@@ -4,7 +4,6 @@ import com.tmploeg.hotelbooker.data.BookingRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.tmploeg.hotelbooker.models.Booking;
@@ -19,16 +18,21 @@ public class BookingController {
 
     @GetMapping("")
     public ResponseEntity<List<Booking>> getAll(){
-        return ResponseEntity.ok(new ArrayList<>());
+        return ResponseEntity.ok(bookingRepository.findAll());
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Booking> getById(@PathVariable int id){
-        return ResponseEntity.notFound().build();
+    public ResponseEntity<Booking> getById(@PathVariable long id){
+        return bookingRepository
+            .findById(id)
+            .map(ResponseEntity::ok)
+            .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping("add")
     public ResponseEntity<Void> addBooking(@RequestBody Booking booking){
+        bookingRepository.save(booking);
+
         return ResponseEntity.noContent().build();
     }
 }
