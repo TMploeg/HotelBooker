@@ -21,7 +21,7 @@ public class BookingController {
         return ResponseEntity.ok(bookingRepository.findAll());
     }
 
-    @GetMapping("{id}")
+    @GetMapping("get-by-id/{id}")
     public ResponseEntity<Booking> getById(@PathVariable long id){
         return bookingRepository
             .findById(id)
