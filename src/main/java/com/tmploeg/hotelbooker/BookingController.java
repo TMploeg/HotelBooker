@@ -41,7 +41,8 @@ public class BookingController {
 
     @PostMapping("add")
     public ResponseEntity<Void> addBooking(@RequestBody Booking booking){
-        bookings.add(booking);
+        Booking newBooking = new Booking(bookings.getLast().id() + 1, booking.ownerName());
+        bookings.add(newBooking);
         return ResponseEntity.noContent().build();
     }
 }
