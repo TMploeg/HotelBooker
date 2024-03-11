@@ -6,37 +6,35 @@ import java.time.LocalDateTime;
 
 @Entity
 public class Booking {
-    @Id
-    @GeneratedValue
-    private Long id;
+  @Id @GeneratedValue private Long id;
 
-    private String ownerName;
+  private String ownerName;
 
-    private LocalDateTime checkIn;
+  private LocalDateTime checkIn;
 
-    private LocalDateTime checkOut;
+  private LocalDateTime checkOut;
 
-    Booking(){}
+  Booking() {}
 
-    public Booking(String ownerName, LocalDateTime checkIn, LocalDateTime checkOut) {
-        this.ownerName = ownerName;
-        this.checkIn = checkIn;
-        this.checkOut = checkOut;
-    }
+  public Booking(String ownerName, LocalDateTime checkIn, LocalDateTime checkOut) {
+    this.ownerName = ownerName;
+    this.checkIn = checkIn;
+    this.checkOut = checkOut;
+  }
 
-    public Long getId(){
-        return id;
-    }
+  public Long getId() {
+    return id;
+  }
 
-    public String getOwnerName(){
-        return ownerName;
-    }
+  public String getOwnerName() {
+    return ownerName;
+  }
 
-    public LocalDateTime getCheckIn(){
-        return checkIn;
-    }
+  public LocalDateTime getCheckIn() {
+    return checkIn;
+  }
 
-    public LocalDateTime getCheckOut(){
-        return checkOut;
-    }
+  public LocalDateTime getCheckOut() {
+    return checkOut;
+  }
 }
