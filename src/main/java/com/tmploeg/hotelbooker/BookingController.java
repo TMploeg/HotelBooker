@@ -1,12 +1,18 @@
 package com.tmploeg.hotelbooker;
 
 import com.tmploeg.hotelbooker.data.BookingRepository;
+import com.tmploeg.hotelbooker.dto.BookingDTO;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.tmploeg.hotelbooker.models.Booking;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -15,30 +21,59 @@ import org.springframework.web.util.UriComponentsBuilder;
 @RequestMapping("bookings")
 public class BookingController {
     private final BookingRepository bookingRepository;
+    
     public BookingController(BookingRepository bookingRepository){
+        System.out.println("Constructor");
         this.bookingRepository = bookingRepository;
     }
 
-    @GetMapping("")
-    public ResponseEntity<List<Booking>> getAll(){
-        return ResponseEntity.ok(bookingRepository.findAll());
+    @GetMapping
+    public ResponseEntity<List<BookingDTO>> getAll(){
+        return ResponseEntity.ok(
+                bookingRepository.findAll().stream()
+                        .map(BookingDTO::fromBooking)
+                        .collect(Collectors.toList())
+        );
     }
 
     @GetMapping("get-by-id/{id}")
-    public ResponseEntity<Booking> getById(@PathVariable long id){
+    public ResponseEntity<BookingDTO> getById(@PathVariable long id){
         return bookingRepository
             .findById(id)
-            .map(ResponseEntity::ok)
+            .map(b -> ResponseEntity.ok(BookingDTO.fromBooking(b)))
             .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("get-by-ownername/{ownerName}")
-    public ResponseEntity<List<Booking>> getByOwnerName(@PathVariable String ownerName){
-        return ResponseEntity.ok(bookingRepository.findByOwnerName(ownerName));
+    public ResponseEntity<List<BookingDTO>> getByOwnerName(@PathVariable String ownerName){
+    return ResponseEntity.ok(
+        bookingRepository.findByOwnerName(ownerName).stream()
+            .map(BookingDTO::fromBooking)
+            .collect(Collectors.toList()));
     }
 
-    @PostMapping("add")
-    public ResponseEntity<Booking> addBooking(@RequestBody Booking booking, UriComponentsBuilder ucb){
+    @PostMapping
+    public ResponseEntity<Object> addBooking(@RequestBody @NotNull BookingDTO bookingDTO, UriComponentsBuilder ucb){
+        Booking booking = bookingDTO.convert();
+
+        if(!isValidOwnerName(booking.getOwnerName())){
+            return ResponseEntity
+                    .badRequest()
+                    .body(ProblemDetail.forStatusAndDetail(
+                            HttpStatus.BAD_REQUEST,
+                            "invalid name"
+                    ));
+        }
+
+        if(!isValidDateRange(booking.getStart(), booking.getEnd())){
+            return ResponseEntity
+                    .badRequest()
+                    .body(ProblemDetail.forStatusAndDetail(
+                            HttpStatus.BAD_REQUEST,
+                            "invalid booking start and/or end"
+                    ));
+        }
+
         bookingRepository.save(booking);
 
         URI newBookingLocation = ucb
@@ -46,7 +81,7 @@ public class BookingController {
                 .buildAndExpand(booking.getId())
                 .toUri();
 
-        return ResponseEntity.created(newBookingLocation).body(booking);
+        return ResponseEntity.created(newBookingLocation).body(BookingDTO.fromBooking(booking));
     }
 
     @DeleteMapping("{id}")
@@ -60,5 +95,16 @@ public class BookingController {
         else{
             return ResponseEntity.notFound().build();
         }
+    }
+
+    private boolean isValidOwnerName(String ownerName){
+        return ownerName != null && !ownerName.isBlank();
+    }
+
+    private boolean isValidDateRange(LocalDateTime startDT, LocalDateTime endDT){
+        return startDT != null &&
+                endDT != null &&
+                startDT.isAfter(LocalDateTime.now()) &&
+                startDT.isBefore((endDT));
     }
 }
