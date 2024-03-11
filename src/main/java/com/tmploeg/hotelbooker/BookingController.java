@@ -3,16 +3,13 @@ package com.tmploeg.hotelbooker;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("bookings")
 public class BookingController {
-    public record Booking(int id, String ownerName, LocalDateTime timeslot){}
+    public record Booking(int id, String ownerName){}
 
     private final List<Booking> bookings;
 
@@ -22,7 +19,7 @@ public class BookingController {
         bookings = new LinkedList<>();
 
         for(int i = 0; i < count; i++){
-            bookings.add(new Booking(i + 1, "person_" + i, LocalDateTime.now()));
+            bookings.add(new Booking(i + 1, "person_" + i));
         }
     }
 
