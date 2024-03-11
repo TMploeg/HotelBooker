@@ -1,13 +1,11 @@
 package com.tmploeg.hotelbooker;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,7 +19,7 @@ public class BookingController {
     public BookingController(){
         int count = 10;
 
-        bookings = new ArrayList<>(count);
+        bookings = new LinkedList<>();
 
         for(int i = 0; i < count; i++){
             bookings.add(new Booking(i + 1, "person_" + i, LocalDateTime.now()));
@@ -42,5 +40,11 @@ public class BookingController {
         }
 
         return ResponseEntity.notFound().build();
+    }
+
+    @PostMapping("add")
+    public ResponseEntity<Void> addBooking(@RequestBody Booking booking){
+        bookings.add(booking);
+        return ResponseEntity.noContent().build();
     }
 }
