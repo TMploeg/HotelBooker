@@ -8,15 +8,17 @@ import jakarta.persistence.Id;
 public class Booking {
     @Id
     @GeneratedValue
-    private long id;
+    private Long id;
 
     private String ownerName;
+
+    Booking(){}
 
     public Booking(String ownerName){
         this.ownerName = ownerName;
     }
 
-    public long getId(){
+    public Long getId(){
         return id;
     }
 
