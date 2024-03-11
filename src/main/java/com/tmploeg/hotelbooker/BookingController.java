@@ -29,6 +29,11 @@ public class BookingController {
             .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @GetMapping("get-by-ownername/{ownerName}")
+    public ResponseEntity<List<Booking>> getByOwnerName(@PathVariable String ownerName){
+        return ResponseEntity.ok(bookingRepository.findByOwnerName(ownerName));
+    }
+
     @PostMapping("add")
     public ResponseEntity<Void> addBooking(@RequestBody Booking booking){
         bookingRepository.save(booking);
