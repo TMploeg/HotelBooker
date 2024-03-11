@@ -1,8 +1,11 @@
 package com.tmploeg.hotelbooker.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Optional;
 
 @Entity
 public class Booking {
@@ -12,10 +15,16 @@ public class Booking {
 
     private String ownerName;
 
+    private LocalDateTime startDT;
+
+    private LocalDateTime endDT;
+
     Booking(){}
 
-    public Booking(String ownerName){
+    public Booking(String ownerName, LocalDateTime startDT, LocalDateTime endDT) {
         this.ownerName = ownerName;
+        this.startDT = startDT;
+        this.endDT = endDT;
     }
 
     public Long getId(){
@@ -24,5 +33,13 @@ public class Booking {
 
     public String getOwnerName(){
         return ownerName;
+    }
+
+    public LocalDateTime getStart(){
+        return startDT;
+    }
+
+    public LocalDateTime getEnd(){
+        return endDT;
     }
 }
