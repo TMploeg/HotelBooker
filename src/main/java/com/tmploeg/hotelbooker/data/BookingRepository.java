@@ -1,4 +1,4 @@
-package com.tmploeg.hotelbooker.interfaces;
+package com.tmploeg.hotelbooker.data;
 
 import com.tmploeg.hotelbooker.models.Booking;
 import org.springframework.data.jpa.repository.JpaRepository;

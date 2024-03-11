@@ -1,6 +1,6 @@
 package com.tmploeg.hotelbooker;
 
-import com.tmploeg.hotelbooker.interfaces.BookingRepository;
+import com.tmploeg.hotelbooker.data.BookingRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
