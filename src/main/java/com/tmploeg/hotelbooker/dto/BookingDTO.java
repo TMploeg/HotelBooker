@@ -9,15 +9,15 @@ import java.time.format.DateTimeParseException;
 public class BookingDTO {
     private final String ownerName;
 
-    private final String startDTString;
+    private final String checkInString;
 
-    private final String endDTString;
+    private final String checkOutString;
 
-    public BookingDTO(String ownerName, String startDTString, String endDTString) {
+    public BookingDTO(String ownerName, String checkInString, String checkOutString) {
         this.ownerName = ownerName;
 
-        this.startDTString = startDTString;
-        this.endDTString = endDTString;
+        this.checkInString = checkInString;
+        this.checkOutString = checkOutString;
     }
 
     public String getOwnerName() {
@@ -25,23 +25,23 @@ public class BookingDTO {
     }
 
     public String getStartDTString() {
-        return startDTString;
+        return checkInString;
     }
 
     public String getEndDTString() {
-        return endDTString;
+        return checkOutString;
     }
 
     public Booking convert(){
         LocalDateTime startDT = null;
         try{
-            startDT = LocalDateTime.parse(startDTString);
+            startDT = LocalDateTime.parse(checkInString);
         }
         catch(DateTimeParseException ignored){ }
 
         LocalDateTime endDT = null;
         try{
-            endDT = LocalDateTime.parse(endDTString);
+            endDT = LocalDateTime.parse(checkOutString);
         }
         catch(DateTimeParseException ignored){ }
 
@@ -53,8 +53,8 @@ public class BookingDTO {
 
         return new BookingDTO(
                 booking.getOwnerName(),
-                booking.getStart().format(formatter),
-                booking.getEnd().format(formatter)
+                booking.getCheckIn().format(formatter),
+                booking.getCheckOut().format(formatter)
         );
     }
 }

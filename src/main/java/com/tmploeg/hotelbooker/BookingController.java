@@ -65,7 +65,7 @@ public class BookingController {
                     ));
         }
 
-        if(!isValidDateRange(booking.getStart(), booking.getEnd())){
+        if(!isValidDateRange(booking.getCheckIn(), booking.getCheckOut())){
             return ResponseEntity
                     .badRequest()
                     .body(ProblemDetail.forStatusAndDetail(
@@ -101,10 +101,10 @@ public class BookingController {
         return ownerName != null && !ownerName.isBlank();
     }
 
-    private boolean isValidDateRange(LocalDateTime startDT, LocalDateTime endDT){
-        return startDT != null &&
-                endDT != null &&
-                startDT.isAfter(LocalDateTime.now()) &&
-                startDT.isBefore((endDT));
+    private boolean isValidDateRange(LocalDateTime checkIn, LocalDateTime checkOut){
+        return checkIn != null &&
+                checkOut != null &&
+                checkIn.isAfter(LocalDateTime.now()) &&
+                checkIn.isBefore((checkOut));
     }
 }

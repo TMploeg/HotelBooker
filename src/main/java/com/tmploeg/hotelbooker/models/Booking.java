@@ -2,10 +2,7 @@ package com.tmploeg.hotelbooker.models;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.Optional;
 
 @Entity
 public class Booking {
@@ -15,16 +12,16 @@ public class Booking {
 
     private String ownerName;
 
-    private LocalDateTime startDT;
+    private LocalDateTime checkIn;
 
-    private LocalDateTime endDT;
+    private LocalDateTime checkOut;
 
     Booking(){}
 
-    public Booking(String ownerName, LocalDateTime startDT, LocalDateTime endDT) {
+    public Booking(String ownerName, LocalDateTime checkIn, LocalDateTime checkOut) {
         this.ownerName = ownerName;
-        this.startDT = startDT;
-        this.endDT = endDT;
+        this.checkIn = checkIn;
+        this.checkOut = checkOut;
     }
 
     public Long getId(){
@@ -35,11 +32,11 @@ public class Booking {
         return ownerName;
     }
 
-    public LocalDateTime getStart(){
-        return startDT;
+    public LocalDateTime getCheckIn(){
+        return checkIn;
     }
 
-    public LocalDateTime getEnd(){
-        return endDT;
+    public LocalDateTime getCheckOut(){
+        return checkOut;
     }
 }
