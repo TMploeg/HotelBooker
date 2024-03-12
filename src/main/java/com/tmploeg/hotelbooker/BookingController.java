@@ -2,6 +2,7 @@ package com.tmploeg.hotelbooker;
 
 import com.tmploeg.hotelbooker.data.BookingRepository;
 import com.tmploeg.hotelbooker.dto.BookingDTO;
+import com.tmploeg.hotelbooker.helpers.LocalDateTimeHelper;
 import com.tmploeg.hotelbooker.models.Booking;
 import java.net.URI;
 import java.time.LocalDateTime;
@@ -58,11 +59,18 @@ public class BookingController {
           .body(ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "invalid name"));
     }
 
+    if (booking.getCheckIn() == null || booking.getCheckOut() == null) {
+      return ResponseEntity.badRequest()
+          .body(
+              ProblemDetail.forStatusAndDetail(
+                  HttpStatus.BAD_REQUEST, "checkIn and/of checkOut is missing"));
+    }
+
     if (!isValidDateRange(booking.getCheckIn(), booking.getCheckOut())) {
       return ResponseEntity.badRequest()
           .body(
               ProblemDetail.forStatusAndDetail(
-                  HttpStatus.BAD_REQUEST, "invalid booking start and/or end"));
+                  HttpStatus.BAD_REQUEST, "checkIn and/or checkOut is invalid"));
     }
 
     bookingRepository.save(booking);
@@ -88,10 +96,8 @@ public class BookingController {
     return ownerName != null && !ownerName.isBlank();
   }
 
-  private boolean isValidDateRange(LocalDateTime checkIn, LocalDateTime checkOut) {
-    return checkIn != null
-        && checkOut != null
-        && checkIn.isAfter(LocalDateTime.now())
-        && checkIn.isBefore((checkOut));
+  private boolean isValidDateRange(
+      @NotNull LocalDateTime checkIn, @NotNull LocalDateTime checkOut) {
+    return checkIn.isAfter(LocalDateTime.now()) && checkIn.isBefore(checkOut);
   }
 }
