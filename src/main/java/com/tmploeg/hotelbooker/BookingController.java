@@ -92,6 +92,33 @@ public class BookingController {
     }
   }
 
+  @PatchMapping("{id}")
+  public ResponseEntity<Object> updateCheckOut(
+      @PathVariable long id, @RequestBody String newCheckOut) {
+    Optional<Booking> updateBooking = bookingRepository.findById(id);
+
+    if (updateBooking.isEmpty()) {
+      return ResponseEntity.notFound().build();
+    }
+
+    Optional<LocalDateTime> parsedNewCheckOut = LocalDateTimeHelper.tryParse(newCheckOut);
+
+    if (parsedNewCheckOut.isEmpty()) {
+      return ResponseEntity.badRequest()
+          .body(ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "invalid checkOut value"));
+    }
+
+    if (!isAvailable(updateBooking.get().getCheckIn(), parsedNewCheckOut.get())) {
+      return ResponseEntity.badRequest()
+          .body(
+              ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "new booking is occupied"));
+    }
+
+    updateBooking.get().setCheckout(parsedNewCheckOut.get());
+
+    return ResponseEntity.ok(updateBooking);
+  }
+
   private boolean isValidOwnerName(String ownerName) {
     return ownerName != null && !ownerName.isBlank();
   }
@@ -99,5 +126,14 @@ public class BookingController {
   private boolean isValidDateRange(
       @NotNull LocalDateTime checkIn, @NotNull LocalDateTime checkOut) {
     return checkIn.isAfter(LocalDateTime.now()) && checkIn.isBefore(checkOut);
+  }
+
+  private boolean isAvailable(LocalDateTime checkIn, LocalDateTime checkOut) {
+
+    return bookingRepository.findAll().stream()
+        .noneMatch(
+            b ->
+                (b.getCheckIn().isAfter(checkIn) && b.getCheckIn().isBefore(checkOut))
+                    || (b.getCheckOut().isAfter(checkIn) && b.getCheckIn().isBefore(checkOut)));
   }
 }

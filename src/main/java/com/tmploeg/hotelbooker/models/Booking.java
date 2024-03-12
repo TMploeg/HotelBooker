@@ -1,7 +1,6 @@
 package com.tmploeg.hotelbooker.models;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -36,5 +35,9 @@ public class Booking {
 
   public LocalDateTime getCheckOut() {
     return checkOut;
+  }
+
+  public void setCheckout(LocalDateTime checkOut) {
+    this.checkOut = checkOut;
   }
 }
