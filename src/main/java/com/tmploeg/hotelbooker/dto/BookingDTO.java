@@ -1,59 +1,52 @@
 package com.tmploeg.hotelbooker.dto;
 
+import com.tmploeg.hotelbooker.helpers.LocalDateTimeHelper;
 import com.tmploeg.hotelbooker.models.Booking;
-
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 
 public class BookingDTO {
+  private final Long id;
+
   private final String ownerName;
 
-  private final String checkInString;
+  private final String checkIn;
 
-  private final String checkOutString;
+  private final String checkOut;
 
-  public BookingDTO(String ownerName, String checkInString, String checkOutString) {
+  public BookingDTO(Long id, String ownerName, String checkIn, String checkOut) {
+    this.id = id;
     this.ownerName = ownerName;
+    this.checkIn = checkIn;
+    this.checkOut = checkOut;
+  }
 
-    this.checkInString = checkInString;
-    this.checkOutString = checkOutString;
+  public Long getId() {
+    return id;
   }
 
   public String getOwnerName() {
     return ownerName;
   }
 
-  public String getStartDTString() {
-    return checkInString;
+  public String getCheckIn() {
+    return checkIn;
   }
 
-  public String getEndDTString() {
-    return checkOutString;
+  public String getCheckOut() {
+    return checkOut;
   }
 
   public Booking convert() {
-    LocalDateTime startDT = null;
-    try {
-      startDT = LocalDateTime.parse(checkInString);
-    } catch (DateTimeParseException ignored) {
-    }
-
-    LocalDateTime endDT = null;
-    try {
-      endDT = LocalDateTime.parse(checkOutString);
-    } catch (DateTimeParseException ignored) {
-    }
-
-    return new Booking(ownerName, startDT, endDT);
+    LocalDateTime parsedCheckIn = LocalDateTimeHelper.tryParse(checkIn).orElse(null);
+    LocalDateTime parsedCheckOut = LocalDateTimeHelper.tryParse(checkOut).orElse(null);
+    return new Booking(ownerName, parsedCheckIn, parsedCheckOut);
   }
 
   public static BookingDTO fromBooking(Booking booking) {
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
     return new BookingDTO(
+        booking.getId(),
         booking.getOwnerName(),
-        booking.getCheckIn().format(formatter),
-        booking.getCheckOut().format(formatter));
+        LocalDateTimeHelper.format(booking.getCheckIn()),
+        LocalDateTimeHelper.format(booking.getCheckOut()));
   }
 }

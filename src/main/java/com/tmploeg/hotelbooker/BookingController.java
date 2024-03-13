@@ -2,6 +2,8 @@ package com.tmploeg.hotelbooker;
 
 import com.tmploeg.hotelbooker.data.BookingRepository;
 import com.tmploeg.hotelbooker.dto.BookingDTO;
+import com.tmploeg.hotelbooker.dto.UpdateCheckOutDTO;
+import com.tmploeg.hotelbooker.helpers.LocalDateTimeHelper;
 import com.tmploeg.hotelbooker.models.Booking;
 import java.net.URI;
 import java.time.LocalDateTime;
@@ -58,11 +60,18 @@ public class BookingController {
           .body(ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "invalid name"));
     }
 
+    if (booking.getCheckIn() == null || booking.getCheckOut() == null) {
+      return ResponseEntity.badRequest()
+          .body(
+              ProblemDetail.forStatusAndDetail(
+                  HttpStatus.BAD_REQUEST, "checkIn and/of checkOut is missing"));
+    }
+
     if (!isValidDateRange(booking.getCheckIn(), booking.getCheckOut())) {
       return ResponseEntity.badRequest()
           .body(
               ProblemDetail.forStatusAndDetail(
-                  HttpStatus.BAD_REQUEST, "invalid booking start and/or end"));
+                  HttpStatus.BAD_REQUEST, "checkIn and/or checkOut is invalid"));
     }
 
     bookingRepository.save(booking);
@@ -84,14 +93,65 @@ public class BookingController {
     }
   }
 
+  @PostMapping("update-checkout")
+  public ResponseEntity<Object> updateCheckOut(@RequestBody UpdateCheckOutDTO updateCheckOutDTO) {
+    if (updateCheckOutDTO.getId() == null) {
+      return ResponseEntity.badRequest()
+          .body(ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "id is missing"));
+    }
+
+    Optional<Booking> updateBooking = bookingRepository.findById(updateCheckOutDTO.getId());
+
+    if (updateBooking.isEmpty()) {
+      return ResponseEntity.notFound().build();
+    }
+
+    Optional<LocalDateTime> parsedNewCheckOut =
+        LocalDateTimeHelper.tryParse(updateCheckOutDTO.getNewCheckOut());
+
+    if (parsedNewCheckOut.isEmpty()) {
+      return ResponseEntity.badRequest()
+          .body(ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "checkOut is invalid"));
+    }
+
+    if (!isValidDateRange(updateBooking.get().getCheckIn(), parsedNewCheckOut.get())) {
+      return ResponseEntity.badRequest()
+          .body(
+              ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "booking range is invalid"));
+    }
+
+    List<Booking> overlappingBookings =
+        findOverlappingBookings(updateBooking.get().getCheckIn(), parsedNewCheckOut.get()).stream()
+            .filter(b -> b != updateBooking.get())
+            .toList();
+
+    if (!overlappingBookings.isEmpty()) {
+      return ResponseEntity.badRequest()
+          .body(
+              ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "new booking is occupied"));
+    }
+
+    updateBooking.get().setCheckout(parsedNewCheckOut.get());
+
+    return ResponseEntity.ok(updateBooking);
+  }
+
   private boolean isValidOwnerName(String ownerName) {
     return ownerName != null && !ownerName.isBlank();
   }
 
-  private boolean isValidDateRange(LocalDateTime checkIn, LocalDateTime checkOut) {
-    return checkIn != null
-        && checkOut != null
-        && checkIn.isAfter(LocalDateTime.now())
-        && checkIn.isBefore((checkOut));
+  private boolean isValidDateRange(
+      @NotNull LocalDateTime checkIn, @NotNull LocalDateTime checkOut) {
+    return checkIn.isAfter(LocalDateTime.now()) && checkIn.isBefore(checkOut);
+  }
+
+  private List<Booking> findOverlappingBookings(LocalDateTime checkIn, LocalDateTime checkOut) {
+
+    return bookingRepository.findAll().stream()
+        .filter(
+            b ->
+                (b.getCheckIn().isAfter(checkIn) && b.getCheckIn().isBefore(checkOut))
+                    || (b.getCheckOut().isAfter(checkIn) && b.getCheckIn().isBefore(checkOut)))
+        .collect(Collectors.toList());
   }
 }
