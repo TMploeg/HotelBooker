@@ -2,6 +2,7 @@ package com.tmploeg.hotelbooker;
 
 import com.tmploeg.hotelbooker.data.BookingRepository;
 import com.tmploeg.hotelbooker.dto.BookingDTO;
+import com.tmploeg.hotelbooker.dto.UpdateCheckOutDTO;
 import com.tmploeg.hotelbooker.helpers.LocalDateTimeHelper;
 import com.tmploeg.hotelbooker.models.Booking;
 import java.net.URI;
@@ -92,23 +93,39 @@ public class BookingController {
     }
   }
 
-  @PatchMapping("{id}")
-  public ResponseEntity<Object> updateCheckOut(
-      @PathVariable long id, @RequestBody String newCheckOut) {
-    Optional<Booking> updateBooking = bookingRepository.findById(id);
+  @PostMapping("update-checkout")
+  public ResponseEntity<Object> updateCheckOut(@RequestBody UpdateCheckOutDTO updateCheckOutDTO) {
+    if (updateCheckOutDTO.getId() == null) {
+      return ResponseEntity.badRequest()
+          .body(ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "id is missing"));
+    }
+
+    Optional<Booking> updateBooking = bookingRepository.findById(updateCheckOutDTO.getId());
 
     if (updateBooking.isEmpty()) {
       return ResponseEntity.notFound().build();
     }
 
-    Optional<LocalDateTime> parsedNewCheckOut = LocalDateTimeHelper.tryParse(newCheckOut);
+    Optional<LocalDateTime> parsedNewCheckOut =
+        LocalDateTimeHelper.tryParse(updateCheckOutDTO.getNewCheckOut());
 
     if (parsedNewCheckOut.isEmpty()) {
       return ResponseEntity.badRequest()
-          .body(ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "invalid checkOut value"));
+          .body(ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "checkOut is invalid"));
     }
 
-    if (!isAvailable(updateBooking.get().getCheckIn(), parsedNewCheckOut.get())) {
+    if (!isValidDateRange(updateBooking.get().getCheckIn(), parsedNewCheckOut.get())) {
+      return ResponseEntity.badRequest()
+          .body(
+              ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "booking range is invalid"));
+    }
+
+    List<Booking> overlappingBookings =
+        findOverlappingBookings(updateBooking.get().getCheckIn(), parsedNewCheckOut.get()).stream()
+            .filter(b -> b != updateBooking.get())
+            .toList();
+
+    if (!overlappingBookings.isEmpty()) {
       return ResponseEntity.badRequest()
           .body(
               ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "new booking is occupied"));
@@ -128,12 +145,13 @@ public class BookingController {
     return checkIn.isAfter(LocalDateTime.now()) && checkIn.isBefore(checkOut);
   }
 
-  private boolean isAvailable(LocalDateTime checkIn, LocalDateTime checkOut) {
+  private List<Booking> findOverlappingBookings(LocalDateTime checkIn, LocalDateTime checkOut) {
 
     return bookingRepository.findAll().stream()
-        .noneMatch(
+        .filter(
             b ->
                 (b.getCheckIn().isAfter(checkIn) && b.getCheckIn().isBefore(checkOut))
-                    || (b.getCheckOut().isAfter(checkIn) && b.getCheckIn().isBefore(checkOut)));
+                    || (b.getCheckOut().isAfter(checkIn) && b.getCheckIn().isBefore(checkOut)))
+        .collect(Collectors.toList());
   }
 }
