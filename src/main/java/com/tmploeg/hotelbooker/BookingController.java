@@ -93,7 +93,7 @@ public class BookingController {
     }
   }
 
-  @PostMapping("update-checkout")
+  @PutMapping("update-checkout")
   public ResponseEntity<Object> updateCheckOut(@RequestBody UpdateCheckOutDTO updateCheckOutDTO) {
     if (updateCheckOutDTO.getId() == null) {
       return ResponseEntity.badRequest()
