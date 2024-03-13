@@ -70,8 +70,21 @@ public class BookingController {
     if (!isValidDateRange(booking.getCheckIn(), booking.getCheckOut())) {
       return ResponseEntity.badRequest()
           .body(
+              ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "booking range is invalid"));
+    }
+
+    if (hasDatePassed(booking.getCheckIn())) {
+      return ResponseEntity.badRequest()
+          .body(
               ProblemDetail.forStatusAndDetail(
-                  HttpStatus.BAD_REQUEST, "checkIn and/or checkOut is invalid"));
+                  HttpStatus.BAD_REQUEST, "booking checkIn has passed"));
+    }
+
+    if (!findOverlappingBookings(booking.getCheckIn(), booking.getCheckOut()).isEmpty()) {
+      return ResponseEntity.badRequest()
+          .body(
+              ProblemDetail.forStatusAndDetail(
+                  HttpStatus.BAD_REQUEST, "booking is (partially) occupied"));
     }
 
     bookingRepository.save(booking);
@@ -93,7 +106,7 @@ public class BookingController {
     }
   }
 
-  @PostMapping("update-checkout")
+  @PutMapping("update-checkout")
   public ResponseEntity<Object> updateCheckOut(@RequestBody UpdateCheckOutDTO updateCheckOutDTO) {
     if (updateCheckOutDTO.getId() == null) {
       return ResponseEntity.badRequest()
@@ -106,12 +119,21 @@ public class BookingController {
       return ResponseEntity.notFound().build();
     }
 
+    if (hasDatePassed(updateBooking.get().getCheckOut())) {
+      return ResponseEntity.badRequest()
+          .body(
+              ProblemDetail.forStatusAndDetail(
+                  HttpStatus.BAD_REQUEST, "booking has already passed"));
+    }
+
     Optional<LocalDateTime> parsedNewCheckOut =
         LocalDateTimeHelper.tryParse(updateCheckOutDTO.getNewCheckOut());
 
     if (parsedNewCheckOut.isEmpty()) {
       return ResponseEntity.badRequest()
-          .body(ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "checkOut is invalid"));
+          .body(
+              ProblemDetail.forStatusAndDetail(
+                  HttpStatus.BAD_REQUEST, "booking checkOut is invalid"));
     }
 
     if (!isValidDateRange(updateBooking.get().getCheckIn(), parsedNewCheckOut.get())) {
@@ -142,7 +164,11 @@ public class BookingController {
 
   private boolean isValidDateRange(
       @NotNull LocalDateTime checkIn, @NotNull LocalDateTime checkOut) {
-    return checkIn.isAfter(LocalDateTime.now()) && checkIn.isBefore(checkOut);
+    return checkIn.isBefore(checkOut);
+  }
+
+  private boolean hasDatePassed(LocalDateTime dt) {
+    return !dt.isAfter(LocalDateTime.now());
   }
 
   private List<Booking> findOverlappingBookings(LocalDateTime checkIn, LocalDateTime checkOut) {
