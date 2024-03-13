@@ -5,28 +5,34 @@ import com.tmploeg.hotelbooker.models.Booking;
 import java.time.LocalDateTime;
 
 public class BookingDTO {
+  private final Long id;
+
   private final String ownerName;
 
   private final String checkIn;
 
   private final String checkOut;
 
-  public BookingDTO(String ownerName, String checkIn, String checkOut) {
+  public BookingDTO(Long id, String ownerName, String checkIn, String checkOut) {
+    this.id = id;
     this.ownerName = ownerName;
-
     this.checkIn = checkIn;
     this.checkOut = checkOut;
+  }
+
+  public Long getId() {
+    return id;
   }
 
   public String getOwnerName() {
     return ownerName;
   }
 
-  public String getCheckin() {
+  public String getCheckIn() {
     return checkIn;
   }
 
-  public String getCheckout() {
+  public String getCheckOut() {
     return checkOut;
   }
 
@@ -38,6 +44,7 @@ public class BookingDTO {
 
   public static BookingDTO fromBooking(Booking booking) {
     return new BookingDTO(
+        booking.getId(),
         booking.getOwnerName(),
         LocalDateTimeHelper.format(booking.getCheckIn()),
         LocalDateTimeHelper.format(booking.getCheckOut()));
