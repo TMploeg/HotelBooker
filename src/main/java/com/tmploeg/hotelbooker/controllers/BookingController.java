@@ -31,7 +31,7 @@ public class BookingController extends ControllerBase {
   @GetMapping
   public ResponseEntity<List<BookingDTO>> getAll() {
     return ResponseEntity.ok(
-        bookingRepository.findAll().stream()
+        bookingRepository.findByOrderByCheckIn().stream()
             .map(BookingDTO::fromBooking)
             .collect(Collectors.toList()));
   }

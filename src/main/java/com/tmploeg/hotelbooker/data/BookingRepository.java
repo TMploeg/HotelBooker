@@ -6,6 +6,8 @@ import java.util.Set;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
+  Set<Booking> findByOrderByCheckIn();
+
   Set<Booking> findByCheckInBetweenAndCheckOutBetween(
       LocalDateTime checkInRangeStart,
       LocalDateTime checkInRangeEnd,
