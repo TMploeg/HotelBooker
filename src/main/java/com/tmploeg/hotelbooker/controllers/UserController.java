@@ -18,7 +18,7 @@ public class UserController extends ControllerBase {
   }
 
   @PostMapping("register")
-  public ResponseEntity<?> register(@RequestBody AuthDTO registerDTO) {
+  public ResponseEntity<UserDTO> register(@RequestBody AuthDTO registerDTO) {
     if (registerDTO == null) {
       throw new BadRequestException("register data is required");
     }
