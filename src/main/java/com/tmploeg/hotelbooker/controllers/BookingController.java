@@ -145,8 +145,9 @@ public class BookingController extends ControllerBase {
     }
 
     updateBooking.get().setCheckout(parsedNewCheckOut.get());
+    bookingRepository.save(updateBooking.get());
 
-    return ResponseEntity.ok(updateBooking);
+    return ResponseEntity.ok(BookingDTO.fromBooking(updateBooking.get()));
   }
 
   private boolean isValidUsername(String ownerName) {
