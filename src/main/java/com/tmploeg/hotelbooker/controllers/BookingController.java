@@ -6,13 +6,13 @@ import com.tmploeg.hotelbooker.dtos.BookingDTO;
 import com.tmploeg.hotelbooker.dtos.UpdateCheckOutDTO;
 import com.tmploeg.hotelbooker.helpers.LocalDateTimeHelper;
 import com.tmploeg.hotelbooker.models.Booking;
+import com.tmploeg.hotelbooker.models.User;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -57,16 +57,20 @@ public class BookingController extends ControllerBase {
 
   @PostMapping
   public ResponseEntity<?> addBooking(
-      @RequestBody @NotNull BookingDTO bookingDTO, UriComponentsBuilder ucb) {
-    Booking booking =
-        BookingDTO.convert(
-            bookingDTO, userName -> userRepository.findByUsername(userName).orElse(null));
+      @RequestBody BookingDTO bookingDTO, UriComponentsBuilder ucb) {
+    if (bookingDTO == null) {
+      return getBadRequestResponse("booking data is required");
+    }
+
+    Optional<User> user = userRepository.findByUsername(bookingDTO.getUsername());
+
+    if (!isValidUsername(bookingDTO.getUsername()) || user.isEmpty()) {
+      return getBadRequestResponse("username is invalid");
+    }
+
+    Booking booking = BookingDTO.convert(bookingDTO, user.get());
 
     LinkedList<String> errorMessages = new LinkedList<>();
-
-    if (booking.getUser() == null || !isValidUsername(booking.getUser().getUsername())) {
-      errorMessages.add("username is invalid");
-    }
 
     boolean checkInValid = false;
     if (booking.getCheckIn() == null) {

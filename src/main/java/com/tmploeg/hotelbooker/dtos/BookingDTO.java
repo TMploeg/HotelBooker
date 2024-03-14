@@ -4,20 +4,19 @@ import com.tmploeg.hotelbooker.helpers.LocalDateTimeHelper;
 import com.tmploeg.hotelbooker.models.Booking;
 import com.tmploeg.hotelbooker.models.User;
 import java.time.LocalDateTime;
-import java.util.function.Function;
 
 public class BookingDTO {
   private final Long id;
 
-  private final String ownerName;
+  private final String username;
 
   private final String checkIn;
 
   private final String checkOut;
 
-  public BookingDTO(Long id, String ownerName, String checkIn, String checkOut) {
+  public BookingDTO(Long id, String username, String checkIn, String checkOut) {
     this.id = id;
-    this.ownerName = ownerName;
+    this.username = username;
     this.checkIn = checkIn;
     this.checkOut = checkOut;
   }
@@ -26,8 +25,8 @@ public class BookingDTO {
     return id;
   }
 
-  public String getOwnerName() {
-    return ownerName;
+  public String getUsername() {
+    return username;
   }
 
   public String getCheckIn() {
@@ -38,14 +37,10 @@ public class BookingDTO {
     return checkOut;
   }
 
-  public static Booking convert(BookingDTO dto, Function<String, User> getOwner) {
-    if (getOwner == null) {
-      throw new NullPointerException("getOwner function is null");
-    }
-
+  public static Booking convert(BookingDTO dto, User user) {
     LocalDateTime parsedCheckIn = LocalDateTimeHelper.tryParse(dto.getCheckIn()).orElse(null);
     LocalDateTime parsedCheckOut = LocalDateTimeHelper.tryParse(dto.getCheckOut()).orElse(null);
-    return new Booking(getOwner.apply(dto.getOwnerName()), parsedCheckIn, parsedCheckOut);
+    return new Booking(user, parsedCheckIn, parsedCheckOut);
   }
 
   public static BookingDTO fromBooking(Booking booking) {
