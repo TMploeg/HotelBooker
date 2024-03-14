@@ -101,29 +101,24 @@ public class BookingController extends ControllerBase {
     }
   }
 
-  @PatchMapping("{id}")
-  public ResponseEntity<?> updateCheckOut(
-      @PathVariable Long id, @RequestBody BookingDTO bookingDTO) {
+  @PatchMapping
+  public ResponseEntity<?> updateCheckOut(@RequestBody BookingDTO bookingDTO) {
     if (bookingDTO == null) {
       return getErrorResponse(HttpStatus.BAD_REQUEST, "booking data is required");
     }
 
-    if (bookingDTO.getUsername() != null) {
-      return getErrorResponse(HttpStatus.FORBIDDEN, "cannot change username");
+    if (bookingDTO.getId() == null) {
+      return getErrorResponse(HttpStatus.BAD_REQUEST, "id is required");
     }
 
-    if (bookingDTO.getCheckIn() != null) {
-      return getErrorResponse(HttpStatus.FORBIDDEN, "cannot change checkIn");
-    }
-
-    Optional<Booking> booking = bookingRepository.findById(id);
+    Optional<Booking> booking = bookingRepository.findById(bookingDTO.getId());
 
     if (booking.isEmpty()) {
       return ResponseEntity.notFound().build();
     }
 
     if (hasDatePassed(booking.get().getCheckOut())) {
-      return getErrorResponse(HttpStatus.BAD_REQUEST, "booking has already passed");
+      return getErrorResponse(HttpStatus.FORBIDDEN, "booking has already passed");
     }
 
     if (bookingDTO.getCheckOut() != null) {
