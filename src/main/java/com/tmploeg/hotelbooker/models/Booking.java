@@ -3,7 +3,13 @@ package com.tmploeg.hotelbooker.models;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 @Entity
+@NoArgsConstructor
+@Getter
 public class Booking {
   @Id @GeneratedValue private Long id;
 
@@ -11,33 +17,11 @@ public class Booking {
 
   private LocalDateTime checkIn;
 
-  private LocalDateTime checkOut;
-
-  Booking() {}
+  @Setter private LocalDateTime checkOut;
 
   public Booking(User user, LocalDateTime checkIn, LocalDateTime checkOut) {
     this.user = user;
     this.checkIn = checkIn;
-    this.checkOut = checkOut;
-  }
-
-  public Long getId() {
-    return id;
-  }
-
-  public User getUser() {
-    return user;
-  }
-
-  public LocalDateTime getCheckIn() {
-    return checkIn;
-  }
-
-  public LocalDateTime getCheckOut() {
-    return checkOut;
-  }
-
-  public void setCheckout(LocalDateTime checkOut) {
     this.checkOut = checkOut;
   }
 }

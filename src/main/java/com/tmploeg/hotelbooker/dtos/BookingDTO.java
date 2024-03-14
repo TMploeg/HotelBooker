@@ -5,37 +5,16 @@ import com.tmploeg.hotelbooker.models.Booking;
 import com.tmploeg.hotelbooker.models.User;
 import java.time.LocalDateTime;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
+@Getter
 public class BookingDTO {
   private final Long id;
-
   private final String username;
-
   private final String checkIn;
-
   private final String checkOut;
-
-  public BookingDTO(Long id, String username, String checkIn, String checkOut) {
-    this.id = id;
-    this.username = username;
-    this.checkIn = checkIn;
-    this.checkOut = checkOut;
-  }
-
-  public Long getId() {
-    return id;
-  }
-
-  public String getUsername() {
-    return username;
-  }
-
-  public String getCheckIn() {
-    return checkIn;
-  }
-
-  public String getCheckOut() {
-    return checkOut;
-  }
 
   public static Booking convert(BookingDTO dto, User user) {
     LocalDateTime parsedCheckIn = LocalDateTimeHelper.tryParse(dto.getCheckIn()).orElse(null);

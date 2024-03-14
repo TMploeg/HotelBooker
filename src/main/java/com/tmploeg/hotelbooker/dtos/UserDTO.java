@@ -1,25 +1,14 @@
 package com.tmploeg.hotelbooker.dtos;
 
 import com.tmploeg.hotelbooker.models.User;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-import java.util.UUID;
-
+@RequiredArgsConstructor
+@Getter
 public class UserDTO {
-  private String id;
-  private String username;
-
-  public UserDTO(String id, String username) {
-    this.id = id;
-    this.username = username;
-  }
-
-  public String getId() {
-    return id;
-  }
-
-  public String getUsername() {
-    return username;
-  }
+  private final String id;
+  private final String username;
 
   public static UserDTO fromUser(User user) {
     return new UserDTO(user.getId().toString(), user.getUsername());
