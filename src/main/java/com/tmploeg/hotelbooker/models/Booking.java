@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 public class Booking {
   @Id @GeneratedValue private Long id;
 
-  private String ownerName;
+  private User owner;
 
   private LocalDateTime checkIn;
 
@@ -15,8 +15,8 @@ public class Booking {
 
   Booking() {}
 
-  public Booking(String ownerName, LocalDateTime checkIn, LocalDateTime checkOut) {
-    this.ownerName = ownerName;
+  public Booking(User owner, LocalDateTime checkIn, LocalDateTime checkOut) {
+    this.owner = owner;
     this.checkIn = checkIn;
     this.checkOut = checkOut;
   }
@@ -25,8 +25,8 @@ public class Booking {
     return id;
   }
 
-  public String getOwnerName() {
-    return ownerName;
+  public User getOwner() {
+    return owner;
   }
 
   public LocalDateTime getCheckIn() {
