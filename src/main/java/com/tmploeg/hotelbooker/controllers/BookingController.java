@@ -87,7 +87,7 @@ public class BookingController extends ControllerBase {
       return getBadRequestResponse(String.join(";", errorMessages));
     }
 
-    if (!findOverlappingBookings(booking.getCheckIn(), booking.getCheckOut()).isEmpty()) {
+    if (hasOverlappingBookings(booking.getCheckIn(), booking.getCheckOut())) {
       return getBadRequestResponse("booking is (partially) occupied");
     }
 
@@ -158,12 +158,13 @@ public class BookingController extends ControllerBase {
   }
 
   private List<Booking> findOverlappingBookings(LocalDateTime checkIn, LocalDateTime checkOut) {
+    return bookingRepository
+        .findByCheckInBetweenAndCheckOutBetween(checkIn, checkOut, checkIn, checkOut)
+        .stream()
+        .toList();
+  }
 
-    return bookingRepository.findAll().stream()
-        .filter(
-            b ->
-                (b.getCheckIn().isAfter(checkIn) && b.getCheckIn().isBefore(checkOut))
-                    || (b.getCheckOut().isAfter(checkIn) && b.getCheckIn().isBefore(checkOut)))
-        .collect(Collectors.toList());
+  private boolean hasOverlappingBookings(LocalDateTime checkIn, LocalDateTime checkOut) {
+    return !findOverlappingBookings(checkIn, checkOut).isEmpty();
   }
 }
