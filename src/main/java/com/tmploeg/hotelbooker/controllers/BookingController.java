@@ -3,6 +3,8 @@ package com.tmploeg.hotelbooker.controllers;
 import com.tmploeg.hotelbooker.data.BookingRepository;
 import com.tmploeg.hotelbooker.data.UserRepository;
 import com.tmploeg.hotelbooker.dtos.BookingDTO;
+import com.tmploeg.hotelbooker.exceptions.BadRequestException;
+import com.tmploeg.hotelbooker.exceptions.ForbiddenException;
 import com.tmploeg.hotelbooker.helpers.LocalDateTimeHelper;
 import com.tmploeg.hotelbooker.models.Booking;
 import com.tmploeg.hotelbooker.models.User;
@@ -12,7 +14,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -45,16 +46,16 @@ public class BookingController extends ControllerBase {
   }
 
   @PostMapping
-  public ResponseEntity<?> addBooking(
+  public ResponseEntity<BookingDTO> addBooking(
       @RequestBody BookingDTO bookingDTO, UriComponentsBuilder ucb) {
     if (bookingDTO == null) {
-      return getErrorResponse(HttpStatus.BAD_REQUEST, "booking data is required");
+      throw new BadRequestException("booking data is required");
     }
 
     Optional<User> user = userRepository.findByUsername(bookingDTO.getUsername());
 
     if (!isValidUsername(bookingDTO.getUsername()) || user.isEmpty()) {
-      return getErrorResponse(HttpStatus.BAD_REQUEST, "username is invalid");
+      throw new BadRequestException("username is invalid");
     }
 
     Booking booking = BookingDTO.convert(bookingDTO, user.get());
@@ -77,11 +78,11 @@ public class BookingController extends ControllerBase {
     }
 
     if (!errorMessages.isEmpty()) {
-      return getErrorResponse(HttpStatus.BAD_REQUEST, String.join(";", errorMessages));
+      throw new BadRequestException(String.join(";", errorMessages));
     }
 
     if (hasOverlappingBookings(booking.getCheckIn(), booking.getCheckOut())) {
-      return getErrorResponse(HttpStatus.BAD_REQUEST, "booking is occupied");
+      throw new ForbiddenException("booking is occupied");
     }
 
     bookingRepository.save(booking);
@@ -102,13 +103,13 @@ public class BookingController extends ControllerBase {
   }
 
   @PatchMapping
-  public ResponseEntity<?> updateCheckOut(@RequestBody BookingDTO bookingDTO) {
+  public ResponseEntity<BookingDTO> updateCheckOut(@RequestBody BookingDTO bookingDTO) {
     if (bookingDTO == null) {
-      return getErrorResponse(HttpStatus.BAD_REQUEST, "booking data is required");
+      throw new BadRequestException("booking data is required");
     }
 
     if (bookingDTO.getId() == null) {
-      return getErrorResponse(HttpStatus.BAD_REQUEST, "id is required");
+      throw new BadRequestException("id is required");
     }
 
     Optional<Booking> booking = bookingRepository.findById(bookingDTO.getId());
@@ -118,26 +119,25 @@ public class BookingController extends ControllerBase {
     }
 
     if (hasDatePassed(booking.get().getCheckOut())) {
-      return getErrorResponse(HttpStatus.FORBIDDEN, "booking has already passed");
+      throw new ForbiddenException("booking has already passed");
     }
 
     if (bookingDTO.getCheckOut() != null) {
       Optional<LocalDateTime> newCheckOut = LocalDateTimeHelper.tryParse(bookingDTO.getCheckOut());
 
       if (newCheckOut.isEmpty()) {
-        return getErrorResponse(HttpStatus.BAD_REQUEST, "checkOut is invalid");
+        throw new BadRequestException("checkOut is invalid");
       }
 
       if (newCheckOut.get().isBefore(booking.get().getCheckIn())) {
-        return getErrorResponse(
-            HttpStatus.BAD_REQUEST, "checkOut must not be earlier than checkIn");
+        throw new BadRequestException("checkOut must not be earlier than checkIn");
       }
 
       if (!findOverlappingBookings(booking.get().getCheckIn(), newCheckOut.get()).stream()
           .filter(b -> b != booking.get())
           .toList()
           .isEmpty()) {
-        return getErrorResponse(HttpStatus.FORBIDDEN, "new booking is occupied");
+        throw new ForbiddenException("new booking is occupied");
       }
 
       booking.get().setCheckout(newCheckOut.get());
