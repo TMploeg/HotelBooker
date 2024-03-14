@@ -37,8 +37,12 @@ public class BookingController extends ControllerBase {
             .collect(Collectors.toList()));
   }
 
-  @GetMapping("get-by-id/{id}")
-  public ResponseEntity<BookingDTO> getById(@PathVariable long id) {
+  @GetMapping("{id}")
+  public ResponseEntity<BookingDTO> getById(@PathVariable Long id) {
+    if (id == null) {
+      throw new BadRequestException("id is required");
+    }
+
     return bookingRepository
         .findById(id)
         .map(b -> ResponseEntity.ok(BookingDTO.fromBooking(b)))
