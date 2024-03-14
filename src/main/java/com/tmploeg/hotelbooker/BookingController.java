@@ -1,6 +1,7 @@
 package com.tmploeg.hotelbooker;
 
 import com.tmploeg.hotelbooker.data.BookingRepository;
+import com.tmploeg.hotelbooker.data.UserRepository;
 import com.tmploeg.hotelbooker.dto.BookingDTO;
 import com.tmploeg.hotelbooker.dto.UpdateCheckOutDTO;
 import com.tmploeg.hotelbooker.helpers.LocalDateTimeHelper;
@@ -21,9 +22,11 @@ import org.springframework.web.util.UriComponentsBuilder;
 @RequestMapping("bookings")
 public class BookingController {
   private final BookingRepository bookingRepository;
+  private final UserRepository userRepository;
 
-  public BookingController(BookingRepository bookingRepository) {
+  public BookingController(BookingRepository bookingRepository, UserRepository userRepository) {
     this.bookingRepository = bookingRepository;
+    this.userRepository = userRepository;
   }
 
   @GetMapping
@@ -53,9 +56,11 @@ public class BookingController {
   @PostMapping
   public ResponseEntity<Object> addBooking(
       @RequestBody @NotNull BookingDTO bookingDTO, UriComponentsBuilder ucb) {
-    Booking booking = bookingDTO.convert();
+    Booking booking =
+        BookingDTO.convert(
+            bookingDTO, userName -> userRepository.findByUsername(userName).orElse(null));
 
-    if (!isValidOwnerName(booking.getOwnerName())) {
+    if (!isValidOwnerName(booking.getOwner().getUsername())) {
       return ResponseEntity.badRequest()
           .body(ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "invalid name"));
     }
