@@ -14,20 +14,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
 @RequestMapping("bookings")
+@RequiredArgsConstructor
 public class BookingController extends ControllerBase {
   private final BookingRepository bookingRepository;
   private final UserRepository userRepository;
-
-  public BookingController(BookingRepository bookingRepository, UserRepository userRepository) {
-    this.bookingRepository = bookingRepository;
-    this.userRepository = userRepository;
-  }
 
   @GetMapping
   public ResponseEntity<List<BookingDTO>> getAll() {
@@ -144,7 +141,7 @@ public class BookingController extends ControllerBase {
         throw new ForbiddenException("new booking is occupied");
       }
 
-      booking.get().setCheckout(newCheckOut.get());
+      booking.get().setCheckOut(newCheckOut.get());
     }
 
     bookingRepository.save(booking.get());

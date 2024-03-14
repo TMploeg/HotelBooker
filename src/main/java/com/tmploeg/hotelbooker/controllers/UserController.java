@@ -5,17 +5,15 @@ import com.tmploeg.hotelbooker.dtos.AuthDTO;
 import com.tmploeg.hotelbooker.dtos.UserDTO;
 import com.tmploeg.hotelbooker.exceptions.BadRequestException;
 import com.tmploeg.hotelbooker.models.User;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("users")
+@RequiredArgsConstructor
 public class UserController extends ControllerBase {
   private final UserRepository userRepository;
-
-  public UserController(UserRepository userRepository) {
-    this.userRepository = userRepository;
-  }
 
   @PostMapping("register")
   public ResponseEntity<UserDTO> register(@RequestBody AuthDTO registerDTO) {
