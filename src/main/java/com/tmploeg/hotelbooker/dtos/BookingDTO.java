@@ -1,4 +1,4 @@
-package com.tmploeg.hotelbooker.dto;
+package com.tmploeg.hotelbooker.dtos;
 
 import com.tmploeg.hotelbooker.helpers.LocalDateTimeHelper;
 import com.tmploeg.hotelbooker.models.Booking;

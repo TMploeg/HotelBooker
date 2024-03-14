@@ -2,8 +2,8 @@ package com.tmploeg.hotelbooker;
 
 import com.tmploeg.hotelbooker.data.BookingRepository;
 import com.tmploeg.hotelbooker.data.UserRepository;
-import com.tmploeg.hotelbooker.dto.BookingDTO;
-import com.tmploeg.hotelbooker.dto.UpdateCheckOutDTO;
+import com.tmploeg.hotelbooker.dtos.BookingDTO;
+import com.tmploeg.hotelbooker.dtos.UpdateCheckOutDTO;
 import com.tmploeg.hotelbooker.helpers.LocalDateTimeHelper;
 import com.tmploeg.hotelbooker.models.Booking;
 import java.net.URI;
