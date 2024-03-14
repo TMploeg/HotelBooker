@@ -92,7 +92,7 @@ public class BookingController extends ControllerBase {
     }
 
     if (hasOverlappingBookings(booking.getCheckIn(), booking.getCheckOut())) {
-      return getBadRequestResponse("booking is (partially) occupied");
+      return getBadRequestResponse("booking is occupied");
     }
 
     bookingRepository.save(booking);
