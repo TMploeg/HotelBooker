@@ -28,4 +28,8 @@ public class User {
   public String getUsername() {
     return username;
   }
+
+  public Set<Booking> getBookings() {
+    return bookings;
+  }
 }

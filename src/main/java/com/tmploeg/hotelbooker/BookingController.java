@@ -6,6 +6,7 @@ import com.tmploeg.hotelbooker.dtos.BookingDTO;
 import com.tmploeg.hotelbooker.dtos.UpdateCheckOutDTO;
 import com.tmploeg.hotelbooker.helpers.LocalDateTimeHelper;
 import com.tmploeg.hotelbooker.models.Booking;
+import com.tmploeg.hotelbooker.models.User;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -46,12 +47,14 @@ public class BookingController {
   }
 
   @GetMapping("get-by-ownername/{ownerName}")
-  public ResponseEntity<List<BookingDTO>> getByOwnerName(@PathVariable String ownerName) {
-    return ResponseEntity.ok(
-        bookingRepository.findAll().stream()
-            //        bookingRepository.findByOwnerName(ownerName).stream()
-            .map(BookingDTO::fromBooking)
-            .collect(Collectors.toList()));
+  public ResponseEntity<List<BookingDTO>> getByUsername(@PathVariable String username) {
+    return userRepository
+        .findByUsername(username)
+        .map(
+            value ->
+                ResponseEntity.ok(
+                    value.getBookings().stream().map(BookingDTO::fromBooking).toList()))
+        .orElseGet(() -> ResponseEntity.notFound().build());
   }
 
   @PostMapping
