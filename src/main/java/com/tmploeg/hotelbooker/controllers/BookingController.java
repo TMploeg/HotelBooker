@@ -44,17 +44,6 @@ public class BookingController extends ControllerBase {
         .orElseGet(() -> ResponseEntity.notFound().build());
   }
 
-  @GetMapping("get-by-ownername/{ownerName}")
-  public ResponseEntity<List<BookingDTO>> getByUsername(@PathVariable String username) {
-    return userRepository
-        .findByUsername(username)
-        .map(
-            value ->
-                ResponseEntity.ok(
-                    value.getBookings().stream().map(BookingDTO::fromBooking).toList()))
-        .orElseGet(() -> ResponseEntity.notFound().build());
-  }
-
   @PostMapping
   public ResponseEntity<?> addBooking(
       @RequestBody BookingDTO bookingDTO, UriComponentsBuilder ucb) {
