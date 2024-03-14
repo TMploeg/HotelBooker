@@ -3,6 +3,7 @@ package com.tmploeg.hotelbooker.controllers;
 import com.tmploeg.hotelbooker.data.UserRepository;
 import com.tmploeg.hotelbooker.dtos.AuthDTO;
 import com.tmploeg.hotelbooker.models.User;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,16 +19,16 @@ public class UserController extends ControllerBase {
   @PostMapping("register")
   public ResponseEntity<?> register(@RequestBody AuthDTO registerDTO) {
     if (registerDTO == null) {
-      return getBadRequestResponse("register data is required");
+      return getErrorResponse(HttpStatus.BAD_REQUEST, "register data is required");
     }
 
     if (registerDTO.getUsername() == null) {
-      return getBadRequestResponse("username is required");
+      return getErrorResponse(HttpStatus.BAD_REQUEST, "username is required");
     }
 
     if (registerDTO.getUsername().isBlank()
         || userRepository.findByUsername(registerDTO.getUsername()).isPresent()) {
-      return getBadRequestResponse("username is invalid");
+      return getErrorResponse(HttpStatus.BAD_REQUEST, "username is invalid");
     }
 
     User newUser = new User(registerDTO.getUsername());
