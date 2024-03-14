@@ -1,4 +1,4 @@
-package com.tmploeg.hotelbooker.dto;
+package com.tmploeg.hotelbooker.dtos;
 
 public class UpdateCheckOutDTO {
   private final Long id;
