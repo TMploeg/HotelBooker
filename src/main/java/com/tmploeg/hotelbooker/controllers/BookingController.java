@@ -64,7 +64,7 @@ public class BookingController extends ControllerBase {
 
     LinkedList<String> errorMessages = new LinkedList<>();
 
-    if (!isValidUsername(booking.getUser().getUsername())) {
+    if (booking.getUser() == null || !isValidUsername(booking.getUser().getUsername())) {
       errorMessages.add("username is invalid");
     }
 
