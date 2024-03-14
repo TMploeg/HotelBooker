@@ -51,7 +51,7 @@ public class BookingDTO {
   public static BookingDTO fromBooking(Booking booking) {
     return new BookingDTO(
         booking.getId(),
-        booking.getOwner().getUsername(),
+        booking.getUser().getUsername(),
         LocalDateTimeHelper.format(booking.getCheckIn()),
         LocalDateTimeHelper.format(booking.getCheckOut()));
   }

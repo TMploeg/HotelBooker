@@ -1,18 +1,19 @@
 package com.tmploeg.hotelbooker.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import java.util.Set;
 import java.util.UUID;
 
-@Entity
+@Entity(name = "users")
 public class User {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
 
   private String username;
+
+  @OneToMany(mappedBy = "user")
+  private Set<Booking> bookings;
 
   public User() {}
 

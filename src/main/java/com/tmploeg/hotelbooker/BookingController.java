@@ -48,7 +48,8 @@ public class BookingController {
   @GetMapping("get-by-ownername/{ownerName}")
   public ResponseEntity<List<BookingDTO>> getByOwnerName(@PathVariable String ownerName) {
     return ResponseEntity.ok(
-        bookingRepository.findByOwnerName(ownerName).stream()
+        bookingRepository.findAll().stream()
+            //        bookingRepository.findByOwnerName(ownerName).stream()
             .map(BookingDTO::fromBooking)
             .collect(Collectors.toList()));
   }
@@ -60,7 +61,7 @@ public class BookingController {
         BookingDTO.convert(
             bookingDTO, userName -> userRepository.findByUsername(userName).orElse(null));
 
-    if (!isValidOwnerName(booking.getOwner().getUsername())) {
+    if (!isValidOwnerName(booking.getUser().getUsername())) {
       return ResponseEntity.badRequest()
           .body(ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "invalid name"));
     }
