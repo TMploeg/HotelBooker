@@ -5,8 +5,8 @@ import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 
 public class ControllerBase {
-  protected ResponseEntity<ProblemDetail> getBadRequestResponse(String errorMessage) {
-    return ResponseEntity.badRequest()
-        .body(ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, errorMessage));
+  protected ResponseEntity<ProblemDetail> getErrorResponse(HttpStatus status, String errorMessage) {
+    return ResponseEntity.status(status)
+        .body(ProblemDetail.forStatusAndDetail(status, errorMessage));
   }
 }

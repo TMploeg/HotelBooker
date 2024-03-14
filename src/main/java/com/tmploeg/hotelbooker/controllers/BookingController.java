@@ -3,16 +3,16 @@ package com.tmploeg.hotelbooker.controllers;
 import com.tmploeg.hotelbooker.data.BookingRepository;
 import com.tmploeg.hotelbooker.data.UserRepository;
 import com.tmploeg.hotelbooker.dtos.BookingDTO;
-import com.tmploeg.hotelbooker.dtos.UpdateCheckOutDTO;
 import com.tmploeg.hotelbooker.helpers.LocalDateTimeHelper;
 import com.tmploeg.hotelbooker.models.Booking;
+import com.tmploeg.hotelbooker.models.User;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.jetbrains.annotations.NotNull;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -31,7 +31,7 @@ public class BookingController extends ControllerBase {
   @GetMapping
   public ResponseEntity<List<BookingDTO>> getAll() {
     return ResponseEntity.ok(
-        bookingRepository.findAll().stream()
+        bookingRepository.findByOrderByCheckIn().stream()
             .map(BookingDTO::fromBooking)
             .collect(Collectors.toList()));
   }
@@ -44,29 +44,22 @@ public class BookingController extends ControllerBase {
         .orElseGet(() -> ResponseEntity.notFound().build());
   }
 
-  @GetMapping("get-by-ownername/{ownerName}")
-  public ResponseEntity<List<BookingDTO>> getByUsername(@PathVariable String username) {
-    return userRepository
-        .findByUsername(username)
-        .map(
-            value ->
-                ResponseEntity.ok(
-                    value.getBookings().stream().map(BookingDTO::fromBooking).toList()))
-        .orElseGet(() -> ResponseEntity.notFound().build());
-  }
-
   @PostMapping
   public ResponseEntity<?> addBooking(
-      @RequestBody @NotNull BookingDTO bookingDTO, UriComponentsBuilder ucb) {
-    Booking booking =
-        BookingDTO.convert(
-            bookingDTO, userName -> userRepository.findByUsername(userName).orElse(null));
+      @RequestBody BookingDTO bookingDTO, UriComponentsBuilder ucb) {
+    if (bookingDTO == null) {
+      return getErrorResponse(HttpStatus.BAD_REQUEST, "booking data is required");
+    }
+
+    Optional<User> user = userRepository.findByUsername(bookingDTO.getUsername());
+
+    if (!isValidUsername(bookingDTO.getUsername()) || user.isEmpty()) {
+      return getErrorResponse(HttpStatus.BAD_REQUEST, "username is invalid");
+    }
+
+    Booking booking = BookingDTO.convert(bookingDTO, user.get());
 
     LinkedList<String> errorMessages = new LinkedList<>();
-
-    if (booking.getUser() == null || !isValidUsername(booking.getUser().getUsername())) {
-      errorMessages.add("username is invalid");
-    }
 
     boolean checkInValid = false;
     if (booking.getCheckIn() == null) {
@@ -84,11 +77,11 @@ public class BookingController extends ControllerBase {
     }
 
     if (!errorMessages.isEmpty()) {
-      return getBadRequestResponse(String.join(";", errorMessages));
+      return getErrorResponse(HttpStatus.BAD_REQUEST, String.join(";", errorMessages));
     }
 
     if (hasOverlappingBookings(booking.getCheckIn(), booking.getCheckOut())) {
-      return getBadRequestResponse("booking is (partially) occupied");
+      return getErrorResponse(HttpStatus.BAD_REQUEST, "booking is occupied");
     }
 
     bookingRepository.save(booking);
@@ -108,46 +101,56 @@ public class BookingController extends ControllerBase {
     }
   }
 
-  @PutMapping("update-checkout")
-  public ResponseEntity<?> updateCheckOut(@RequestBody UpdateCheckOutDTO updateCheckOutDTO) {
-    if (updateCheckOutDTO.getId() == null) {
-      return getBadRequestResponse("id is required");
+  @PatchMapping("{id}")
+  public ResponseEntity<?> updateCheckOut(
+      @PathVariable Long id, @RequestBody BookingDTO bookingDTO) {
+    if (bookingDTO == null) {
+      return getErrorResponse(HttpStatus.BAD_REQUEST, "booking data is required");
     }
 
-    Optional<Booking> updateBooking = bookingRepository.findById(updateCheckOutDTO.getId());
+    if (bookingDTO.getUsername() != null) {
+      return getErrorResponse(HttpStatus.FORBIDDEN, "cannot change username");
+    }
 
-    if (updateBooking.isEmpty()) {
+    if (bookingDTO.getCheckIn() != null) {
+      return getErrorResponse(HttpStatus.FORBIDDEN, "cannot change checkIn");
+    }
+
+    Optional<Booking> booking = bookingRepository.findById(id);
+
+    if (booking.isEmpty()) {
       return ResponseEntity.notFound().build();
     }
 
-    if (hasDatePassed(updateBooking.get().getCheckOut())) {
-      return getBadRequestResponse("booking has already passed");
+    if (hasDatePassed(booking.get().getCheckOut())) {
+      return getErrorResponse(HttpStatus.BAD_REQUEST, "booking has already passed");
     }
 
-    Optional<LocalDateTime> parsedNewCheckOut =
-        LocalDateTimeHelper.tryParse(updateCheckOutDTO.getNewCheckOut());
+    if (bookingDTO.getCheckOut() != null) {
+      Optional<LocalDateTime> newCheckOut = LocalDateTimeHelper.tryParse(bookingDTO.getCheckOut());
 
-    if (parsedNewCheckOut.isEmpty()) {
-      return getBadRequestResponse("checkOut is invalid");
+      if (newCheckOut.isEmpty()) {
+        return getErrorResponse(HttpStatus.BAD_REQUEST, "checkOut is invalid");
+      }
+
+      if (newCheckOut.get().isBefore(booking.get().getCheckIn())) {
+        return getErrorResponse(
+            HttpStatus.BAD_REQUEST, "checkOut must not be earlier than checkIn");
+      }
+
+      if (!findOverlappingBookings(booking.get().getCheckIn(), newCheckOut.get()).stream()
+          .filter(b -> b != booking.get())
+          .toList()
+          .isEmpty()) {
+        return getErrorResponse(HttpStatus.FORBIDDEN, "new booking is occupied");
+      }
+
+      booking.get().setCheckout(newCheckOut.get());
     }
 
-    if (parsedNewCheckOut.get().isBefore(updateBooking.get().getCheckIn())) {
-      return getBadRequestResponse("checkOut must not be earlier than checkIn");
-    }
+    bookingRepository.save(booking.get());
 
-    List<Booking> overlappingBookings =
-        findOverlappingBookings(updateBooking.get().getCheckIn(), parsedNewCheckOut.get()).stream()
-            .filter(b -> b != updateBooking.get())
-            .toList();
-
-    if (!overlappingBookings.isEmpty()) {
-      return getBadRequestResponse("new booking is occupied");
-    }
-
-    updateBooking.get().setCheckout(parsedNewCheckOut.get());
-    bookingRepository.save(updateBooking.get());
-
-    return ResponseEntity.ok(BookingDTO.fromBooking(updateBooking.get()));
+    return ResponseEntity.ok(BookingDTO.fromBooking(booking.get()));
   }
 
   private boolean isValidUsername(String ownerName) {
