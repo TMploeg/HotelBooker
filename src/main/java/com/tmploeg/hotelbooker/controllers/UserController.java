@@ -2,6 +2,7 @@ package com.tmploeg.hotelbooker.controllers;
 
 import com.tmploeg.hotelbooker.data.UserRepository;
 import com.tmploeg.hotelbooker.dtos.AuthDTO;
+import com.tmploeg.hotelbooker.dtos.UserDTO;
 import com.tmploeg.hotelbooker.models.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +35,6 @@ public class UserController extends ControllerBase {
     User newUser = new User(registerDTO.getUsername());
     userRepository.save(newUser);
 
-    return ResponseEntity.ok(newUser);
+    return ResponseEntity.ok(UserDTO.fromUser(newUser));
   }
 }
