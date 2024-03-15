@@ -1,9 +1,12 @@
 package com.tmploeg.hotelbooker.controllers;
 
+import com.tmploeg.hotelbooker.data.AuthorityRepository;
 import com.tmploeg.hotelbooker.data.UserRepository;
 import com.tmploeg.hotelbooker.dtos.AuthDTO;
 import com.tmploeg.hotelbooker.dtos.UserDTO;
+import com.tmploeg.hotelbooker.enums.Role;
 import com.tmploeg.hotelbooker.exceptions.BadRequestException;
+import com.tmploeg.hotelbooker.models.Authority;
 import com.tmploeg.hotelbooker.models.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class UserController extends ControllerBase {
   private final UserRepository userRepository;
+  private final AuthorityRepository authorityRepository;
   private final PasswordEncoder passwordEncoder;
 
   @PostMapping("register")
@@ -43,6 +47,9 @@ public class UserController extends ControllerBase {
     User newUser =
         new User(registerDTO.getUsername(), passwordEncoder.encode(registerDTO.getPassword()));
     userRepository.save(newUser);
+
+    Authority role = new Authority(newUser.getUsername(), Role.USER.getName());
+    authorityRepository.save(role);
 
     return ResponseEntity.ok(UserDTO.fromUser(newUser));
   }
