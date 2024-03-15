@@ -7,6 +7,7 @@ import com.tmploeg.hotelbooker.exceptions.BadRequestException;
 import com.tmploeg.hotelbooker.models.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class UserController extends ControllerBase {
   private final UserRepository userRepository;
+  private final PasswordEncoder passwordEncoder;
 
   @PostMapping("register")
   public ResponseEntity<UserDTO> register(@RequestBody AuthDTO registerDTO) {
@@ -38,7 +40,8 @@ public class UserController extends ControllerBase {
       throw new BadRequestException("password is invalid");
     }
 
-    User newUser = new User(registerDTO.getUsername(), registerDTO.getPassword());
+    User newUser =
+        new User(registerDTO.getUsername(), passwordEncoder.encode(registerDTO.getPassword()));
     userRepository.save(newUser);
 
     return ResponseEntity.ok(UserDTO.fromUser(newUser));

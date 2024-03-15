@@ -3,13 +3,15 @@ package com.tmploeg.hotelbooker.models;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Entity
+@Entity(name = "authorities")
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
 public class Authority {
-  @Id public String username;
+  @Id private String username;
 
-  public String authority;
+  private String authority;
 }
