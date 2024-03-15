@@ -2,7 +2,6 @@ package com.tmploeg.hotelbooker.models;
 
 import jakarta.persistence.*;
 import java.util.Set;
-import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,16 +9,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class User {
-  @Id
-  @GeneratedValue(strategy = GenerationType.UUID)
-  private UUID id;
+  @Id private String username;
 
-  private String username;
+  private String password;
 
   @OneToMany(mappedBy = "user")
   private Set<Booking> bookings;
 
-  public User(String username) {
+  public User(String username, String password) {
     this.username = username;
+    this.password = password;
   }
 }

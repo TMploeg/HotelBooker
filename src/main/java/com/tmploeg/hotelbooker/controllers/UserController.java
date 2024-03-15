@@ -30,7 +30,15 @@ public class UserController extends ControllerBase {
       throw new BadRequestException("username is invalid");
     }
 
-    User newUser = new User(registerDTO.getUsername());
+    if (registerDTO.getPassword() == null) {
+      throw new BadRequestException("password is required");
+    }
+
+    if (registerDTO.getPassword().isBlank()) {
+      throw new BadRequestException("password is invalid");
+    }
+
+    User newUser = new User(registerDTO.getUsername(), registerDTO.getPassword());
     userRepository.save(newUser);
 
     return ResponseEntity.ok(UserDTO.fromUser(newUser));
