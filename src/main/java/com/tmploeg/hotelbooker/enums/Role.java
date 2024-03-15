@@ -8,9 +8,9 @@ public enum Role {
   ADMIN;
 
   private static final String NAME_PREFIX = "ROLE_";
-  private final String name;
 
-  private Role() {
-    this.name = NAME_PREFIX + this.toString();
+  @Override
+  public String toString() {
+    return NAME_PREFIX + name();
   }
 }

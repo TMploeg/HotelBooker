@@ -1,25 +1,21 @@
 package com.tmploeg.hotelbooker.controllers;
 
-import com.tmploeg.hotelbooker.data.AuthorityRepository;
-import com.tmploeg.hotelbooker.data.UserRepository;
 import com.tmploeg.hotelbooker.dtos.AuthDTO;
 import com.tmploeg.hotelbooker.dtos.UserDTO;
 import com.tmploeg.hotelbooker.enums.Role;
 import com.tmploeg.hotelbooker.exceptions.BadRequestException;
 import com.tmploeg.hotelbooker.models.Authority;
 import com.tmploeg.hotelbooker.models.User;
+import com.tmploeg.hotelbooker.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("users")
 @RequiredArgsConstructor
 public class UserController extends ControllerBase {
-  private final UserRepository userRepository;
-  private final AuthorityRepository authorityRepository;
-  private final PasswordEncoder passwordEncoder;
+  private final UserService userService;
 
   @PostMapping("register")
   public ResponseEntity<UserDTO> register(@RequestBody AuthDTO registerDTO) {
@@ -32,7 +28,7 @@ public class UserController extends ControllerBase {
     }
 
     if (registerDTO.getUsername().isBlank()
-        || userRepository.findByUsername(registerDTO.getUsername()).isPresent()) {
+        || userService.findByUsername(registerDTO.getUsername()).isPresent()) {
       throw new BadRequestException("username is invalid");
     }
 
@@ -45,11 +41,7 @@ public class UserController extends ControllerBase {
     }
 
     User newUser =
-        new User(registerDTO.getUsername(), passwordEncoder.encode(registerDTO.getPassword()));
-    userRepository.save(newUser);
-
-    Authority role = new Authority(newUser.getUsername(), Role.USER.getName());
-    authorityRepository.save(role);
+        userService.save(registerDTO.getUsername(), registerDTO.getPassword(), Role.USER);
 
     return ResponseEntity.ok(UserDTO.fromUser(newUser));
   }
