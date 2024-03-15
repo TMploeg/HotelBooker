@@ -1,9 +1,12 @@
 package com.tmploeg.hotelbooker.controllers;
 
+import com.tmploeg.hotelbooker.data.RoleRepository;
 import com.tmploeg.hotelbooker.data.UserRepository;
 import com.tmploeg.hotelbooker.dtos.AuthDTO;
 import com.tmploeg.hotelbooker.dtos.UserDTO;
+import com.tmploeg.hotelbooker.enums.RoleName;
 import com.tmploeg.hotelbooker.exceptions.BadRequestException;
+import com.tmploeg.hotelbooker.models.Role;
 import com.tmploeg.hotelbooker.models.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +17,9 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class UserController extends ControllerBase {
   private final UserRepository userRepository;
+  private final RoleRepository roleRepository;
+
+  private static final RoleName DEFAULT_ROLE_NAME = RoleName.USER;
 
   @PostMapping("register")
   public ResponseEntity<UserDTO> register(@RequestBody AuthDTO registerDTO) {
@@ -30,7 +36,9 @@ public class UserController extends ControllerBase {
       throw new BadRequestException("username is invalid");
     }
 
-    User newUser = new User(registerDTO.getUsername());
+    User newUser =
+        new User(registerDTO.getUsername(), roleRepository.findByName(DEFAULT_ROLE_NAME));
+
     userRepository.save(newUser);
 
     return ResponseEntity.ok(UserDTO.fromUser(newUser));

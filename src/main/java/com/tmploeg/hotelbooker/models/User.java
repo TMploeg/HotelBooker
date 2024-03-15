@@ -16,10 +16,13 @@ public class User {
 
   private String username;
 
+  @ManyToOne private Role role;
+
   @OneToMany(mappedBy = "user")
   private Set<Booking> bookings;
 
-  public User(String username) {
+  public User(String username, Role role) {
     this.username = username;
+    this.role = role;
   }
 }
