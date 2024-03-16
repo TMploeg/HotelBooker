@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("users")
+@RequestMapping(ControllerRoutes.USERS)
 @RequiredArgsConstructor
 public class UserController extends ControllerBase {
   private final UserService userService;
