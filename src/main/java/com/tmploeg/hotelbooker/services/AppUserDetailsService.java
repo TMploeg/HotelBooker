@@ -1,7 +1,5 @@
 package com.tmploeg.hotelbooker.services;
 
-import com.tmploeg.hotelbooker.data.AuthorityRepository;
-import com.tmploeg.hotelbooker.data.UserRepository;
 import com.tmploeg.hotelbooker.models.AppUserDetails;
 import com.tmploeg.hotelbooker.models.User;
 import java.util.Optional;
@@ -12,8 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 @RequiredArgsConstructor
 public class AppUserDetailsService implements UserDetailsService {
-  private final UserRepository userRepository;
-  private final AuthorityRepository authorityRepository;
+  private final UserService userService;
 
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -21,12 +18,9 @@ public class AppUserDetailsService implements UserDetailsService {
       throw new UsernameNotFoundException("username is null or empty");
     }
 
-    Optional<User> user = userRepository.findByUsername(username);
-
-    if (user.isEmpty()) {
-      throw new UsernameNotFoundException("user '" + username + "' not found");
-    }
-
-    return new AppUserDetails(user.get(), authorityRepository.findByUsername(username));
+    return userService
+        .findByUsername(username)
+        .map(AppUserDetails::new)
+        .orElseThrow(() -> new UsernameNotFoundException("user '" + username + "' not found"));
   }
 }

@@ -3,9 +3,8 @@ package com.tmploeg.hotelbooker;
 import com.tmploeg.hotelbooker.controllers.BookingController;
 import com.tmploeg.hotelbooker.controllers.ControllerBase;
 import com.tmploeg.hotelbooker.controllers.UserController;
-import com.tmploeg.hotelbooker.data.AuthorityRepository;
-import com.tmploeg.hotelbooker.data.UserRepository;
 import com.tmploeg.hotelbooker.services.AppUserDetailsService;
+import com.tmploeg.hotelbooker.services.UserService;
 import java.util.Optional;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,9 +23,8 @@ public class ProjectConfiguration {
   private static final String ROUTE_SEPARATOR = "/";
 
   @Bean
-  public UserDetailsService userDetailsService(
-      UserRepository userRepository, AuthorityRepository authorityRepository) {
-    return new AppUserDetailsService(userRepository, authorityRepository);
+  public UserDetailsService userDetailsService(UserService userService) {
+    return new AppUserDetailsService(userService);
   }
 
   @Bean

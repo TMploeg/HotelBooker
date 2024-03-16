@@ -15,14 +15,11 @@ public class AppUserDetails implements UserDetails {
   private final boolean enabled;
   private final List<GrantedAuthority> authorities;
 
-  public AppUserDetails(User user, Collection<Authority> authorities) {
+  public AppUserDetails(User user) {
     username = user.getUsername();
     password = user.getPassword();
     enabled = user.isEnabled();
-    this.authorities =
-        authorities.stream()
-            .map(a -> (GrantedAuthority) new SimpleGrantedAuthority(a.getAuthority()))
-            .toList();
+    this.authorities = List.of(new SimpleGrantedAuthority(user.getRole().getName()));
   }
 
   @Override
