@@ -3,8 +3,6 @@ package com.tmploeg.hotelbooker;
 import com.tmploeg.hotelbooker.controllers.BookingController;
 import com.tmploeg.hotelbooker.controllers.ControllerBase;
 import com.tmploeg.hotelbooker.controllers.UserController;
-import com.tmploeg.hotelbooker.services.AppUserDetailsService;
-import com.tmploeg.hotelbooker.services.UserService;
 import java.util.Optional;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,7 +10,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -21,11 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Configuration
 public class ProjectConfiguration {
   private static final String ROUTE_SEPARATOR = "/";
-
-  @Bean
-  public UserDetailsService userDetailsService(UserService userService) {
-    return new AppUserDetailsService(userService);
-  }
 
   @Bean
   public PasswordEncoder passwordEncoder() {
