@@ -2,6 +2,7 @@ package com.tmploeg.hotelbooker;
 
 import com.tmploeg.hotelbooker.controllers.BookingController;
 import com.tmploeg.hotelbooker.controllers.ControllerBase;
+import com.tmploeg.hotelbooker.controllers.ControllerRoutes;
 import com.tmploeg.hotelbooker.controllers.UserController;
 import java.util.Optional;
 import org.springframework.context.annotation.Bean;
@@ -33,21 +34,12 @@ public class ProjectConfiguration {
             requests ->
                 requests
                     .requestMatchers(
-                        HttpMethod.GET,
-                        getBaseRouteForController(BookingController.class) + ROUTE_SEPARATOR + "**")
+                        HttpMethod.GET, ControllerRoutes.BOOKINGS + ROUTE_SEPARATOR + "**")
                     .permitAll()
-                    .requestMatchers(
-                        getBaseRouteForController(UserController.class) + ROUTE_SEPARATOR + "**")
+                    .requestMatchers(ControllerRoutes.USERS + ROUTE_SEPARATOR + "**")
                     .permitAll()
                     .anyRequest()
                     .authenticated())
         .build();
-  }
-
-  private static String getBaseRouteForController(Class<? extends ControllerBase> controllerClass) {
-    Optional<RequestMapping> requestMapping =
-        Optional.ofNullable(controllerClass.getAnnotation(RequestMapping.class));
-
-    return requestMapping.map(mapping -> String.join(ROUTE_SEPARATOR, mapping.value())).orElse("");
   }
 }
