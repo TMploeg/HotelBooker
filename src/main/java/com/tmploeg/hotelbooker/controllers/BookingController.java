@@ -53,6 +53,10 @@ public class BookingController extends ControllerBase {
       throw new BadRequestException("booking data is required");
     }
 
+    if (bookingDTO.getUsername() == null) {
+      throw new BadRequestException("username is required");
+    }
+
     Optional<User> user = userService.findByUsername(bookingDTO.getUsername());
 
     if (!isValidUsername(bookingDTO.getUsername()) || user.isEmpty()) {
