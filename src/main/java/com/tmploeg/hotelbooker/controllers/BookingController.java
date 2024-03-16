@@ -86,7 +86,7 @@ public class BookingController extends ControllerBase {
   }
 
   @PatchMapping
-  public ResponseEntity<BookingDTO> updateCheckOut(
+  public ResponseEntity<BookingDTO> updateBooking(
       @RequestBody NewBookingDTO bookingDTO, Principal principal) {
     if (bookingDTO == null) {
       throw new BadRequestException("booking data is required");
