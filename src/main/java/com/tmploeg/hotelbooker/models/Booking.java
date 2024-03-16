@@ -15,7 +15,7 @@ public class Booking {
 
   @ManyToOne private User user;
 
-  private LocalDateTime checkIn;
+  @Setter private LocalDateTime checkIn;
 
   @Setter private LocalDateTime checkOut;
 

@@ -1,3 +1,3 @@
 package com.tmploeg.hotelbooker.dtos;
 
-public record NewBookingDTO(String checkIn, String checkOut) {}
+public record NewBookingDTO(Long id, String checkIn, String checkOut) {}

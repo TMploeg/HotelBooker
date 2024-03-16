@@ -6,7 +6,6 @@ import com.tmploeg.hotelbooker.enums.RoleName;
 import com.tmploeg.hotelbooker.models.Booking;
 import com.tmploeg.hotelbooker.models.Role;
 import com.tmploeg.hotelbooker.models.User;
-
 import java.security.Principal;
 import java.util.Optional;
 import java.util.Set;
@@ -45,5 +44,9 @@ public class UserService {
   public User getFromPrincipal(Principal principal) {
     return findByUsername(principal.getName())
         .orElseThrow(() -> new RuntimeException("invalid principal name"));
+  }
+
+  public Optional<Booking> getUserBooking(User user, Long bookingId) {
+    return bookingRepository.findById(bookingId).filter(b -> b.getUser() == user);
   }
 }
