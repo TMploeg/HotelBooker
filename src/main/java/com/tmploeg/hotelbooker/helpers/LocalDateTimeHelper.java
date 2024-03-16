@@ -12,10 +12,6 @@ public final class LocalDateTimeHelper {
   private LocalDateTimeHelper() {}
 
   public static Optional<LocalDateTime> tryParse(String rawDateTime) {
-    if (rawDateTime == null) {
-      throw new NullPointerException("rawDateTime is null");
-    }
-
     try {
       return Optional.of(LocalDateTime.parse(rawDateTime));
     } catch (DateTimeParseException ignored) {
