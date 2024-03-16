@@ -1,6 +1,5 @@
 package com.tmploeg.hotelbooker.services;
 
-import com.tmploeg.hotelbooker.data.RoleRepository;
 import com.tmploeg.hotelbooker.data.UserRepository;
 import com.tmploeg.hotelbooker.models.Role;
 import com.tmploeg.hotelbooker.models.User;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserService {
   private final UserRepository userRepository;
-  private final RoleRepository roleRepository;
   private final PasswordEncoder passwordEncoder;
 
   public User save(String username, String password, Role role) {
