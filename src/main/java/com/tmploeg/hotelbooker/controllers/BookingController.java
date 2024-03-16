@@ -9,12 +9,15 @@ import com.tmploeg.hotelbooker.models.Booking;
 import com.tmploeg.hotelbooker.models.User;
 import com.tmploeg.hotelbooker.services.UserService;
 import java.net.URI;
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -27,21 +30,25 @@ public class BookingController extends ControllerBase {
   private final UserService userService;
 
   @GetMapping
-  public ResponseEntity<List<BookingDTO>> getAll() {
+  public ResponseEntity<List<BookingDTO>> getAll(@NotNull Principal principal) {
+    User user = userService.getFromPrincipal(principal);
+    Set<Booking> bookings = userService.getBookingsForUser(user);
+
     return ResponseEntity.ok(
-        bookingRepository.findByOrderByCheckIn().stream()
-            .map(BookingDTO::fromBooking)
-            .collect(Collectors.toList()));
+        bookings.stream().map(BookingDTO::fromBooking).collect(Collectors.toList()));
   }
 
   @GetMapping("{id}")
-  public ResponseEntity<BookingDTO> getById(@PathVariable Long id) {
+  public ResponseEntity<BookingDTO> getById(@PathVariable Long id, Principal principal) {
     if (id == null) {
       throw new BadRequestException("id is required");
     }
 
+    User user = userService.getFromPrincipal(principal);
+
     return bookingRepository
         .findById(id)
+        .filter(b -> b.getUser() == user)
         .map(b -> ResponseEntity.ok(BookingDTO.fromBooking(b)))
         .orElseGet(() -> ResponseEntity.notFound().build());
   }
