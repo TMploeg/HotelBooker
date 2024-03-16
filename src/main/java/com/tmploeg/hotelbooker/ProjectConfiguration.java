@@ -3,8 +3,10 @@ package com.tmploeg.hotelbooker;
 import com.tmploeg.hotelbooker.controllers.BookingController;
 import com.tmploeg.hotelbooker.controllers.ControllerBase;
 import com.tmploeg.hotelbooker.controllers.UserController;
+import com.tmploeg.hotelbooker.data.AuthorityRepository;
+import com.tmploeg.hotelbooker.data.UserRepository;
+import com.tmploeg.hotelbooker.services.AppUserDetailsService;
 import java.util.Optional;
-import javax.sql.DataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -14,7 +16,6 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -23,8 +24,9 @@ public class ProjectConfiguration {
   private static final String ROUTE_SEPARATOR = "/";
 
   @Bean
-  public UserDetailsService userDetailsService(DataSource dataSource) {
-    return new JdbcUserDetailsManager(dataSource);
+  public UserDetailsService userDetailsService(
+      UserRepository userRepository, AuthorityRepository authorityRepository) {
+    return new AppUserDetailsService(userRepository, authorityRepository);
   }
 
   @Bean
