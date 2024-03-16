@@ -66,7 +66,7 @@ public class BookingController extends ControllerBase {
 
     LocalDateTime checkIn =
         LocalDateTimeHelper.tryParse(bookingDTO.checkIn())
-            .filter(this::hasDatePassed)
+            .filter(dT -> !hasDatePassed(dT))
             .orElseThrow(() -> new BadRequestException("checkIn is invalid"));
 
     LocalDateTime checkOut =
