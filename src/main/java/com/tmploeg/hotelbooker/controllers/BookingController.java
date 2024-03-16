@@ -1,13 +1,13 @@
 package com.tmploeg.hotelbooker.controllers;
 
 import com.tmploeg.hotelbooker.data.BookingRepository;
-import com.tmploeg.hotelbooker.data.UserRepository;
 import com.tmploeg.hotelbooker.dtos.BookingDTO;
 import com.tmploeg.hotelbooker.exceptions.BadRequestException;
 import com.tmploeg.hotelbooker.exceptions.ForbiddenException;
 import com.tmploeg.hotelbooker.helpers.LocalDateTimeHelper;
 import com.tmploeg.hotelbooker.models.Booking;
 import com.tmploeg.hotelbooker.models.User;
+import com.tmploeg.hotelbooker.services.UserService;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
@@ -24,7 +24,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @RequiredArgsConstructor
 public class BookingController extends ControllerBase {
   private final BookingRepository bookingRepository;
-  private final UserRepository userRepository;
+  private final UserService userService;
 
   @GetMapping
   public ResponseEntity<List<BookingDTO>> getAll() {
@@ -53,7 +53,7 @@ public class BookingController extends ControllerBase {
       throw new BadRequestException("booking data is required");
     }
 
-    Optional<User> user = userRepository.findByUsername(bookingDTO.getUsername());
+    Optional<User> user = userService.findByUsername(bookingDTO.getUsername());
 
     if (!isValidUsername(bookingDTO.getUsername()) || user.isEmpty()) {
       throw new BadRequestException("username is invalid");

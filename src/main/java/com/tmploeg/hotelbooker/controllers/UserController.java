@@ -1,10 +1,12 @@
 package com.tmploeg.hotelbooker.controllers;
 
-import com.tmploeg.hotelbooker.data.UserRepository;
 import com.tmploeg.hotelbooker.dtos.AuthDTO;
 import com.tmploeg.hotelbooker.dtos.UserDTO;
+import com.tmploeg.hotelbooker.enums.Role;
 import com.tmploeg.hotelbooker.exceptions.BadRequestException;
+import com.tmploeg.hotelbooker.models.Authority;
 import com.tmploeg.hotelbooker.models.User;
+import com.tmploeg.hotelbooker.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("users")
 @RequiredArgsConstructor
 public class UserController extends ControllerBase {
-  private final UserRepository userRepository;
+  private final UserService userService;
 
   @PostMapping("register")
   public ResponseEntity<UserDTO> register(@RequestBody AuthDTO registerDTO) {
@@ -26,12 +28,20 @@ public class UserController extends ControllerBase {
     }
 
     if (registerDTO.getUsername().isBlank()
-        || userRepository.findByUsername(registerDTO.getUsername()).isPresent()) {
+        || userService.findByUsername(registerDTO.getUsername()).isPresent()) {
       throw new BadRequestException("username is invalid");
     }
 
-    User newUser = new User(registerDTO.getUsername());
-    userRepository.save(newUser);
+    if (registerDTO.getPassword() == null) {
+      throw new BadRequestException("password is required");
+    }
+
+    if (registerDTO.getPassword().isBlank()) {
+      throw new BadRequestException("password is invalid");
+    }
+
+    User newUser =
+        userService.save(registerDTO.getUsername(), registerDTO.getPassword(), Role.USER);
 
     return ResponseEntity.ok(UserDTO.fromUser(newUser));
   }
