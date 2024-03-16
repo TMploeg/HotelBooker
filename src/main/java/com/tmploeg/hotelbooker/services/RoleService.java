@@ -4,7 +4,6 @@ import com.tmploeg.hotelbooker.data.RoleRepository;
 import com.tmploeg.hotelbooker.enums.RoleName;
 import com.tmploeg.hotelbooker.models.Role;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,10 +16,6 @@ public class RoleService {
     return roleRepository
         .findByName(name.toString())
         .orElseThrow(() -> new NoSuchElementException("role '" + name.toString() + "' not found"));
-  }
-
-  public Optional<Role> getByName(String name) {
-    return roleRepository.findByName(name);
   }
 
   public void save(String name) {
