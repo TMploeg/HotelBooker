@@ -13,11 +13,12 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class Seeder implements CommandLineRunner {
+  private static final String ADMIN_USERNAME_ENVIRONMENT_KEY = "hotelbooker-admin-username";
+  private static final String ADMIN_PASSWORD_ENVIRONMENT_KEY = "hotelbooker-admin-password";
+
   private final UserService userService;
   private final RoleService roleService;
   private final Environment environment;
-
-  private static final String ADMIN_PASSWORD_ENVIRONMENT_KEY = "hotelbooker.admin-password";
 
   @Override
   public void run(String... args) throws Exception {
@@ -30,7 +31,7 @@ public class Seeder implements CommandLineRunner {
   }
 
   private void seedUsers() {
-    String adminUsername = "ADMIN";
+    String adminUsername = environment.getProperty(ADMIN_USERNAME_ENVIRONMENT_KEY);
     String adminPassword = environment.getProperty(ADMIN_PASSWORD_ENVIRONMENT_KEY);
     Role adminRole = roleService.getByName(RoleName.ADMIN);
 
