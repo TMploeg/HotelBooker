@@ -33,7 +33,7 @@ public class BookingController {
   @GetMapping
   public ResponseEntity<List<BookingDTO>> getAll(@NotNull Principal principal) {
     User user = userService.getFromPrincipal(principal);
-    Set<Booking> bookings = userService.getBookingsForUser(user);
+    Set<Booking> bookings = bookingService.findByUser(user);
 
     return ResponseEntity.ok(
         bookings.stream().map(BookingDTO::fromBooking).collect(Collectors.toList()));

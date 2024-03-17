@@ -2,8 +2,6 @@ package com.tmploeg.hotelbooker.services;
 
 import com.tmploeg.hotelbooker.data.BookingRepository;
 import com.tmploeg.hotelbooker.data.UserRepository;
-import com.tmploeg.hotelbooker.enums.RoleName;
-import com.tmploeg.hotelbooker.models.Booking;
 import com.tmploeg.hotelbooker.models.Role;
 import com.tmploeg.hotelbooker.models.User;
 import java.security.Principal;
@@ -38,14 +36,6 @@ public class UserService implements UserDetailsService {
 
   public Set<User> findByRole(Role role) {
     return userRepository.findByRole(role);
-  }
-
-  public Set<Booking> getBookingsForUser(User user) {
-    boolean isAdmin = user.getRole() == roleService.findByName(RoleName.ADMIN);
-
-    return isAdmin
-        ? bookingRepository.findByOrderByCheckIn()
-        : bookingRepository.findByUserOrderByCheckIn(user);
   }
 
   public User getFromPrincipal(Principal principal) {

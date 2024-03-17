@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -83,5 +84,9 @@ public class BookingService {
 
   public Optional<Booking> findById(Long id) {
     return bookingRepository.findById(id);
+  }
+
+  public Set<Booking> findByUser(User user) {
+    return bookingRepository.findByUserOrderByCheckIn(user);
   }
 }
