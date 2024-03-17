@@ -2,6 +2,7 @@ package com.tmploeg.hotelbooker.services;
 
 import com.tmploeg.hotelbooker.data.BookingRepository;
 import com.tmploeg.hotelbooker.data.UserRepository;
+import com.tmploeg.hotelbooker.enums.RoleName;
 import com.tmploeg.hotelbooker.models.Role;
 import com.tmploeg.hotelbooker.models.User;
 import java.security.Principal;
@@ -40,5 +41,13 @@ public class UserService implements UserDetailsService {
 
   public User getFromPrincipal(Principal principal) {
     return loadUserByUsername(principal.getName());
+  }
+
+  public boolean isAdmin(User user) {
+    if (user == null) {
+      throw new NullPointerException("user is null");
+    }
+
+    return user.getRole().getName().equals(RoleName.ADMIN.toString());
   }
 }
