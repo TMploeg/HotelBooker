@@ -11,7 +11,6 @@ import com.tmploeg.hotelbooker.models.User;
 import com.tmploeg.hotelbooker.services.BookingService;
 import com.tmploeg.hotelbooker.services.UserService;
 import java.net.URI;
-import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +19,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -31,8 +31,9 @@ public class BookingController {
   private final UserService userService;
 
   @GetMapping
-  public ResponseEntity<List<BookingDTO>> getAll(@NotNull Principal principal) {
-    User user = userService.getFromPrincipal(principal);
+  public ResponseEntity<List<BookingDTO>> getAll(@NotNull Authentication authentication) {
+    User user = getUser(authentication);
+
     Set<Booking> bookings = bookingService.findByUser(user);
 
     return ResponseEntity.ok(
@@ -40,12 +41,12 @@ public class BookingController {
   }
 
   @GetMapping("{id}")
-  public ResponseEntity<BookingDTO> getById(@PathVariable Long id, Principal principal) {
+  public ResponseEntity<BookingDTO> getById(@PathVariable Long id, Authentication authentication) {
     if (id == null) {
       throw new BadRequestException("id is required");
     }
 
-    User user = userService.getFromPrincipal(principal);
+    User user = getUser(authentication);
 
     return bookingService
         .findById(id)
@@ -58,12 +59,12 @@ public class BookingController {
   public ResponseEntity<BookingDTO> addBooking(
       @RequestBody NewBookingDTO bookingDTO,
       UriComponentsBuilder ucb,
-      @NotNull Principal principal) {
+      @NotNull Authentication authentication) {
     if (bookingDTO == null) {
       throw new BadRequestException("booking data is required");
     }
 
-    User user = userService.getFromPrincipal(principal);
+    User user = getUser(authentication);
 
     LocalDateTime checkIn =
         LocalDateTimeHelper.tryParse(bookingDTO.checkIn())
@@ -88,12 +89,12 @@ public class BookingController {
 
   @PatchMapping
   public ResponseEntity<BookingDTO> updateBooking(
-      @RequestBody NewBookingDTO bookingDTO, Principal principal) {
+      @RequestBody NewBookingDTO bookingDTO, Authentication authentication) {
     if (bookingDTO == null) {
       throw new BadRequestException("booking data is required");
     }
 
-    User user = userService.getFromPrincipal(principal);
+    User user = getUser(authentication);
 
     if (bookingDTO.id() == null) {
       throw new BadRequestException("id is required");
@@ -144,8 +145,14 @@ public class BookingController {
   }
 
   @DeleteMapping("{id}")
-  public ResponseEntity<Void> deleteBooking(@PathVariable long id) {
-    Optional<Booking> deleteBooking = bookingService.findById(id);
+  public ResponseEntity<Void> deleteBooking(@PathVariable Long id, Authentication authentication) {
+    if (id == null) {
+      throw new BadRequestException("id is required");
+    }
+
+    User user = getUser(authentication);
+
+    Optional<Booking> deleteBooking = bookingService.findById(id).filter(b -> b.getUser() == user);
 
     if (deleteBooking.isPresent()) {
       bookingService.delete(deleteBooking.get());
@@ -153,5 +160,9 @@ public class BookingController {
     } else {
       return ResponseEntity.notFound().build();
     }
+  }
+
+  private User getUser(@NotNull Authentication authentication) {
+    return (User) authentication.getPrincipal();
   }
 }
