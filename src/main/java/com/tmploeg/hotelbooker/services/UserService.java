@@ -10,12 +10,14 @@ import java.security.Principal;
 import java.util.Optional;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserService implements UserDetailsService {
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
   private final RoleService roleService;
@@ -25,8 +27,14 @@ public class UserService {
     return userRepository.save(new User(username, passwordEncoder.encode(password), role));
   }
 
-  public Optional<User> findByUsername(String username) {
-    return userRepository.findByUsername(username);
+  public User loadUserByUsername(String username) throws UsernameNotFoundException {
+    return userRepository
+        .findByUsername(username)
+        .orElseThrow(() -> new UsernameNotFoundException("user '" + username + "' not found"));
+  }
+
+  public boolean userExists(String username) {
+    return userRepository.findByUsername(username).isPresent();
   }
 
   public Set<User> findByRole(Role role) {
@@ -42,8 +50,7 @@ public class UserService {
   }
 
   public User getFromPrincipal(Principal principal) {
-    return findByUsername(principal.getName())
-        .orElseThrow(() -> new RuntimeException("invalid principal name"));
+    return loadUserByUsername(principal.getName());
   }
 
   public Optional<Booking> getUserBooking(User user, Long bookingId) {

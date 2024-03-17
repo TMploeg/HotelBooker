@@ -28,8 +28,7 @@ public class UserController extends ControllerBase {
       throw new BadRequestException("username is required");
     }
 
-    if (registerDTO.getUsername().isBlank()
-        || userService.findByUsername(registerDTO.getUsername()).isPresent()) {
+    if (registerDTO.getUsername().isBlank() || userService.userExists(registerDTO.getUsername())) {
       throw new BadRequestException("username is invalid");
     }
 
