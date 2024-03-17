@@ -1,13 +1,14 @@
 package com.tmploeg.hotelbooker.controllers;
 
-import com.tmploeg.hotelbooker.data.BookingRepository;
 import com.tmploeg.hotelbooker.dtos.BookingDTO;
 import com.tmploeg.hotelbooker.dtos.NewBookingDTO;
 import com.tmploeg.hotelbooker.exceptions.BadRequestException;
 import com.tmploeg.hotelbooker.exceptions.ForbiddenException;
 import com.tmploeg.hotelbooker.helpers.LocalDateTimeHelper;
 import com.tmploeg.hotelbooker.models.Booking;
+import com.tmploeg.hotelbooker.models.SaveBookingResult;
 import com.tmploeg.hotelbooker.models.User;
+import com.tmploeg.hotelbooker.services.BookingService;
 import com.tmploeg.hotelbooker.services.UserService;
 import java.net.URI;
 import java.security.Principal;
@@ -26,7 +27,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @RequestMapping("bookings")
 @RequiredArgsConstructor
 public class BookingController {
-  private final BookingRepository bookingRepository;
+  private final BookingService bookingService;
   private final UserService userService;
 
   @GetMapping
@@ -46,7 +47,7 @@ public class BookingController {
 
     User user = userService.getFromPrincipal(principal);
 
-    return bookingRepository
+    return bookingService
         .findById(id)
         .filter(b -> b.getUser() == user)
         .map(b -> ResponseEntity.ok(BookingDTO.fromBooking(b)))
@@ -66,23 +67,23 @@ public class BookingController {
 
     LocalDateTime checkIn =
         LocalDateTimeHelper.tryParse(bookingDTO.checkIn())
-            .filter(dT -> !LocalDateTimeHelper.hasDatePassed(dT))
             .orElseThrow(() -> new BadRequestException("checkIn is invalid"));
 
     LocalDateTime checkOut =
         LocalDateTimeHelper.tryParse(bookingDTO.checkOut())
-            .filter(dT -> !dT.isBefore(checkIn))
             .orElseThrow(() -> new BadRequestException("checkOut is invalid"));
 
-    Booking booking = new Booking(user, checkIn, checkOut);
+    SaveBookingResult result = bookingService.save(user, checkIn, checkOut);
 
-    if (hasOverlappingBookings(booking.getCheckIn(), booking.getCheckOut())) {
-      throw new ForbiddenException("booking is occupied");
+    if (!result.succeeded()) {
+      throw new BadRequestException(String.join(";", result.getErrors()));
     }
 
-    bookingRepository.save(booking);
-    URI newBookingLocation = ucb.path("{id}").buildAndExpand(booking.getId()).toUri();
-    return ResponseEntity.created(newBookingLocation).body(BookingDTO.fromBooking(booking));
+    URI newBookingLocation =
+        ucb.path("{id}").buildAndExpand(result.getSavedBooking().getId()).toUri();
+
+    return ResponseEntity.created(newBookingLocation)
+        .body(BookingDTO.fromBooking(result.getSavedBooking()));
   }
 
   @PatchMapping
@@ -136,31 +137,20 @@ public class BookingController {
     booking.get().setCheckIn(newCheckIn);
     booking.get().setCheckOut(newCheckOut);
 
-    bookingRepository.save(booking.get());
+    bookingService.update(booking.get());
 
     return ResponseEntity.ok(BookingDTO.fromBooking(booking.get()));
   }
 
   @DeleteMapping("{id}")
   public ResponseEntity<Void> deleteBooking(@PathVariable long id) {
-    Optional<Booking> deleteBooking = bookingRepository.findById(id);
+    Optional<Booking> deleteBooking = bookingService.findById(id);
 
     if (deleteBooking.isPresent()) {
-      bookingRepository.delete(deleteBooking.get());
+      bookingService.delete(deleteBooking.get());
       return ResponseEntity.noContent().build();
     } else {
       return ResponseEntity.notFound().build();
     }
-  }
-
-  private List<Booking> findOverlappingBookings(LocalDateTime checkIn, LocalDateTime checkOut) {
-    return bookingRepository
-        .findByCheckInBetweenAndCheckOutBetween(checkIn, checkOut, checkIn, checkOut)
-        .stream()
-        .toList();
-  }
-
-  private boolean hasOverlappingBookings(LocalDateTime checkIn, LocalDateTime checkOut) {
-    return !findOverlappingBookings(checkIn, checkOut).isEmpty();
   }
 }
