@@ -99,7 +99,8 @@ public class BookingController {
       throw new BadRequestException("id is required");
     }
 
-    Optional<Booking> booking = userService.getUserBooking(user, bookingDTO.id());
+    Optional<Booking> booking =
+        bookingService.findById(bookingDTO.id()).filter(b -> b.getUser() == user);
 
     if (booking.isEmpty()) {
       return ResponseEntity.notFound().build();
