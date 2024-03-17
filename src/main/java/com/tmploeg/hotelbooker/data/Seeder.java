@@ -33,7 +33,7 @@ public class Seeder implements CommandLineRunner {
   private void seedUsers() {
     String adminUsername = environment.getProperty(ADMIN_USERNAME_ENVIRONMENT_KEY);
     String adminPassword = environment.getProperty(ADMIN_PASSWORD_ENVIRONMENT_KEY);
-    Role adminRole = roleService.getByName(RoleName.ADMIN);
+    Role adminRole = roleService.findByName(RoleName.ADMIN);
 
     userService.save(adminUsername, adminPassword, adminRole);
   }

@@ -2,12 +2,9 @@ package com.tmploeg.hotelbooker.services;
 
 import com.tmploeg.hotelbooker.data.BookingRepository;
 import com.tmploeg.hotelbooker.data.UserRepository;
-import com.tmploeg.hotelbooker.enums.RoleName;
-import com.tmploeg.hotelbooker.models.Booking;
 import com.tmploeg.hotelbooker.models.Role;
 import com.tmploeg.hotelbooker.models.User;
 import java.security.Principal;
-import java.util.Optional;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -41,19 +38,7 @@ public class UserService implements UserDetailsService {
     return userRepository.findByRole(role);
   }
 
-  public Set<Booking> getBookingsForUser(User user) {
-    boolean isAdmin = user.getRole() == roleService.getByName(RoleName.ADMIN);
-
-    return isAdmin
-        ? bookingRepository.findByOrderByCheckIn()
-        : bookingRepository.findByUserOrderByCheckIn(user);
-  }
-
   public User getFromPrincipal(Principal principal) {
     return loadUserByUsername(principal.getName());
-  }
-
-  public Optional<Booking> getUserBooking(User user, Long bookingId) {
-    return bookingRepository.findById(bookingId).filter(b -> b.getUser() == user);
   }
 }

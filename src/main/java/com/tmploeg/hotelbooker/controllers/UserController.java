@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(ControllerRoutes.USERS)
 @RequiredArgsConstructor
-public class UserController extends ControllerBase {
+public class UserController {
   private final UserService userService;
   private final RoleService roleService;
 
@@ -44,7 +44,7 @@ public class UserController extends ControllerBase {
         userService.save(
             registerDTO.getUsername(),
             registerDTO.getPassword(),
-            roleService.getByName(RoleName.USER));
+            roleService.findByName(RoleName.USER));
 
     return ResponseEntity.ok(UserDTO.fromUser(newUser));
   }
