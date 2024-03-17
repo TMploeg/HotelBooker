@@ -22,4 +22,8 @@ public final class LocalDateTimeHelper {
   public static String format(LocalDateTime dateTime) {
     return dateTime.format(FORMATTER);
   }
+
+  public static boolean hasDatePassed(LocalDateTime dt) {
+    return !dt.isAfter(LocalDateTime.now());
+  }
 }

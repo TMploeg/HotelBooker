@@ -66,7 +66,7 @@ public class BookingController {
 
     LocalDateTime checkIn =
         LocalDateTimeHelper.tryParse(bookingDTO.checkIn())
-            .filter(dT -> !hasDatePassed(dT))
+            .filter(dT -> !LocalDateTimeHelper.hasDatePassed(dT))
             .orElseThrow(() -> new BadRequestException("checkIn is invalid"));
 
     LocalDateTime checkOut =
@@ -112,19 +112,19 @@ public class BookingController {
             .orElseThrow(() -> new BadRequestException("checkOut is invalid"));
 
     if (newCheckIn != booking.get().getCheckIn()) {
-      if (hasDatePassed(booking.get().getCheckIn())) {
+      if (LocalDateTimeHelper.hasDatePassed(booking.get().getCheckIn())) {
         throw new ForbiddenException("cannot change checkIn when already passed");
       }
-      if (hasDatePassed(newCheckIn)) {
+      if (LocalDateTimeHelper.hasDatePassed(newCheckIn)) {
         throw new ForbiddenException("checkIn has already passed");
       }
     }
 
     if (newCheckOut != booking.get().getCheckOut()) {
-      if (hasDatePassed(booking.get().getCheckOut())) {
+      if (LocalDateTimeHelper.hasDatePassed(booking.get().getCheckOut())) {
         throw new ForbiddenException("cannot change checkOut when already passed");
       }
-      if (hasDatePassed(newCheckOut)) {
+      if (LocalDateTimeHelper.hasDatePassed(newCheckOut)) {
         throw new ForbiddenException("checkOut has already passed");
       }
     }
@@ -151,14 +151,6 @@ public class BookingController {
     } else {
       return ResponseEntity.notFound().build();
     }
-  }
-
-  private boolean isValidUsername(String ownerName) {
-    return ownerName != null && !ownerName.isBlank();
-  }
-
-  private boolean hasDatePassed(LocalDateTime dt) {
-    return !dt.isAfter(LocalDateTime.now());
   }
 
   private List<Booking> findOverlappingBookings(LocalDateTime checkIn, LocalDateTime checkOut) {
