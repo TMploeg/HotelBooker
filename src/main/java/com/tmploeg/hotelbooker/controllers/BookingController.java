@@ -4,6 +4,7 @@ import com.tmploeg.hotelbooker.dtos.BookingDTO;
 import com.tmploeg.hotelbooker.dtos.NewBookingDTO;
 import com.tmploeg.hotelbooker.exceptions.BadRequestException;
 import com.tmploeg.hotelbooker.exceptions.ForbiddenException;
+import com.tmploeg.hotelbooker.exceptions.NotFoundException;
 import com.tmploeg.hotelbooker.helpers.LocalDateTimeHelper;
 import com.tmploeg.hotelbooker.models.Booking;
 import com.tmploeg.hotelbooker.models.SaveBookingResult;
@@ -13,7 +14,6 @@ import com.tmploeg.hotelbooker.services.UserService;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -53,7 +53,7 @@ public class BookingController {
         .findById(id)
         .filter(b -> userService.isAdmin(user) || b.isOwnedByUser(user))
         .map(b -> ResponseEntity.ok(BookingDTO.fromBooking(b)))
-        .orElseGet(() -> ResponseEntity.notFound().build());
+        .orElseThrow(NotFoundException::new);
   }
 
   @PostMapping
@@ -101,12 +101,11 @@ public class BookingController {
       throw new BadRequestException("id is required");
     }
 
-    Optional<Booking> booking =
-        bookingService.findById(bookingDTO.id()).filter(b -> b.getUser() == user);
-
-    if (booking.isEmpty()) {
-      return ResponseEntity.notFound().build();
-    }
+    Booking booking =
+        bookingService
+            .findById(bookingDTO.id())
+            .filter(b -> b.getUser() == user)
+            .orElseThrow(NotFoundException::new);
 
     LocalDateTime newCheckIn =
         LocalDateTimeHelper.tryParse(bookingDTO.checkIn())
@@ -115,8 +114,8 @@ public class BookingController {
         LocalDateTimeHelper.tryParse(bookingDTO.checkOut())
             .orElseThrow(() -> new BadRequestException("checkOut is invalid"));
 
-    if (newCheckIn != booking.get().getCheckIn()) {
-      if (LocalDateTimeHelper.hasDatePassed(booking.get().getCheckIn())) {
+    if (newCheckIn != booking.getCheckIn()) {
+      if (LocalDateTimeHelper.hasDatePassed(booking.getCheckIn())) {
         throw new ForbiddenException("cannot change checkIn when already passed");
       }
       if (LocalDateTimeHelper.hasDatePassed(newCheckIn)) {
@@ -124,8 +123,8 @@ public class BookingController {
       }
     }
 
-    if (newCheckOut != booking.get().getCheckOut()) {
-      if (LocalDateTimeHelper.hasDatePassed(booking.get().getCheckOut())) {
+    if (newCheckOut != booking.getCheckOut()) {
+      if (LocalDateTimeHelper.hasDatePassed(booking.getCheckOut())) {
         throw new ForbiddenException("cannot change checkOut when already passed");
       }
       if (LocalDateTimeHelper.hasDatePassed(newCheckOut)) {
@@ -137,12 +136,12 @@ public class BookingController {
       throw new ForbiddenException("checkOut cannot be before checkIn");
     }
 
-    booking.get().setCheckIn(newCheckIn);
-    booking.get().setCheckOut(newCheckOut);
+    booking.setCheckIn(newCheckIn);
+    booking.setCheckOut(newCheckOut);
 
-    bookingService.update(booking.get());
+    bookingService.update(booking);
 
-    return ResponseEntity.ok(BookingDTO.fromBooking(booking.get()));
+    return ResponseEntity.ok(BookingDTO.fromBooking(booking));
   }
 
   @DeleteMapping("{id}")
@@ -153,14 +152,14 @@ public class BookingController {
 
     User user = getUser(authentication);
 
-    Optional<Booking> deleteBooking = bookingService.findById(id).filter(b -> b.getUser() == user);
+    Booking deleteBooking =
+        bookingService
+            .findById(id)
+            .filter(b -> b.getUser() == user)
+            .orElseThrow(NotFoundException::new);
 
-    if (deleteBooking.isPresent()) {
-      bookingService.delete(deleteBooking.get());
-      return ResponseEntity.noContent().build();
-    } else {
-      return ResponseEntity.notFound().build();
-    }
+    bookingService.delete(deleteBooking);
+    return ResponseEntity.noContent().build();
   }
 
   private User getUser(@NotNull Authentication authentication) {
