@@ -18,6 +18,10 @@ import org.springframework.stereotype.Service;
 public class BookingService {
   private final BookingRepository bookingRepository;
 
+  public Set<Booking> getAll() {
+    return bookingRepository.findByOrderByCheckIn();
+  }
+
   public SaveBookingResult save(User user, LocalDateTime checkIn, LocalDateTime checkOut) {
     List<String> errors = new LinkedList<>();
 

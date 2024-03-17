@@ -34,7 +34,8 @@ public class BookingController {
   public ResponseEntity<List<BookingDTO>> getAll(@NotNull Authentication authentication) {
     User user = getUser(authentication);
 
-    Set<Booking> bookings = bookingService.findByUser(user);
+    Set<Booking> bookings =
+        userService.isAdmin(user) ? bookingService.getAll() : bookingService.findByUser(user);
 
     return ResponseEntity.ok(
         bookings.stream().map(BookingDTO::fromBooking).collect(Collectors.toList()));
@@ -50,7 +51,7 @@ public class BookingController {
 
     return bookingService
         .findById(id)
-        .filter(b -> b.getUser() == user)
+        .filter(b -> userService.isAdmin(user) || b.isOwnedByUser(user))
         .map(b -> ResponseEntity.ok(BookingDTO.fromBooking(b)))
         .orElseGet(() -> ResponseEntity.notFound().build());
   }
