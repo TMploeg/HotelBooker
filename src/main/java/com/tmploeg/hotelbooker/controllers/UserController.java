@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(ControllerRoutes.USERS)
 @RequiredArgsConstructor
-public class UserController extends ControllerBase {
+public class UserController {
   private final UserService userService;
   private final RoleService roleService;
 

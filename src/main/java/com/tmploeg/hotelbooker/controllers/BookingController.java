@@ -25,7 +25,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @RestController
 @RequestMapping("bookings")
 @RequiredArgsConstructor
-public class BookingController extends ControllerBase {
+public class BookingController {
   private final BookingRepository bookingRepository;
   private final UserService userService;
 
