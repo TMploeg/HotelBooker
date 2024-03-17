@@ -44,7 +44,7 @@ public class UserController extends ControllerBase {
         userService.save(
             registerDTO.getUsername(),
             registerDTO.getPassword(),
-            roleService.getByName(RoleName.USER));
+            roleService.findByName(RoleName.USER));
 
     return ResponseEntity.ok(UserDTO.fromUser(newUser));
   }

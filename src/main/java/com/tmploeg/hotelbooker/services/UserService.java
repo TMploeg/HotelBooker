@@ -42,7 +42,7 @@ public class UserService implements UserDetailsService {
   }
 
   public Set<Booking> getBookingsForUser(User user) {
-    boolean isAdmin = user.getRole() == roleService.getByName(RoleName.ADMIN);
+    boolean isAdmin = user.getRole() == roleService.findByName(RoleName.ADMIN);
 
     return isAdmin
         ? bookingRepository.findByOrderByCheckIn()
