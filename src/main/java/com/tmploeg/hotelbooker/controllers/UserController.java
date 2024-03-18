@@ -4,7 +4,7 @@ import com.tmploeg.hotelbooker.dtos.AuthDTO;
 import com.tmploeg.hotelbooker.dtos.UserDTO;
 import com.tmploeg.hotelbooker.enums.RoleName;
 import com.tmploeg.hotelbooker.exceptions.BadRequestException;
-import com.tmploeg.hotelbooker.models.User;
+import com.tmploeg.hotelbooker.models.entities.User;
 import com.tmploeg.hotelbooker.services.RoleService;
 import com.tmploeg.hotelbooker.services.UserService;
 import lombok.RequiredArgsConstructor;

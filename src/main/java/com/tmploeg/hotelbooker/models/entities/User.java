@@ -1,4 +1,4 @@
-package com.tmploeg.hotelbooker.models;
+package com.tmploeg.hotelbooker.models.entities;
 
 import jakarta.persistence.*;
 import java.util.Collection;

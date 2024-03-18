@@ -1,9 +1,9 @@
 package com.tmploeg.hotelbooker.models;
 
-import lombok.Getter;
-
+import com.tmploeg.hotelbooker.models.entities.Booking;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
 
 @Getter
 public class SaveBookingResult {

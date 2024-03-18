@@ -1,7 +1,8 @@
-package com.tmploeg.hotelbooker.models;
+package com.tmploeg.hotelbooker.models.entities;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Set;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,6 +18,8 @@ public class Booking {
   @Setter private LocalDateTime checkIn;
 
   @Setter private LocalDateTime checkOut;
+
+  @ManyToMany private Set<Room> rooms;
 
   public Booking(User user, LocalDateTime checkIn, LocalDateTime checkOut) {
     this.user = user;

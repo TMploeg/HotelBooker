@@ -1,3 +1,6 @@
 package com.tmploeg.hotelbooker.dtos;
 
-public record NewBookingDTO(Long id, String checkIn, String checkOut) {}
+import com.tmploeg.hotelbooker.models.RoomNumber;
+
+public record NewBookingDTO(
+    Long id, String checkIn, String checkOut, Long hotelId, RoomNumber[] roomNumbers) {}

@@ -2,9 +2,9 @@ package com.tmploeg.hotelbooker.services;
 
 import com.tmploeg.hotelbooker.data.BookingRepository;
 import com.tmploeg.hotelbooker.helpers.LocalDateTimeHelper;
-import com.tmploeg.hotelbooker.models.Booking;
 import com.tmploeg.hotelbooker.models.SaveBookingResult;
-import com.tmploeg.hotelbooker.models.User;
+import com.tmploeg.hotelbooker.models.entities.Booking;
+import com.tmploeg.hotelbooker.models.entities.User;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;

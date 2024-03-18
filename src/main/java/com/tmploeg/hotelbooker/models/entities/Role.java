@@ -1,13 +1,11 @@
-package com.tmploeg.hotelbooker.models;
+package com.tmploeg.hotelbooker.models.entities;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import lombok.AllArgsConstructor;
+import java.util.Set;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.Set;
 
 @Entity(name = "roles")
 @NoArgsConstructor

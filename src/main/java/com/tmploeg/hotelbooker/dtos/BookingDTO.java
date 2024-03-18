@@ -1,10 +1,9 @@
 package com.tmploeg.hotelbooker.dtos;
 
 import com.tmploeg.hotelbooker.helpers.LocalDateTimeHelper;
-import com.tmploeg.hotelbooker.models.Booking;
-import com.tmploeg.hotelbooker.models.User;
+import com.tmploeg.hotelbooker.models.entities.Booking;
+import com.tmploeg.hotelbooker.models.entities.User;
 import java.time.LocalDateTime;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
