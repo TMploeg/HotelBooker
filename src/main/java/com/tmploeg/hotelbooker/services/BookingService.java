@@ -98,20 +98,6 @@ public class BookingService {
             });
   }
 
-  //  public boolean isBooked(Room room, LocalDateTime checkIn, LocalDateTime checkOut) {
-  //    return !bookingRepository
-  //        .findAllByRoomsAndCheckInBetweenAndCheckOutBetween(
-  //            room, checkIn, checkOut, checkIn, checkOut)
-  //        .isEmpty();
-  //  }
-
-  public List<Booking> findBookingsInRange(LocalDateTime checkIn, LocalDateTime checkOut) {
-    return bookingRepository
-        .findByCheckInBetweenAndCheckOutBetween(checkIn, checkOut, checkIn, checkOut)
-        .stream()
-        .toList();
-  }
-
   public Optional<Booking> findById(Long id) {
     return bookingRepository.findById(id);
   }
