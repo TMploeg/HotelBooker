@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
-@RequestMapping("bookings")
+@RequestMapping(ControllerRoutes.BOOKINGS)
 @RequiredArgsConstructor
 public class BookingController {
   private final BookingService bookingService;
