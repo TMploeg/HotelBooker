@@ -5,7 +5,6 @@ import com.tmploeg.hotelbooker.data.UserRepository;
 import com.tmploeg.hotelbooker.enums.RoleName;
 import com.tmploeg.hotelbooker.models.entities.Role;
 import com.tmploeg.hotelbooker.models.entities.User;
-import java.security.Principal;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -37,10 +36,6 @@ public class UserService implements UserDetailsService {
 
   public Set<User> findByRole(Role role) {
     return userRepository.findByRole(role);
-  }
-
-  public User getFromPrincipal(Principal principal) {
-    return loadUserByUsername(principal.getName());
   }
 
   public boolean isAdmin(User user) {

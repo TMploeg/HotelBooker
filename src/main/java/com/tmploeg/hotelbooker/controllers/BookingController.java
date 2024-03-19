@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
-@RequestMapping("bookings")
+@RequestMapping(ControllerRoutes.BOOKINGS)
 @RequiredArgsConstructor
 public class BookingController {
   private final BookingService bookingService;
@@ -37,18 +37,17 @@ public class BookingController {
   private final RoomService roomService;
 
   @GetMapping
-  public ResponseEntity<List<BookingDTO>> getAll(@NotNull Authentication authentication) {
+  public List<BookingDTO> getAll(@NotNull Authentication authentication) {
     User user = getUser(authentication);
 
     Set<Booking> bookings =
         userService.isAdmin(user) ? bookingService.getAll() : bookingService.findByUser(user);
 
-    return ResponseEntity.ok(
-        bookings.stream().map(BookingDTO::fromBooking).collect(Collectors.toList()));
+    return bookings.stream().map(BookingDTO::fromBooking).collect(Collectors.toList());
   }
 
   @GetMapping("{id}")
-  public ResponseEntity<BookingDTO> getById(@PathVariable Long id, Authentication authentication) {
+  public BookingDTO getById(@PathVariable Long id, Authentication authentication) {
     if (id == null) {
       throw new BadRequestException("id is required");
     }
@@ -58,7 +57,7 @@ public class BookingController {
     return bookingService
         .findById(id)
         .filter(b -> userService.isAdmin(user) || b.isOwnedByUser(user))
-        .map(b -> ResponseEntity.ok(BookingDTO.fromBooking(b)))
+        .map(BookingDTO::fromBooking)
         .orElseThrow(NotFoundException::new);
   }
 
@@ -82,17 +81,17 @@ public class BookingController {
             .orElseThrow(() -> new BadRequestException("checkOut is invalid"));
 
     if (bookingDTO.hotelId() == null) {
-      throw new BadRequestException("hotel id is required");
+      throw new BadRequestException("hotelId is required");
     }
 
     Hotel hotel = hotelService.findById(bookingDTO.hotelId()).orElseThrow(NotFoundException::new);
 
     if (bookingDTO.roomNumbers() == null) {
-      throw new BadRequestException("rooms is required");
+      throw new BadRequestException("roomNumbers is required");
     }
 
     if (CollectionHelper.hasDuplicates(bookingDTO.roomNumbers())) {
-      throw new BadRequestException("room numbers cannot have duplicates");
+      throw new BadRequestException("roomNumbers cannot have duplicates");
     }
 
     Set<Room> rooms =
@@ -112,14 +111,16 @@ public class BookingController {
     }
 
     URI newBookingLocation =
-        ucb.path("{id}").buildAndExpand(saveBookingResult.getValue().getId()).toUri();
+        ucb.path(ControllerRoutes.BOOKINGS + "{id}")
+            .buildAndExpand(saveBookingResult.getValue().getId())
+            .toUri();
 
     return ResponseEntity.created(newBookingLocation)
         .body(BookingDTO.fromBooking(saveBookingResult.getValue()));
   }
 
   @PatchMapping
-  public ResponseEntity<BookingDTO> updateBooking(
+  public BookingDTO updateBooking(
       @RequestBody NewBookingDTO bookingDTO, Authentication authentication) {
     if (bookingDTO == null) {
       throw new BadRequestException("booking data is required");
@@ -171,7 +172,7 @@ public class BookingController {
 
     bookingService.update(booking);
 
-    return ResponseEntity.ok(BookingDTO.fromBooking(booking));
+    return BookingDTO.fromBooking(booking);
   }
 
   @DeleteMapping("{id}")
