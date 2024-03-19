@@ -107,23 +107,23 @@ public class RoomController {
       throw new BadRequestException("bookingDTO is required");
     }
 
-    if (bookingDTO.getCheckIn() == null) {
+    if (bookingDTO.checkIn() == null) {
       throw new BadRequestException("checkIn is required");
     }
 
     Hotel hotel = hotelService.findById(hotelId).orElseThrow(NotFoundException::new);
 
     LocalDateTime checkIn =
-        LocalDateTimeHelper.tryParse(bookingDTO.getCheckIn())
+        LocalDateTimeHelper.tryParse(bookingDTO.checkIn())
             .filter(dT -> dT.isAfter(LocalDateTime.now()))
             .orElseThrow(() -> new BadRequestException("checkIn is invalid"));
 
-    if (bookingDTO.getCheckOut() == null) {
+    if (bookingDTO.checkOut() == null) {
       throw new BadRequestException("checkOut is required");
     }
 
     LocalDateTime checkOut =
-        LocalDateTimeHelper.tryParse(bookingDTO.getCheckOut())
+        LocalDateTimeHelper.tryParse(bookingDTO.checkOut())
             .filter(dT -> !dT.isBefore(checkIn))
             .orElseThrow(() -> new BadRequestException("checkOut is invalid"));
 

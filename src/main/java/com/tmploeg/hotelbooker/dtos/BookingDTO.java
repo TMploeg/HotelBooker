@@ -4,20 +4,11 @@ import com.tmploeg.hotelbooker.helpers.LocalDateTimeHelper;
 import com.tmploeg.hotelbooker.models.entities.Booking;
 import com.tmploeg.hotelbooker.models.entities.User;
 import java.time.LocalDateTime;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
-@Getter
-public class BookingDTO {
-  private final Long id;
-  private final String username;
-  private final String checkIn;
-  private final String checkOut;
-
+public record BookingDTO(Long id, String username, String checkIn, String checkOut) {
   public static Booking convert(BookingDTO dto, User user) {
-    LocalDateTime parsedCheckIn = LocalDateTimeHelper.tryParse(dto.getCheckIn()).orElse(null);
-    LocalDateTime parsedCheckOut = LocalDateTimeHelper.tryParse(dto.getCheckOut()).orElse(null);
+    LocalDateTime parsedCheckIn = LocalDateTimeHelper.tryParse(dto.checkIn()).orElse(null);
+    LocalDateTime parsedCheckOut = LocalDateTimeHelper.tryParse(dto.checkOut()).orElse(null);
     return new Booking(user, parsedCheckIn, parsedCheckOut);
   }
 
