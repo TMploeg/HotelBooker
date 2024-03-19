@@ -81,17 +81,17 @@ public class BookingController {
             .orElseThrow(() -> new BadRequestException("checkOut is invalid"));
 
     if (bookingDTO.hotelId() == null) {
-      throw new BadRequestException("hotel id is required");
+      throw new BadRequestException("hotelId is required");
     }
 
     Hotel hotel = hotelService.findById(bookingDTO.hotelId()).orElseThrow(NotFoundException::new);
 
     if (bookingDTO.roomNumbers() == null) {
-      throw new BadRequestException("rooms is required");
+      throw new BadRequestException("roomNumbers is required");
     }
 
     if (CollectionHelper.hasDuplicates(bookingDTO.roomNumbers())) {
-      throw new BadRequestException("room numbers cannot have duplicates");
+      throw new BadRequestException("roomNumbers cannot have duplicates");
     }
 
     Set<Room> rooms =
