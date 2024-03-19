@@ -111,7 +111,9 @@ public class BookingController {
     }
 
     URI newBookingLocation =
-        ucb.path("{id}").buildAndExpand(saveBookingResult.getValue().getId()).toUri();
+        ucb.path(ControllerRoutes.BOOKINGS + "{id}")
+            .buildAndExpand(saveBookingResult.getValue().getId())
+            .toUri();
 
     return ResponseEntity.created(newBookingLocation)
         .body(BookingDTO.fromBooking(saveBookingResult.getValue()));
