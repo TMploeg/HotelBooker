@@ -2,14 +2,16 @@ package com.tmploeg.hotelbooker.services;
 
 import com.tmploeg.hotelbooker.data.BookingRepository;
 import com.tmploeg.hotelbooker.helpers.LocalDateTimeHelper;
-import com.tmploeg.hotelbooker.models.SaveBookingResult;
+import com.tmploeg.hotelbooker.models.ValueResult;
 import com.tmploeg.hotelbooker.models.entities.Booking;
+import com.tmploeg.hotelbooker.models.entities.Room;
 import com.tmploeg.hotelbooker.models.entities.User;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +24,8 @@ public class BookingService {
     return bookingRepository.findByOrderByCheckIn();
   }
 
-  public SaveBookingResult save(User user, LocalDateTime checkIn, LocalDateTime checkOut) {
+  public ValueResult<Booking> save(
+      User user, LocalDateTime checkIn, LocalDateTime checkOut, Set<Room> rooms) {
     List<String> errors = new LinkedList<>();
 
     if (user == null) {
@@ -34,6 +37,9 @@ public class BookingService {
     if (checkOut == null) {
       throw new NullPointerException("checkOut is required");
     }
+    if (rooms == null) {
+      throw new IllegalArgumentException("rooms is required");
+    }
 
     if (LocalDateTimeHelper.hasDatePassed(checkIn)) {
       errors.add("checkIn has passed");
@@ -41,14 +47,27 @@ public class BookingService {
       errors.add("checkOut is not after checkIn");
     }
 
-    if (!findBookingsInRange(checkIn, checkOut).isEmpty()) {
-      errors.add("booking is occupied");
+    if (rooms.isEmpty()) {
+      errors.add("at least one room is required");
+    }
+
+    Set<Room> bookedRooms =
+        rooms.stream().filter(r -> isBooked(r, checkIn, checkOut)).collect(Collectors.toSet());
+
+    if (!bookedRooms.isEmpty()) {
+      errors.add(
+          "rooms { "
+              + String.join(
+                  ", ",
+                  bookedRooms.stream()
+                      .map(r -> ' ' + Integer.toString(r.getRoomNumber()) + ' ')
+                      .toList())
+              + " } are occupied");
     }
 
     return errors.isEmpty()
-        ? SaveBookingResult.succesResult(
-            bookingRepository.save(new Booking(user, checkIn, checkOut)))
-        : SaveBookingResult.errorResult(errors);
+        ? ValueResult.succesResult(bookingRepository.save(new Booking(user, checkIn, checkOut)))
+        : ValueResult.errorResult(errors);
   }
 
   public void update(Booking booking) {
@@ -77,6 +96,13 @@ public class BookingService {
             () -> {
               throw new RuntimeException("booking does not exist");
             });
+  }
+
+  public boolean isBooked(Room room, LocalDateTime checkIn, LocalDateTime checkOut) {
+    return !bookingRepository
+        .findAllByRoomsAndCheckInBetweenAndCheckOutBetween(
+            room, checkIn, checkOut, checkIn, checkOut)
+        .isEmpty();
   }
 
   public List<Booking> findBookingsInRange(LocalDateTime checkIn, LocalDateTime checkOut) {
