@@ -8,7 +8,6 @@ import com.tmploeg.hotelbooker.models.entities.User;
 import com.tmploeg.hotelbooker.services.RoleService;
 import com.tmploeg.hotelbooker.services.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,7 +18,7 @@ public class UserController {
   private final RoleService roleService;
 
   @PostMapping("register")
-  public ResponseEntity<UserDTO> register(@RequestBody AuthDTO registerDTO) {
+  public UserDTO register(@RequestBody AuthDTO registerDTO) {
     if (registerDTO == null) {
       throw new BadRequestException("register data is required");
     }
@@ -46,6 +45,6 @@ public class UserController {
             registerDTO.getPassword(),
             roleService.findByName(RoleName.USER));
 
-    return ResponseEntity.ok(UserDTO.fromUser(newUser));
+    return UserDTO.fromUser(newUser);
   }
 }
