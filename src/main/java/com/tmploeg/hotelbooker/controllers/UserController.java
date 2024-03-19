@@ -23,27 +23,25 @@ public class UserController {
       throw new BadRequestException("register data is required");
     }
 
-    if (registerDTO.getUsername() == null) {
+    if (registerDTO.username() == null) {
       throw new BadRequestException("username is required");
     }
 
-    if (registerDTO.getUsername().isBlank() || userService.userExists(registerDTO.getUsername())) {
+    if (registerDTO.username().isBlank() || userService.userExists(registerDTO.username())) {
       throw new BadRequestException("username is invalid");
     }
 
-    if (registerDTO.getPassword() == null) {
+    if (registerDTO.password() == null) {
       throw new BadRequestException("password is required");
     }
 
-    if (registerDTO.getPassword().isBlank()) {
+    if (registerDTO.password().isBlank()) {
       throw new BadRequestException("password is invalid");
     }
 
     User newUser =
         userService.save(
-            registerDTO.getUsername(),
-            registerDTO.getPassword(),
-            roleService.findByName(RoleName.USER));
+            registerDTO.username(), registerDTO.password(), roleService.findByName(RoleName.USER));
 
     return UserDTO.fromUser(newUser);
   }
