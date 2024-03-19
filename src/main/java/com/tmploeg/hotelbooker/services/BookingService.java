@@ -4,14 +4,11 @@ import com.tmploeg.hotelbooker.data.BookingRepository;
 import com.tmploeg.hotelbooker.helpers.LocalDateTimeHelper;
 import com.tmploeg.hotelbooker.models.ValueResult;
 import com.tmploeg.hotelbooker.models.entities.Booking;
+import com.tmploeg.hotelbooker.models.entities.Hotel;
 import com.tmploeg.hotelbooker.models.entities.Room;
 import com.tmploeg.hotelbooker.models.entities.User;
 import java.time.LocalDateTime;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +16,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class BookingService {
   private final BookingRepository bookingRepository;
+  private final RoomService roomService;
 
   public Set<Booking> getAll() {
     return bookingRepository.findByOrderByCheckIn();
@@ -51,18 +49,20 @@ public class BookingService {
       errors.add("at least one room is required");
     }
 
-    Set<Room> bookedRooms =
-        rooms.stream().filter(r -> isBooked(r, checkIn, checkOut)).collect(Collectors.toSet());
+    Hotel hotel = rooms.stream().findFirst().get().getHotel();
+    if (rooms.stream().anyMatch(r -> !Objects.equals(r.getHotel().getId(), hotel.getId()))) {
+      throw new IllegalArgumentException("all rooms must have the same hotel");
+    }
 
-    if (!bookedRooms.isEmpty()) {
-      errors.add(
-          "rooms { "
-              + String.join(
-                  ", ",
-                  bookedRooms.stream()
-                      .map(r -> ' ' + Integer.toString(r.getRoomNumber()) + ' ')
-                      .toList())
-              + " } are occupied");
+    Set<Room> availableRooms = roomService.findAvailableRooms(hotel, checkIn, checkOut);
+    List<String> unavailableRoomNumbers =
+        rooms.stream()
+            .filter(availableRooms::contains)
+            .map(r -> Integer.toString(r.getRoomNumber()))
+            .toList();
+
+    if (!unavailableRoomNumbers.isEmpty()) {
+      errors.add("rooms { " + String.join(", ", unavailableRoomNumbers) + " } are occupied");
     }
 
     return errors.isEmpty()
@@ -98,12 +98,12 @@ public class BookingService {
             });
   }
 
-  public boolean isBooked(Room room, LocalDateTime checkIn, LocalDateTime checkOut) {
-    return !bookingRepository
-        .findAllByRoomsAndCheckInBetweenAndCheckOutBetween(
-            room, checkIn, checkOut, checkIn, checkOut)
-        .isEmpty();
-  }
+  //  public boolean isBooked(Room room, LocalDateTime checkIn, LocalDateTime checkOut) {
+  //    return !bookingRepository
+  //        .findAllByRoomsAndCheckInBetweenAndCheckOutBetween(
+  //            room, checkIn, checkOut, checkIn, checkOut)
+  //        .isEmpty();
+  //  }
 
   public List<Booking> findBookingsInRange(LocalDateTime checkIn, LocalDateTime checkOut) {
     return bookingRepository
