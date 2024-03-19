@@ -37,18 +37,17 @@ public class BookingController {
   private final RoomService roomService;
 
   @GetMapping
-  public ResponseEntity<List<BookingDTO>> getAll(@NotNull Authentication authentication) {
+  public List<BookingDTO> getAll(@NotNull Authentication authentication) {
     User user = getUser(authentication);
 
     Set<Booking> bookings =
         userService.isAdmin(user) ? bookingService.getAll() : bookingService.findByUser(user);
 
-    return ResponseEntity.ok(
-        bookings.stream().map(BookingDTO::fromBooking).collect(Collectors.toList()));
+    return bookings.stream().map(BookingDTO::fromBooking).collect(Collectors.toList());
   }
 
   @GetMapping("{id}")
-  public ResponseEntity<BookingDTO> getById(@PathVariable Long id, Authentication authentication) {
+  public BookingDTO getById(@PathVariable Long id, Authentication authentication) {
     if (id == null) {
       throw new BadRequestException("id is required");
     }
@@ -58,7 +57,7 @@ public class BookingController {
     return bookingService
         .findById(id)
         .filter(b -> userService.isAdmin(user) || b.isOwnedByUser(user))
-        .map(b -> ResponseEntity.ok(BookingDTO.fromBooking(b)))
+        .map(BookingDTO::fromBooking)
         .orElseThrow(NotFoundException::new);
   }
 
@@ -119,7 +118,7 @@ public class BookingController {
   }
 
   @PatchMapping
-  public ResponseEntity<BookingDTO> updateBooking(
+  public BookingDTO updateBooking(
       @RequestBody NewBookingDTO bookingDTO, Authentication authentication) {
     if (bookingDTO == null) {
       throw new BadRequestException("booking data is required");
@@ -171,7 +170,7 @@ public class BookingController {
 
     bookingService.update(booking);
 
-    return ResponseEntity.ok(BookingDTO.fromBooking(booking));
+    return BookingDTO.fromBooking(booking);
   }
 
   @DeleteMapping("{id}")
