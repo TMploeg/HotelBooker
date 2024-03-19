@@ -67,18 +67,19 @@ public class HotelController {
   }
 
   @GetMapping("{hotelId}")
-  public ResponseEntity<HotelDTO> getById(@PathVariable Long hotelId) {
+  public HotelDTO getById(@PathVariable Long hotelId) {
     Hotel hotel = hotelService.findById(hotelId).orElseThrow(NotFoundException::new);
 
-    return ResponseEntity.ok(HotelDTO.fromHotel(hotel));
+    return HotelDTO.fromHotel(hotel);
   }
 
   @GetMapping("{hotelId}/rooms")
-  public ResponseEntity<Set<RoomDTO>> getHotelRooms(@PathVariable Long hotelId) {
+  public Set<RoomDTO> getHotelRooms(@PathVariable Long hotelId) {
     Hotel hotel = hotelService.findById(hotelId).orElseThrow(NotFoundException::new);
 
-    return ResponseEntity.ok(
-        roomService.findByHotel(hotel).stream().map(RoomDTO::fromRoom).collect(Collectors.toSet()));
+    return roomService.findByHotel(hotel).stream()
+        .map(RoomDTO::fromRoom)
+        .collect(Collectors.toSet());
   }
 
   @PostMapping("{id}/rooms")
@@ -134,13 +135,13 @@ public class HotelController {
   }
 
   @GetMapping("{hotelId}/rooms/{roomNumber}")
-  public ResponseEntity<RoomDTO> getHotelRoomByRoomNumber(
+  public RoomDTO getHotelRoomByRoomNumber(
       @PathVariable long hotelId, @PathVariable int roomNumber) {
     Hotel hotel = hotelService.findById(hotelId).orElseThrow(NotFoundException::new);
     Room room =
         roomService.findByHotelAndRoomNumber(hotel, roomNumber).orElseThrow(NotFoundException::new);
 
-    return ResponseEntity.ok(RoomDTO.fromRoom(room));
+    return RoomDTO.fromRoom(room);
   }
 
   @GetMapping("{hotelId}/rooms/available")
