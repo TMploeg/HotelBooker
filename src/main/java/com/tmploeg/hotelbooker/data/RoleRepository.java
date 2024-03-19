@@ -1,6 +1,6 @@
 package com.tmploeg.hotelbooker.data;
 
-import com.tmploeg.hotelbooker.models.Role;
+import com.tmploeg.hotelbooker.models.entities.Role;
 import java.util.Optional;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;

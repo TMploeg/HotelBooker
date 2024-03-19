@@ -1,13 +1,12 @@
 package com.tmploeg.hotelbooker.data;
 
 import com.tmploeg.hotelbooker.enums.RoleName;
-import com.tmploeg.hotelbooker.models.Role;
-import com.tmploeg.hotelbooker.models.User;
+import com.tmploeg.hotelbooker.models.entities.Role;
+import com.tmploeg.hotelbooker.models.entities.User;
 import com.tmploeg.hotelbooker.services.RoleService;
 import com.tmploeg.hotelbooker.services.UserService;
 import java.util.Arrays;
 import java.util.Set;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.env.Environment;

@@ -2,7 +2,7 @@ package com.tmploeg.hotelbooker.services;
 
 import com.tmploeg.hotelbooker.data.RoleRepository;
 import com.tmploeg.hotelbooker.enums.RoleName;
-import com.tmploeg.hotelbooker.models.Role;
+import com.tmploeg.hotelbooker.models.entities.Role;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

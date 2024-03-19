@@ -1,7 +1,8 @@
 package com.tmploeg.hotelbooker.data;
 
-import com.tmploeg.hotelbooker.models.Booking;
-import com.tmploeg.hotelbooker.models.User;
+import com.tmploeg.hotelbooker.models.entities.Booking;
+import com.tmploeg.hotelbooker.models.entities.Room;
+import com.tmploeg.hotelbooker.models.entities.User;
 import java.time.LocalDateTime;
 import java.util.Set;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,6 +15,13 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
   Set<Booking> findByUserOrderByCheckIn(User user);
 
   Set<Booking> findByCheckInBetweenAndCheckOutBetween(
+      LocalDateTime checkInRangeStart,
+      LocalDateTime checkInRangeEnd,
+      LocalDateTime checkOutRangeStart,
+      LocalDateTime checkOutRangeEnd);
+
+  Set<Booking> findAllByRoomsAndCheckInBetweenAndCheckOutBetween(
+      Room room,
       LocalDateTime checkInRangeStart,
       LocalDateTime checkInRangeEnd,
       LocalDateTime checkOutRangeStart,
