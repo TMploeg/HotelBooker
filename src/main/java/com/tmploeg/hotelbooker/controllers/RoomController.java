@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @RequiredArgsConstructor
-@RequestMapping(ControllerRoutes.HOTELS + "{hotelId}" + ControllerRoutes.ROOMS)
+@RequestMapping(ControllerRoutes.HOTELS + "/{hotelId}/" + ControllerRoutes.ROOMS)
 @RestController
 public class RoomController {
   private final RoomService roomService;
