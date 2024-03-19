@@ -1,7 +1,6 @@
 package com.tmploeg.hotelbooker.data;
 
 import com.tmploeg.hotelbooker.models.entities.Booking;
-import com.tmploeg.hotelbooker.models.entities.Room;
 import com.tmploeg.hotelbooker.models.entities.User;
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -15,13 +14,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
   Set<Booking> findByUserOrderByCheckIn(User user);
 
   Set<Booking> findByCheckInBetweenAndCheckOutBetween(
-      LocalDateTime checkInRangeStart,
-      LocalDateTime checkInRangeEnd,
-      LocalDateTime checkOutRangeStart,
-      LocalDateTime checkOutRangeEnd);
-
-  Set<Booking> findAllByRoomsAndCheckInBetweenAndCheckOutBetween(
-      Room room,
       LocalDateTime checkInRangeStart,
       LocalDateTime checkInRangeEnd,
       LocalDateTime checkOutRangeStart,
