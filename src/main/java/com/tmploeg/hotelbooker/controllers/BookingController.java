@@ -5,16 +5,20 @@ import com.tmploeg.hotelbooker.dtos.NewBookingDTO;
 import com.tmploeg.hotelbooker.exceptions.BadRequestException;
 import com.tmploeg.hotelbooker.exceptions.ForbiddenException;
 import com.tmploeg.hotelbooker.exceptions.NotFoundException;
+import com.tmploeg.hotelbooker.helpers.CollectionHelper;
 import com.tmploeg.hotelbooker.helpers.LocalDateTimeHelper;
-import com.tmploeg.hotelbooker.models.SaveBookingResult;
+import com.tmploeg.hotelbooker.models.ValueResult;
 import com.tmploeg.hotelbooker.models.entities.Booking;
+import com.tmploeg.hotelbooker.models.entities.Hotel;
+import com.tmploeg.hotelbooker.models.entities.Room;
 import com.tmploeg.hotelbooker.models.entities.User;
 import com.tmploeg.hotelbooker.services.BookingService;
+import com.tmploeg.hotelbooker.services.HotelService;
+import com.tmploeg.hotelbooker.services.RoomService;
 import com.tmploeg.hotelbooker.services.UserService;
 import java.net.URI;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -29,6 +33,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class BookingController {
   private final BookingService bookingService;
   private final UserService userService;
+  private final HotelService hotelService;
+  private final RoomService roomService;
 
   @GetMapping
   public ResponseEntity<List<BookingDTO>> getAll(@NotNull Authentication authentication) {
@@ -75,17 +81,41 @@ public class BookingController {
         LocalDateTimeHelper.tryParse(bookingDTO.checkOut())
             .orElseThrow(() -> new BadRequestException("checkOut is invalid"));
 
-    SaveBookingResult result = bookingService.save(user, checkIn, checkOut);
+    if (bookingDTO.hotelId() == null) {
+      throw new BadRequestException("hotel id is required");
+    }
 
-    if (!result.succeeded()) {
-      throw new BadRequestException(String.join(";", result.getErrors()));
+    Hotel hotel = hotelService.findById(bookingDTO.hotelId()).orElseThrow(NotFoundException::new);
+
+    if (bookingDTO.roomNumbers() == null) {
+      throw new BadRequestException("rooms is required");
+    }
+
+    if (CollectionHelper.hasDuplicates(bookingDTO.roomNumbers())) {
+      throw new BadRequestException("room numbers cannot have duplicates");
+    }
+
+    Set<Room> rooms =
+        Arrays.stream(bookingDTO.roomNumbers())
+            .map(
+                n ->
+                    roomService
+                        .findByHotelAndRoomNumber(hotel, n)
+                        .orElseThrow(
+                            () -> new BadRequestException("invalid room number(s) detected")))
+            .collect(Collectors.toSet());
+
+    ValueResult<Booking> saveBookingResult = bookingService.save(user, checkIn, checkOut, rooms);
+
+    if (!saveBookingResult.succeeded()) {
+      throw new BadRequestException(String.join(";", saveBookingResult.getErrors()));
     }
 
     URI newBookingLocation =
-        ucb.path("{id}").buildAndExpand(result.getSavedBooking().getId()).toUri();
+        ucb.path("{id}").buildAndExpand(saveBookingResult.getValue().getId()).toUri();
 
     return ResponseEntity.created(newBookingLocation)
-        .body(BookingDTO.fromBooking(result.getSavedBooking()));
+        .body(BookingDTO.fromBooking(saveBookingResult.getValue()));
   }
 
   @PatchMapping
