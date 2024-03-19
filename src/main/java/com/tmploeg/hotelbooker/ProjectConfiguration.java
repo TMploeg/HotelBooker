@@ -1,6 +1,7 @@
 package com.tmploeg.hotelbooker;
 
 import com.tmploeg.hotelbooker.controllers.ControllerRoutes;
+import com.tmploeg.hotelbooker.enums.RoleName;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -29,6 +30,8 @@ public class ProjectConfiguration {
                 requests
                     .requestMatchers(ControllerRoutes.USERS + ROUTE_SEPARATOR + "**")
                     .permitAll()
+                    .requestMatchers(ControllerRoutes.HOTELS + ROUTE_SEPARATOR + "**")
+                    .hasAuthority(RoleName.ADMIN.toString())
                     .anyRequest()
                     .authenticated())
         .build();
