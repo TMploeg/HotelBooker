@@ -24,6 +24,6 @@ export class HotelListComponent {
   }
 
   navigate(hotel: Hotel) {
-    this.router.navigateByUrl(AppRoutes.buildRoute(AppRoutes.HOTELS, ':' + hotel.id));
+    this.router.navigateByUrl(AppRoutes.buildRoute(AppRoutes.HOTELS, hotel.id.toString()));
   }
 }

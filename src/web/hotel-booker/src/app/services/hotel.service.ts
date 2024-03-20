@@ -14,4 +14,8 @@ export class HotelService {
   getAll(): Observable<Hotel[] | null> {
     return this.apiService.get<Hotel[]>(environment.apiBaseUrl + 'hotels').pipe(map(response => response.body));
   }
+
+  getById(hotelId: number): Observable<Hotel | null> {
+    return this.apiService.get<Hotel>(environment.apiBaseUrl + 'hotels/' + hotelId).pipe(map(response => response.body));
+  }
 }

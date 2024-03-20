@@ -1,23 +1,42 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppRoutes } from 'src/app/constants/routes';
+import { Hotel } from 'src/app/models/hotel';
+import { HotelService } from 'src/app/services/hotel.service';
 
 @Component({
   selector: 'app-hotel-info',
   templateUrl: './hotel-info.component.html',
   styleUrls: ['./hotel-info.component.scss']
 })
-export class HotelInfoComponent {
+export class HotelInfoComponent implements OnInit {
+  hotel: Hotel | null = null;
+
   constructor(
-    route: ActivatedRoute,
-    private router: Router
-  ) {
-    route.params.subscribe(params => {
+    private route: ActivatedRoute,
+    private router: Router,
+    private hotelService: HotelService
+  ) { }
+
+  ngOnInit(): void {
+    this.route.params.subscribe(params => {
       if (!Object.keys(params).includes(AppRoutes.HOTEL_ID)) {
-        router.navigateByUrl("");
+        this.returnToHomeScreen();
       }
 
-      console.log('hotelId: ' + params[AppRoutes.HOTEL_ID]);
+      const hotelId: number = params[AppRoutes.HOTEL_ID];
+
+      this.hotelService.getById(hotelId).subscribe(hotel => {
+        if (hotel == null) {
+          this.returnToHomeScreen();
+        }
+
+        this.hotel = hotel;
+      });
     });
+  }
+
+  returnToHomeScreen(): void {
+    this.router.navigateByUrl("");
   }
 }
