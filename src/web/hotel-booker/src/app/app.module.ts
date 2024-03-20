@@ -9,12 +9,17 @@ import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { AccountMenuComponent } from './components/toolbar/account-menu/account-menu.component';
+import { MatListModule } from '@angular/material/list';
+import { HotelListComponent } from './components/hotels/hotel-list/hotel-list.component';
+import { HotelInfoComponent } from './components/hotels/hotel-info/hotel-info.component'
 
 @NgModule({
   declarations: [
     AppComponent,
     ToolbarComponent,
-    AccountMenuComponent
+    AccountMenuComponent,
+    HotelListComponent,
+    HotelInfoComponent
   ],
   imports: [
     BrowserModule,
@@ -22,7 +27,8 @@ import { AccountMenuComponent } from './components/toolbar/account-menu/account-
     BrowserAnimationsModule,
     MatToolbarModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    MatListModule
   ],
   providers: [],
   bootstrap: [AppComponent]

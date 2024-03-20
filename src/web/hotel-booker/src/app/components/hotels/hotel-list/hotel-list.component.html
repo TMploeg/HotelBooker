@@ -1,0 +1,7 @@
+<mat-nav-list class="hotel-list">
+    <div mat-subheader class="subheader">Hotels</div>
+    <mat-list-item *ngFor="let hotel of hotels" (click)="navigate(hotel)">
+        <span matListItemTitle>{{hotel.name}}</span>
+        <span matListItemLine>{{hotel.address}}</span>
+    </mat-list-item>
+</mat-nav-list>
