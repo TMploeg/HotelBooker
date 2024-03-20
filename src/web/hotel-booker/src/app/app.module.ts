@@ -12,6 +12,7 @@ import { AccountMenuComponent } from './components/toolbar/account-menu/account-
 import { MatListModule } from '@angular/material/list';
 import { HotelListComponent } from './components/hotels/hotel-list/hotel-list.component';
 import { HotelInfoComponent } from './components/hotels/hotel-info/hotel-info.component'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { HotelInfoComponent } from './components/hotels/hotel-info/hotel-info.co
     MatToolbarModule,
     MatButtonModule,
     MatIconModule,
-    MatListModule
+    MatListModule,
+    MatProgressSpinnerModule
   ],
   providers: [],
   bootstrap: [AppComponent]

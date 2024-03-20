@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AppRoutes } from 'src/app/constants/routes';
 import { Hotel } from 'src/app/models/hotel';
+import { HotelService } from 'src/app/services/hotel.service';
 
 @Component({
   selector: 'app-hotel-list',
@@ -12,13 +13,14 @@ export class HotelListComponent {
   hotels: Hotel[] = [];
 
   constructor(
-    private router: Router
+    private router: Router,
+    private hotelService: HotelService
   ) { }
 
   ngOnInit(): void {
-    for (let i: number = 1; i <= 5; i++) {
-      this.hotels.push({ id: i, name: 'hotel' + i, address: 'hotel' + i + '_address' });
-    }
+    this.hotelService.getAll().subscribe(hotels => {
+      this.hotels = hotels;
+    })
   }
 
   navigate(hotel: Hotel) {
