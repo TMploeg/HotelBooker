@@ -1,23 +1,17 @@
 import { Injectable } from '@angular/core';
 import { Hotel } from '../models/hotel';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
+import { ApiService } from './api.service';
+import { environment } from 'src/environment/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class HotelService {
 
-  constructor() { }
+  constructor(private apiService: ApiService) { }
 
-  getAll(): Observable<Hotel[]> {
-    let hotels: Hotel[] = [];
-
-    for (let i: number = 1; i <= 5; i++) {
-      hotels.push({ id: i, name: 'hotel' + i, address: 'hotel' + i + '_address' });
-    }
-
-    return new Observable<Hotel[]>(observer => {
-      setInterval(() => observer.next(hotels), 3000);
-    });
+  getAll(): Observable<Hotel[] | null> {
+    return this.apiService.get<Hotel[]>(environment.apiBaseUrl + 'hotels').pipe(map(response => response.body));
   }
 }

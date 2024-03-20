@@ -19,7 +19,7 @@ export class HotelListComponent {
 
   ngOnInit(): void {
     this.hotelService.getAll().subscribe(hotels => {
-      this.hotels = hotels;
+      this.hotels = hotels ?? [];
     })
   }
 

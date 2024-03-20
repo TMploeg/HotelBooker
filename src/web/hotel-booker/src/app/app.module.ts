@@ -13,6 +13,7 @@ import { MatListModule } from '@angular/material/list';
 import { HotelListComponent } from './components/hotels/hotel-list/hotel-list.component';
 import { HotelInfoComponent } from './components/hotels/hotel-info/hotel-info.component'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatButtonModule,
     MatIconModule,
     MatListModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]
