@@ -66,7 +66,8 @@ public class BookingService {
     }
 
     return errors.isEmpty()
-        ? ValueResult.succesResult(bookingRepository.save(new Booking(user, checkIn, checkOut)))
+        ? ValueResult.succesResult(
+            bookingRepository.save(new Booking(user, checkIn, checkOut, rooms)))
         : ValueResult.errorResult(errors);
   }
 

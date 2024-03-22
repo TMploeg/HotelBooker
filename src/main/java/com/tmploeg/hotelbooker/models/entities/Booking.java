@@ -22,10 +22,11 @@ public class Booking {
 
   @ManyToMany private Set<Room> rooms;
 
-  public Booking(User user, LocalDateTime checkIn, LocalDateTime checkOut) {
+  public Booking(User user, LocalDateTime checkIn, LocalDateTime checkOut, Set<Room> rooms) {
     this.user = user;
     this.checkIn = checkIn;
     this.checkOut = checkOut;
+    this.rooms = rooms;
   }
 
   public boolean isOwnedByUser(User user) {
