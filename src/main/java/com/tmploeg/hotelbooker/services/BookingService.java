@@ -57,7 +57,7 @@ public class BookingService {
     Set<Room> availableRooms = roomService.findAvailableRooms(hotel, checkIn, checkOut);
     List<String> unavailableRoomNumbers =
         rooms.stream()
-            .filter(availableRooms::contains)
+            .filter(r -> !availableRooms.contains(r))
             .map(r -> Integer.toString(r.getRoomNumber()))
             .toList();
 
