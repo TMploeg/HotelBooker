@@ -8,14 +8,13 @@ import { environment } from 'src/environment/environment';
   providedIn: 'root'
 })
 export class HotelService {
-
   constructor(private apiService: ApiService) { }
 
   getAll(): Observable<Hotel[] | null> {
-    return this.apiService.get<Hotel[]>(environment.apiBaseUrl + 'hotels').pipe(map(response => response.body));
+    return this.apiService.get<Hotel[]>('hotels').pipe(map(response => response.body));
   }
 
   getById(hotelId: number): Observable<Hotel | null> {
-    return this.apiService.get<Hotel>(environment.apiBaseUrl + 'hotels/' + hotelId).pipe(map(response => response.body));
+    return this.apiService.get<Hotel>('hotels/' + hotelId).pipe(map(response => response.body));
   }
 }

@@ -2,6 +2,7 @@ import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/htt
 import { Injectable } from '@angular/core';
 import { Observable, catchError, map, of } from 'rxjs';
 import { ApiResponse } from '../models/api.response';
+import { environment } from 'src/environment/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -12,9 +13,22 @@ export class ApiService {
 
   get<TResponse>(url: string): Observable<ApiResponse<TResponse>> {
     return this.handleResponse(this.httpClient.get<TResponse>(
-      url,
+      environment.apiBaseUrl + url,
       {
         observe: 'response'
+      }
+    ));
+  }
+
+  post<TResponse>(url: string, body: any) {
+    return this.handleResponse(this.httpClient.post<TResponse>(
+      environment.apiBaseUrl + url,
+      body,
+      {
+        observe: 'response',
+        headers: {
+          Authorization: this.getAuthHeader()
+        }
       }
     ));
   }
@@ -30,5 +44,13 @@ export class ApiService {
           succeeded: !isErrorResponse
         }
       }));
+  }
+
+  getAuthHeader(): string {
+    const username: string = 'Yggdrasil';
+    const password: string = 'BlueQueue_0428';
+
+    const encodedCredentials = 'Basic ' + btoa(username + ':' + password);
+    return encodedCredentials;
   }
 }

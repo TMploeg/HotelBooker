@@ -1,7 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AppRoutes } from 'src/app/constants/routes';
+import { NewBookingDTO } from 'src/app/models/dtos/dtos.newbooking';
 import { Booking } from 'src/app/models/entities/booking';
 import { Time } from 'src/app/models/time';
+import { BookingService } from 'src/app/services/booking.service';
 import { TimeService } from 'src/app/services/time.service';
 
 @Component({
@@ -12,7 +16,14 @@ import { TimeService } from 'src/app/services/time.service';
 export class BookingFormComponent implements OnInit {
   formGroup!: FormGroup;
 
-  constructor(private timeService: TimeService) { }
+  private hotelId!: number;
+
+  constructor(
+    private bookingService: BookingService,
+    private timeService: TimeService,
+    private route: ActivatedRoute,
+    private router: Router
+  ) { }
 
   ngOnInit(): void {
     const checkinDateControl: FormControl = new FormControl('', [Validators.required, this.createCheckinDateNotBeforeTodayValidator()]);
@@ -31,6 +42,27 @@ export class BookingFormComponent implements OnInit {
       checkoutDate: checkoutDateControl,
       checkoutTime: checkoutTimeControl
     });
+
+    this.route.paramMap.subscribe(paramMap => {
+      const hotelId: string | null = paramMap.get(AppRoutes.HOTEL_ID);
+
+      if (hotelId == null) {
+        this.router.navigateByUrl('');
+      }
+
+      this.hotelId = Number.parseInt(hotelId!, 10);
+    })
+  }
+
+  submit(): void {
+    const booking = this.createNewBooking(
+      this.getControl('checkinDate')!.value,
+      this.timeService.parseTime(this.getControl('checkinTime')!.value)!,
+      this.getControl('checkoutDate')!.value,
+      this.timeService.parseTime(this.getControl('checkoutTime')!.value)!
+    );
+
+    this.bookingService.placeBooking(booking).subscribe(succes => console.log('posted booking: ' + succes));
   }
 
   getControl(controlName: string): FormControl | null {
@@ -78,16 +110,6 @@ export class BookingFormComponent implements OnInit {
     }
 
     return control.disabled;
-  }
-
-  submit(): void {
-    console.log(this.createBooking(
-      'myUsername',
-      this.getControl('checkinDate')!.value,
-      this.timeService.parseTime(this.getControl('checkinTime')!.value)!,
-      this.getControl('checkoutDate')!.value,
-      this.timeService.parseTime(this.getControl('checkoutTime')!.value)!
-    ));
   }
 
   checkinDateChanged() {
@@ -204,30 +226,30 @@ export class BookingFormComponent implements OnInit {
     );
   }
 
-  private createBooking(
-    username: string,
+  private createNewBooking(
     checkinDate: Date,
     checkinTime: Time,
     checkoutDate: Date,
     checkoutTime: Time
-  ): Booking {
+  ): NewBookingDTO {
     return {
       id: 0,
-      username: username,
-      checkIn: new Date(
-        checkinDate.getFullYear(),
-        checkinDate.getMonth(),
-        checkinDate.getDate(),
-        checkinTime.hours,
-        checkinTime.minutes
-      ).toISOString(),
-      checkOut: new Date(
-        checkoutDate.getFullYear(),
-        checkoutDate.getMonth(),
-        checkoutDate.getDate(),
-        checkoutTime.hours,
-        checkoutTime.minutes
-      ).toISOString(),
+      checkIn: this.createDateTimeString(checkinDate, checkinTime),
+      checkOut: this.createDateTimeString(checkoutDate, checkoutTime),
+      hotelId: this.hotelId,
+      roomNumbers: [10]
     }
+  }
+
+  private createDateTimeString(date: Date, time: Time) {
+    const dateTimeString: string = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate(),
+      time.hours,
+      time.minutes
+    ).toISOString();
+
+    return dateTimeString.slice(0, dateTimeString.length - 1);
   }
 }
