@@ -1,0 +1,109 @@
+<div class="form-container">
+    <form class="form" [formGroup]="formGroup">
+        <div class="datetime-fields">
+            <mat-form-field>
+                <mat-label>check-in date</mat-label>
+                <input
+                    matInput
+                    [matDatepicker]="checkinDatePicker"
+                    [readonly]="true"
+                    formControlName="checkinDate"
+                    (dateChange)="checkinDateChanged()">
+                <mat-datepicker-toggle
+                    matIconSuffix
+                    [for]="checkinDatePicker">
+                </mat-datepicker-toggle>
+                <mat-datepicker
+                    #checkinDatePicker
+                    touchUi>
+                </mat-datepicker>
+                <mat-error *ngIf="controlHasError('checkinDate', 'required')">
+                    check-in date is required
+                </mat-error>
+                <mat-error *ngIf="!controlHasError('checkinDate', 'required') && controlHasError('checkinDate', 'beforeToday')">
+                    date has already passed
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>check-in time</mat-label>
+                <input
+                    matInput
+                    [ngxTimepicker]="checkin_timepicker"
+                    [disableClick]="true"
+                    [readonly]="true"
+                    [format]="24"
+                    formControlName="checkinTime">
+                <button
+                    mat-icon-button
+                    matSuffix
+                    [disabled]="controlIsDisabled('checkinTime')"
+                    (click)="checkin_timepicker.open()">
+                    <mat-icon>access_time</mat-icon>
+                </button>
+                <ngx-material-timepicker
+                    #checkin_timepicker
+                    [preventOverlayClick]="true"
+                    (timeSet)="checkinTimeChanged($event)">
+                </ngx-material-timepicker>
+                <mat-error *ngIf="controlHasError('checkinTime', 'required')">
+                    check-in time is required
+                </mat-error>
+                <mat-error *ngIf="!controlHasError('checkinTime', 'required') && controlHasError('checkinTime', 'beforeNow')">
+                    check-in time has passed
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <div class="datetime-fields">
+            <mat-form-field>
+                <mat-label>check-out date</mat-label>
+                <input
+                    matInput
+                    [matDatepicker]="checkoutDatePicker"
+                    [readonly]="true"
+                    formControlName="checkoutDate"
+                    (dateChange)="checkoutDateChanged()">
+                <mat-datepicker-toggle
+                    matIconSuffix
+                    [for]="checkoutDatePicker">
+                </mat-datepicker-toggle>
+                <mat-datepicker
+                    #checkoutDatePicker
+                    touchUi></mat-datepicker>
+                <mat-error *ngIf="controlHasError('checkoutDate', 'required')">
+                    check-out date is required
+                </mat-error>
+                <mat-error *ngIf="!controlHasError('checkoutDate', 'required') && controlHasError('checkoutDate', 'beforeCheckin')">
+                    date is before check-in
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>check-out time</mat-label>
+                <input
+                    matInput
+                    [ngxTimepicker]="checkout_timepicker"
+                    [disableClick]="true"
+                    [readonly]="true"
+                    [format]="24"
+                    formControlName="checkoutTime">
+                <button
+                    mat-icon-button
+                    matSuffix
+                    [disabled]="controlIsDisabled('checkoutTime')"
+                    (click)="checkout_timepicker.open()">
+                    <mat-icon>access_time</mat-icon>
+                </button>
+                <ngx-material-timepicker
+                    #checkout_timepicker
+                    [preventOverlayClick]="true">
+                </ngx-material-timepicker>
+                <mat-error *ngIf="controlHasError('checkoutTime', 'required')">
+                    check-out time is required
+                </mat-error>
+                <mat-error *ngIf="!controlHasError('checkoutTime', 'required') && controlHasError('checkoutTime', 'beforeCheckin')">
+                    check-out time is before check-in
+                </mat-error>
+            </mat-form-field>
+        </div>
+    </form>
+    <button mat-raised-button color="primary" [disabled]="formGroup.invalid" (click)="submit()">Place Booking</button>
+</div>

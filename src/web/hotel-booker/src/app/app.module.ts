@@ -14,6 +14,13 @@ import { HotelListComponent } from './components/hotels/hotel-list/hotel-list.co
 import { HotelInfoComponent } from './components/hotels/hotel-info/hotel-info.component'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { HttpClientModule } from '@angular/common/http';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
+import { MatInputModule } from '@angular/material/input';
+import { BookingFormComponent } from './components/booking-form/booking-form.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +28,8 @@ import { HttpClientModule } from '@angular/common/http';
     ToolbarComponent,
     AccountMenuComponent,
     HotelListComponent,
-    HotelInfoComponent
+    HotelInfoComponent,
+    BookingFormComponent
   ],
   imports: [
     BrowserModule,
@@ -32,7 +40,14 @@ import { HttpClientModule } from '@angular/common/http';
     MatIconModule,
     MatListModule,
     MatProgressSpinnerModule,
-    HttpClientModule
+    HttpClientModule,
+    MatFormFieldModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatDatepickerModule,
+    NgxMaterialTimepickerModule,
+    MatInputModule,
+    MatNativeDateModule
   ],
   providers: [],
   bootstrap: [AppComponent]
