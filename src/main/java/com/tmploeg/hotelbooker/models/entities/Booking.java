@@ -2,6 +2,7 @@ package com.tmploeg.hotelbooker.models.entities;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.Set;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,5 +30,19 @@ public class Booking {
 
   public boolean isOwnedByUser(User user) {
     return user.getUsername().equals(this.user.getUsername());
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (!(obj instanceof Booking otherBooking)) {
+      return false;
+    }
+
+    return Objects.equals(this.id, otherBooking.id);
+  }
+
+  @Override
+  public int hashCode() {
+    return id.hashCode();
   }
 }

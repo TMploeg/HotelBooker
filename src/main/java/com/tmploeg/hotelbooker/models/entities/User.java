@@ -3,6 +3,7 @@ package com.tmploeg.hotelbooker.models.entities;
 import jakarta.persistence.*;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -49,5 +50,19 @@ public class User implements UserDetails {
   @Override
   public boolean isCredentialsNonExpired() {
     return true;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (!(obj instanceof User otherUser)) {
+      return false;
+    }
+
+    return Objects.equals(this.username, otherUser.username);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(username);
   }
 }

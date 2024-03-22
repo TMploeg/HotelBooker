@@ -2,8 +2,8 @@ package com.tmploeg.hotelbooker.models.entities;
 
 import com.tmploeg.hotelbooker.models.RoomId;
 import jakarta.persistence.*;
+import java.util.Objects;
 import java.util.Set;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -22,5 +22,20 @@ public class Room {
   public Room(Hotel hotel, int roomNumber) {
     this.hotel = hotel;
     this.roomNumber = roomNumber;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (!(obj instanceof Room otherRoom)) {
+      return false;
+    }
+
+    return Objects.equals(this.hotel, otherRoom.hotel)
+        && Objects.equals(this.roomNumber, otherRoom.roomNumber);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(hotel, roomNumber);
   }
 }
