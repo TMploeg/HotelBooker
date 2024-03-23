@@ -20,7 +20,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
 import { MatInputModule } from '@angular/material/input';
-import { BookingFormComponent } from './components/booking-form/booking-form.component';
+import { BookingFormComponent } from './components/bookings/booking-form/booking-form.component';
 
 @NgModule({
   declarations: [

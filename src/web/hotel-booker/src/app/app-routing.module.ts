@@ -3,7 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { HotelListComponent } from './components/hotels/hotel-list/hotel-list.component';
 import { HotelInfoComponent } from './components/hotels/hotel-info/hotel-info.component';
 import { AppRoutes } from "./constants/routes";
-import { BookingFormComponent } from './components/booking-form/booking-form.component';
+import { BookingFormComponent } from './components/bookings/booking-form/booking-form.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'hotels', pathMatch: 'full' },
