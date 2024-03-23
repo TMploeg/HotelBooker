@@ -21,6 +21,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
 import { MatInputModule } from '@angular/material/input';
 import { BookingFormComponent } from './components/bookings/booking-form/booking-form.component';
+import { BookingInfoComponent } from './components/bookings/booking-info/booking-info.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import { BookingFormComponent } from './components/bookings/booking-form/booking
     AccountMenuComponent,
     HotelListComponent,
     HotelInfoComponent,
-    BookingFormComponent
+    BookingFormComponent,
+    BookingInfoComponent
   ],
   imports: [
     BrowserModule,
