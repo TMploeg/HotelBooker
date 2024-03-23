@@ -41,4 +41,16 @@ export class HotelInfoComponent implements OnInit {
   returnToHomeScreen(): void {
     this.router.navigateByUrl("");
   }
+
+  placeBookingClicked(): void {
+    if (!this.hotel) {
+      return;
+    }
+
+    this.router.navigateByUrl(AppRoutes.buildRoute(AppRoutes.buildRoute(AppRoutes.BOOKINGS, AppRoutes.ADD)), {
+      state: {
+        hotelId: this.hotel.id
+      }
+    });
+  }
 }

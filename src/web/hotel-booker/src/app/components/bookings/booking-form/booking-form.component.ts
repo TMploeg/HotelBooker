@@ -23,7 +23,15 @@ export class BookingFormComponent implements OnInit {
     private timeService: TimeService,
     private route: ActivatedRoute,
     private router: Router
-  ) { }
+  ) {
+    const hotelId: number = Number.parseInt(this.router.getCurrentNavigation()?.extras.state!['hotelId']);
+
+    if (Number.isNaN(hotelId)) {
+      console.log('invalid hotel id');
+    }
+
+    this.hotelId = hotelId;
+  }
 
   ngOnInit(): void {
     const checkinDateControl: FormControl = new FormControl('', [Validators.required, this.createCheckinDateNotBeforeTodayValidator()]);
@@ -42,16 +50,6 @@ export class BookingFormComponent implements OnInit {
       checkoutDate: checkoutDateControl,
       checkoutTime: checkoutTimeControl
     });
-
-    this.route.paramMap.subscribe(paramMap => {
-      const hotelId: string | null = paramMap.get(AppRoutes.HOTEL_ID);
-
-      if (hotelId == null) {
-        this.router.navigateByUrl('');
-      }
-
-      this.hotelId = Number.parseInt(hotelId!, 10);
-    })
   }
 
   submit(): void {

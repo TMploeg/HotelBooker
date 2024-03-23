@@ -9,7 +9,7 @@ const routes: Routes = [
   { path: '', redirectTo: 'hotels', pathMatch: 'full' },
   { path: 'hotels', component: HotelListComponent },
   { path: AppRoutes.buildRoute(AppRoutes.HOTELS, ':' + AppRoutes.HOTEL_ID), component: HotelInfoComponent },
-  { path: AppRoutes.buildRoute(AppRoutes.HOTELS, ':' + AppRoutes.HOTEL_ID, AppRoutes.BOOK), component: BookingFormComponent }
+  { path: AppRoutes.buildRoute(AppRoutes.BOOKINGS, AppRoutes.ADD), component: BookingFormComponent }
 ];
 
 @NgModule({

@@ -2,7 +2,7 @@
     <div *ngIf="hotel != null else spinnerBlock">
         <h1>{{hotel.name}}</h1>
         <p>address: {{hotel.address}}</p>
-        <button routerLink="book" mat-raised-button color="primary">Place Booking</button>
+        <button mat-raised-button color="primary" (click)="placeBookingClicked()">Place Booking</button>
     </div>
     <ng-template #spinnerBlock><mat-spinner/></ng-template>
 </div>
