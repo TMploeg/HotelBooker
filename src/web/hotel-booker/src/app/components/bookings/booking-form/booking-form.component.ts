@@ -44,11 +44,14 @@ export class BookingFormComponent implements OnInit {
     const checkoutTimeControl: FormControl = new FormControl('', [Validators.required, this.createCheckoutTimeNotBeforeCheckinValidator()]);
     checkoutTimeControl.disable();
 
+    const roomCountControl: FormControl = new FormControl(1)
+
     this.formGroup = new FormGroup({
       checkinDate: checkinDateControl,
       checkinTime: checkinTimeControl,
       checkoutDate: checkoutDateControl,
-      checkoutTime: checkoutTimeControl
+      checkoutTime: checkoutTimeControl,
+      roomCount: roomCountControl
     });
   }
 
@@ -61,9 +64,10 @@ export class BookingFormComponent implements OnInit {
       this.getControl('checkoutDate')!.value,
       this.timeService.parseTime(this.getControl('checkoutTime')!.value)!
     );
+    const nrOfRooms: number = this.getControl('roomCount')!.value;
 
     this.bookingService
-      .placeBooking(this.hotelId, checkIn, checkOut, 1)
+      .placeBooking(this.hotelId, checkIn, checkOut, nrOfRooms)
       .subscribe(response => {
         if (response.succes) {
           this.router.navigate([AppRoutes.BOOKINGS, this.hotelId]);
