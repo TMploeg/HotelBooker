@@ -30,7 +30,7 @@ export class ApiService {
       body,
       {
         observe: 'response',
-        params: this.generateHttpParams(params),
+        params: params,
         headers: {
           Authorization: this.getAuthHeader()
         }
@@ -57,19 +57,5 @@ export class ApiService {
 
     const encodedCredentials = 'Basic ' + btoa(username + ':' + password);
     return encodedCredentials;
-  }
-
-  generateHttpParams(params?: { [key: string]: string }) {
-    const httpParams: HttpParams = new HttpParams();
-
-    if (!params) {
-      return httpParams;
-    }
-
-    Object.keys(params).forEach(key => {
-      httpParams.set(key, params[key]);
-    });
-
-    return httpParams;
   }
 }
