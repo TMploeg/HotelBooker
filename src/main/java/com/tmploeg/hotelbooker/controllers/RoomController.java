@@ -92,9 +92,11 @@ public class RoomController {
   @GetMapping("{roomNumber}")
   public RoomDTO getHotelRoomByRoomNumber(
       @PathVariable Long hotelId, @PathVariable Integer roomNumber) {
-    Hotel hotel = hotelService.findById(hotelId).orElseThrow(NotFoundException::new);
     Room room =
-        roomService.findByHotelAndRoomNumber(hotel, roomNumber).orElseThrow(NotFoundException::new);
+        hotelService
+            .findById(hotelId)
+            .flatMap(hotel -> roomService.findByHotelAndRoomNumber(hotel, roomNumber))
+            .orElseThrow(NotFoundException::new);
 
     return RoomDTO.fromRoom(room);
   }
