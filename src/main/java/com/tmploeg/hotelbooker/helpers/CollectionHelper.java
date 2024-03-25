@@ -10,7 +10,7 @@ public final class CollectionHelper {
 
   public static <T> boolean hasDuplicates(T[] array) {
     if (array == null) {
-      throw new NullPointerException("array is null");
+      throw new IllegalArgumentException("array is null");
     }
 
     if (array.length <= 1) {
@@ -30,7 +30,7 @@ public final class CollectionHelper {
 
   public static <T> boolean hasDuplicates(Collection<T> collection) {
     if (collection == null) {
-      throw new NullPointerException("collection is null");
+      throw new IllegalArgumentException("collection is null");
     }
 
     if (collection.size() <= 1) {

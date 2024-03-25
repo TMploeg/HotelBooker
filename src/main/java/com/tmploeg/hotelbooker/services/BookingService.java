@@ -27,13 +27,13 @@ public class BookingService {
     List<String> errors = new LinkedList<>();
 
     if (user == null) {
-      throw new NullPointerException("user is required");
+      throw new IllegalArgumentException("user is required");
     }
     if (checkIn == null) {
-      throw new NullPointerException("checkIn is required");
+      throw new IllegalArgumentException("checkIn is required");
     }
     if (checkOut == null) {
-      throw new NullPointerException("checkOut is required");
+      throw new IllegalArgumentException("checkOut is required");
     }
     if (rooms == null) {
       throw new IllegalArgumentException("rooms is required");
@@ -73,7 +73,7 @@ public class BookingService {
 
   public void update(Booking booking) {
     if (booking == null) {
-      throw new NullPointerException("booking is null");
+      throw new IllegalArgumentException("booking is null");
     }
 
     bookingRepository
@@ -87,7 +87,7 @@ public class BookingService {
 
   public void delete(Booking booking) {
     if (booking == null) {
-      throw new NullPointerException("booking is null");
+      throw new IllegalArgumentException("booking is null");
     }
 
     bookingRepository

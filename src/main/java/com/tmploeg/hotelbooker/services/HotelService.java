@@ -23,10 +23,10 @@ public class HotelService {
 
   public ValueResult<Hotel> save(String name, String address) {
     if (name == null) {
-      throw new NullPointerException("name is null");
+      throw new IllegalArgumentException("name is null");
     }
     if (address == null) {
-      throw new NullPointerException("address is null");
+      throw new IllegalArgumentException("address is null");
     }
 
     return ValueResult.succesResult(hotelRepository.save(new Hotel(name, address)));

@@ -40,7 +40,7 @@ public class UserService implements UserDetailsService {
 
   public boolean isAdmin(User user) {
     if (user == null) {
-      throw new NullPointerException("user is null");
+      throw new IllegalArgumentException("user is null");
     }
 
     return user.getRole().getName().equals(RoleName.ADMIN.toString());
