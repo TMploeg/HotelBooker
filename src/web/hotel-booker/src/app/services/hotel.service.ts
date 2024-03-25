@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Hotel } from '../models/entities/hotel';
 import { Observable, map } from 'rxjs';
 import { ApiService } from './api.service';
-import { environment } from 'src/environment/environment';
 
 @Injectable({
   providedIn: 'root'

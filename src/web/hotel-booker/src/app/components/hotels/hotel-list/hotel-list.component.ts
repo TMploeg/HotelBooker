@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AppRoutes } from 'src/app/constants/routes';
 import { Hotel } from 'src/app/models/entities/hotel';
@@ -20,7 +20,7 @@ export class HotelListComponent {
   ngOnInit(): void {
     this.hotelService.getAll().subscribe(hotels => {
       this.hotels = hotels ?? [];
-    })
+    });
   }
 
   navigate(hotel: Hotel) {
