@@ -1,0 +1,12 @@
+.form-container{
+    padding: 20px;
+
+    .datetime-fields{
+        display: flex;
+        flex-direction: row;
+        
+        :not(:last-child){
+            margin-right: 10px;
+        }
+    }
+}

@@ -1,6 +1,5 @@
 package com.tmploeg.hotelbooker.controllers;
 
-import com.tmploeg.hotelbooker.dtos.BookingDTO;
 import com.tmploeg.hotelbooker.dtos.RoomDTO;
 import com.tmploeg.hotelbooker.exceptions.BadRequestException;
 import com.tmploeg.hotelbooker.exceptions.NotFoundException;
@@ -102,32 +101,29 @@ public class RoomController {
 
   @GetMapping("available")
   public Set<RoomDTO> getAvailableRooms(
-      @PathVariable Long hotelId, @RequestBody BookingDTO bookingDTO) {
-    if (bookingDTO == null) {
-      throw new BadRequestException("bookingDTO is required");
+      @PathVariable Long hotelId, @RequestParam String checkIn, @RequestParam String checkOut) {
+    if (hotelId == null) {
+      throw new BadRequestException("hotelId is required");
     }
-
-    if (bookingDTO.checkIn() == null) {
-      throw new BadRequestException("checkIn is required");
-    }
-
     Hotel hotel = hotelService.findById(hotelId).orElseThrow(NotFoundException::new);
 
-    LocalDateTime checkIn =
-        LocalDateTimeHelper.tryParse(bookingDTO.checkIn())
+    if (checkIn == null) {
+      throw new BadRequestException("checkIn is required");
+    }
+    LocalDateTime parsedCheckIn =
+        LocalDateTimeHelper.tryParse(checkIn)
             .filter(dT -> dT.isAfter(LocalDateTime.now()))
             .orElseThrow(() -> new BadRequestException("checkIn is invalid"));
 
-    if (bookingDTO.checkOut() == null) {
+    if (checkOut == null) {
       throw new BadRequestException("checkOut is required");
     }
-
-    LocalDateTime checkOut =
-        LocalDateTimeHelper.tryParse(bookingDTO.checkOut())
-            .filter(dT -> !dT.isBefore(checkIn))
+    LocalDateTime parsedCheckOut =
+        LocalDateTimeHelper.tryParse(checkOut)
+            .filter(dT -> !dT.isBefore(parsedCheckIn))
             .orElseThrow(() -> new BadRequestException("checkOut is invalid"));
 
-    return roomService.findAvailableRooms(hotel, checkIn, checkOut).stream()
+    return roomService.findAvailableRooms(hotel, parsedCheckIn, parsedCheckOut).stream()
         .map(RoomDTO::fromRoom)
         .collect(Collectors.toSet());
   }

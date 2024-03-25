@@ -57,7 +57,7 @@ public class BookingService {
     Set<Room> availableRooms = roomService.findAvailableRooms(hotel, checkIn, checkOut);
     List<String> unavailableRoomNumbers =
         rooms.stream()
-            .filter(availableRooms::contains)
+            .filter(r -> !availableRooms.contains(r))
             .map(r -> Integer.toString(r.getRoomNumber()))
             .toList();
 
@@ -66,7 +66,8 @@ public class BookingService {
     }
 
     return errors.isEmpty()
-        ? ValueResult.succesResult(bookingRepository.save(new Booking(user, checkIn, checkOut)))
+        ? ValueResult.succesResult(
+            bookingRepository.save(new Booking(user, checkIn, checkOut, rooms)))
         : ValueResult.errorResult(errors);
   }
 

@@ -1,0 +1,10 @@
+<mat-nav-list class="hotel-list">
+    <div mat-subheader class="subheader">Hotels</div>
+    <div *ngIf="hotels.length == 0 else hotelList"><mat-spinner/></div>
+    <ng-template #hotelList>
+        <mat-list-item *ngFor="let hotel of hotels" (click)="navigate(hotel)">
+            <span matListItemTitle>{{hotel.name}}</span>
+            <span matListItemLine>{{hotel.address}}</span>
+        </mat-list-item>
+    </ng-template>
+</mat-nav-list>
