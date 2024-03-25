@@ -101,9 +101,12 @@ public class RoomController {
     return RoomDTO.fromRoom(room);
   }
 
-  @GetMapping("available")
-  public Set<RoomDTO> getAvailableRooms(
-      @PathVariable Long hotelId, @RequestParam String checkIn, @RequestParam String checkOut) {
+  @GetMapping("can-book")
+  public boolean canBookRooms(
+      @PathVariable Long hotelId,
+      @RequestParam Integer roomCount,
+      @RequestParam String checkIn,
+      @RequestParam String checkOut) {
     if (hotelId == null) {
       throw new BadRequestException("hotelId is required");
     }
@@ -125,8 +128,13 @@ public class RoomController {
             .filter(dT -> !dT.isBefore(parsedCheckIn))
             .orElseThrow(() -> new BadRequestException("checkOut is invalid"));
 
-    return roomService.findAvailableRooms(hotel, parsedCheckIn, parsedCheckOut).stream()
-        .map(RoomDTO::fromRoom)
-        .collect(Collectors.toSet());
+    if (roomCount == null) {
+      throw new BadRequestException("roomCount is required");
+    }
+
+    int availableRoomCount =
+        roomService.getAvailableRoomCount(hotel, parsedCheckIn, parsedCheckOut);
+
+    return availableRoomCount >= roomCount;
   }
 }

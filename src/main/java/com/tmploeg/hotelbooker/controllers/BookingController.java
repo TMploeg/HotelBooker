@@ -5,12 +5,10 @@ import com.tmploeg.hotelbooker.dtos.NewBookingDTO;
 import com.tmploeg.hotelbooker.exceptions.BadRequestException;
 import com.tmploeg.hotelbooker.exceptions.ForbiddenException;
 import com.tmploeg.hotelbooker.exceptions.NotFoundException;
-import com.tmploeg.hotelbooker.helpers.CollectionHelper;
 import com.tmploeg.hotelbooker.helpers.LocalDateTimeHelper;
 import com.tmploeg.hotelbooker.models.ValueResult;
 import com.tmploeg.hotelbooker.models.entities.Booking;
 import com.tmploeg.hotelbooker.models.entities.Hotel;
-import com.tmploeg.hotelbooker.models.entities.Room;
 import com.tmploeg.hotelbooker.models.entities.User;
 import com.tmploeg.hotelbooker.services.BookingService;
 import com.tmploeg.hotelbooker.services.HotelService;
@@ -92,25 +90,12 @@ public class BookingController {
                     new BadRequestException(
                         "no hotel with id '" + bookingDTO.hotelId() + "' exists"));
 
-    if (bookingDTO.roomNumbers() == null) {
-      throw new BadRequestException("roomNumbers is required");
+    if (bookingDTO.roomCount() == null) {
+      throw new BadRequestException("roomCount is required");
     }
 
-    if (CollectionHelper.hasDuplicates(bookingDTO.roomNumbers())) {
-      throw new BadRequestException("roomNumbers cannot have duplicates");
-    }
-
-    Set<Room> rooms =
-        Arrays.stream(bookingDTO.roomNumbers())
-            .map(
-                n ->
-                    roomService
-                        .findByHotelAndRoomNumber(hotel, n)
-                        .orElseThrow(
-                            () -> new BadRequestException("invalid room number(s) detected")))
-            .collect(Collectors.toSet());
-
-    ValueResult<Booking> saveBookingResult = bookingService.save(user, checkIn, checkOut, rooms);
+    ValueResult<Booking> saveBookingResult =
+        bookingService.save(user, hotel, checkIn, checkOut, bookingDTO.roomCount());
 
     if (!saveBookingResult.succeeded()) {
       throw new BadRequestException(String.join(";", saveBookingResult.getErrors()));
