@@ -133,7 +133,7 @@ public class RoomController {
     }
 
     int availableRoomCount =
-        roomService.getAvailableRoomCount(hotel, parsedCheckIn, parsedCheckOut);
+        roomService.getAvailableRooms(hotel, parsedCheckIn, parsedCheckOut).size();
 
     return availableRoomCount >= roomCount;
   }

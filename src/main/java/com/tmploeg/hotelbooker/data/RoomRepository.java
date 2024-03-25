@@ -15,8 +15,8 @@ public interface RoomRepository extends CrudRepository<Room, RoomId> {
   Set<Room> findByHotelOrderByRoomNumberAsc(Hotel hotel);
 
   @Query(
-      "SELECT count(r) FROM Room r WHERE"
+      "SELECT r FROM Room r WHERE"
           + " r.hotel = ?1 AND"
           + " (select count(b) FROM r.bookings b WHERE b.checkIn < ?3 AND b.checkOut > ?2) = 0")
-  Integer getAvailableRoomCountInHotel(Hotel hotel, LocalDateTime checkIn, LocalDateTime checkOut);
+  Set<Room> getAvailableRoomsInHotel(Hotel hotel, LocalDateTime checkIn, LocalDateTime checkOut);
 }

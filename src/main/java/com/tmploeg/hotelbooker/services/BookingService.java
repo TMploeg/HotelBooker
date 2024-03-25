@@ -9,8 +9,6 @@ import com.tmploeg.hotelbooker.models.entities.Room;
 import com.tmploeg.hotelbooker.models.entities.User;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -48,19 +46,14 @@ public class BookingService {
       errors.add("at least one room is required");
     }
 
-    Set<Room> availableRooms = roomService.findAvailableRooms(hotel, checkIn, checkOut);
+    Set<Room> availableRooms = roomService.getAvailableRooms(hotel, checkIn, checkOut);
     if (availableRooms.size() < roomCount) {
       errors.add("insufficient rooms available");
     }
 
     return errors.isEmpty()
         ? ValueResult.succesResult(
-            bookingRepository.save(
-                new Booking(
-                    user,
-                    checkIn,
-                    checkOut,
-                    availableRooms.stream().limit(roomCount).collect(Collectors.toSet()))))
+            bookingRepository.save(new Booking(user, checkIn, checkOut, availableRooms)))
         : ValueResult.errorResult(errors);
   }
 
