@@ -1,5 +1,6 @@
 package com.tmploeg.hotelbooker.controllers;
 
+import com.tmploeg.hotelbooker.dtos.CanBookDTO;
 import com.tmploeg.hotelbooker.dtos.RoomDTO;
 import com.tmploeg.hotelbooker.exceptions.BadRequestException;
 import com.tmploeg.hotelbooker.exceptions.NotFoundException;
@@ -13,6 +14,7 @@ import com.tmploeg.hotelbooker.services.RoomService;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -102,7 +104,7 @@ public class RoomController {
   }
 
   @GetMapping("can-book")
-  public boolean canBookRooms(
+  public CanBookDTO canBookRooms(
       @PathVariable Long hotelId,
       @RequestParam Integer roomCount,
       @RequestParam String checkIn,
@@ -132,9 +134,12 @@ public class RoomController {
       throw new BadRequestException("roomCount is required");
     }
 
-    int availableRoomCount =
-        roomService.getAvailableRooms(hotel, parsedCheckIn, parsedCheckOut).size();
+    List<String> errors = new LinkedList<>();
 
-    return availableRoomCount >= roomCount;
+    if (roomService.getAvailableRooms(hotel, parsedCheckIn, parsedCheckOut).size() < roomCount) {
+      errors.add("insufficient available rooms");
+    }
+
+    return new CanBookDTO(errors);
   }
 }
