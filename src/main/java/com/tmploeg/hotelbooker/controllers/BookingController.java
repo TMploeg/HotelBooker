@@ -84,7 +84,13 @@ public class BookingController {
       throw new BadRequestException("hotelId is required");
     }
 
-    Hotel hotel = hotelService.findById(bookingDTO.hotelId()).orElseThrow(NotFoundException::new);
+    Hotel hotel =
+        hotelService
+            .findById(bookingDTO.hotelId())
+            .orElseThrow(
+                () ->
+                    new BadRequestException(
+                        "no hotel with id '" + bookingDTO.hotelId() + "' exists"));
 
     if (bookingDTO.roomNumbers() == null) {
       throw new BadRequestException("roomNumbers is required");
@@ -136,7 +142,9 @@ public class BookingController {
         bookingService
             .findById(bookingDTO.id())
             .filter(b -> b.getUser() == user)
-            .orElseThrow(NotFoundException::new);
+            .orElseThrow(
+                () ->
+                    new BadRequestException("no booking with id '" + bookingDTO.id() + "' exists"));
 
     LocalDateTime newCheckIn =
         LocalDateTimeHelper.tryParse(bookingDTO.checkIn())
@@ -181,12 +189,10 @@ public class BookingController {
       throw new BadRequestException("id is required");
     }
 
-    User user = getUser(authentication);
-
     Booking deleteBooking =
         bookingService
             .findById(id)
-            .filter(b -> b.getUser() == user)
+            .filter(b -> b.getUser() == getUser(authentication))
             .orElseThrow(NotFoundException::new);
 
     bookingService.delete(deleteBooking);

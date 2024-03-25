@@ -28,7 +28,7 @@ public class RoomService {
 
   public ValueResult<Room> save(Hotel hotel, int roomNumber) {
     if (hotel == null) {
-      throw new NullPointerException("hotel is null");
+      throw new IllegalArgumentException("hotel is null");
     }
 
     List<String> errors = new LinkedList<String>();
