@@ -46,7 +46,7 @@ public class RoomService {
         : ValueResult.errorResult(errors);
   }
 
-  public Set<Room> findAvailableRooms(Hotel hotel, LocalDateTime checkIn, LocalDateTime checkOut) {
-    return roomRepository.findAvailableRoomsInHotel(hotel, checkIn, checkOut);
+  public Set<Room> getAvailableRooms(Hotel hotel, LocalDateTime checkIn, LocalDateTime checkOut) {
+    return roomRepository.getAvailableRoomsInHotel(hotel, checkIn, checkOut);
   }
 }

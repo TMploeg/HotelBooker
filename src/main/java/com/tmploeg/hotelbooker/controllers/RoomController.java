@@ -1,5 +1,6 @@
 package com.tmploeg.hotelbooker.controllers;
 
+import com.tmploeg.hotelbooker.dtos.CanBookDTO;
 import com.tmploeg.hotelbooker.dtos.RoomDTO;
 import com.tmploeg.hotelbooker.exceptions.BadRequestException;
 import com.tmploeg.hotelbooker.exceptions.NotFoundException;
@@ -13,6 +14,7 @@ import com.tmploeg.hotelbooker.services.RoomService;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -101,9 +103,12 @@ public class RoomController {
     return RoomDTO.fromRoom(room);
   }
 
-  @GetMapping("available")
-  public Set<RoomDTO> getAvailableRooms(
-      @PathVariable Long hotelId, @RequestParam String checkIn, @RequestParam String checkOut) {
+  @GetMapping("can-book")
+  public CanBookDTO canBookRooms(
+      @PathVariable Long hotelId,
+      @RequestParam Integer roomCount,
+      @RequestParam String checkIn,
+      @RequestParam String checkOut) {
     if (hotelId == null) {
       throw new BadRequestException("hotelId is required");
     }
@@ -125,8 +130,16 @@ public class RoomController {
             .filter(dT -> !dT.isBefore(parsedCheckIn))
             .orElseThrow(() -> new BadRequestException("checkOut is invalid"));
 
-    return roomService.findAvailableRooms(hotel, parsedCheckIn, parsedCheckOut).stream()
-        .map(RoomDTO::fromRoom)
-        .collect(Collectors.toSet());
+    if (roomCount == null) {
+      throw new BadRequestException("roomCount is required");
+    }
+
+    List<String> errors = new LinkedList<>();
+
+    if (roomService.getAvailableRooms(hotel, parsedCheckIn, parsedCheckOut).size() < roomCount) {
+      errors.add("insufficient available rooms");
+    }
+
+    return new CanBookDTO(errors);
   }
 }

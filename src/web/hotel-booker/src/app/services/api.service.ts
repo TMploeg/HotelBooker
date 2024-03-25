@@ -11,7 +11,7 @@ export class ApiService {
 
   constructor(private httpClient: HttpClient) { }
 
-  get<TResponse>(url: string, params?: { [key: string]: string }): Observable<ApiResponse<TResponse>> {
+  get<TResponse>(url: string, params?: { [key: string]: string | number | boolean }): Observable<ApiResponse<TResponse>> {
     return this.handleResponse(this.httpClient.get<TResponse>(
       environment.apiBaseUrl + url,
       {

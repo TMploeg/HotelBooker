@@ -23,7 +23,7 @@ public class BookingService {
   }
 
   public ValueResult<Booking> save(
-      User user, LocalDateTime checkIn, LocalDateTime checkOut, Set<Room> rooms) {
+      User user, Hotel hotel, LocalDateTime checkIn, LocalDateTime checkOut, int roomCount) {
     List<String> errors = new LinkedList<>();
 
     if (user == null) {
@@ -35,9 +35,6 @@ public class BookingService {
     if (checkOut == null) {
       throw new IllegalArgumentException("checkOut is required");
     }
-    if (rooms == null) {
-      throw new IllegalArgumentException("rooms is required");
-    }
 
     if (LocalDateTimeHelper.hasDatePassed(checkIn)) {
       errors.add("checkIn has passed");
@@ -45,29 +42,18 @@ public class BookingService {
       errors.add("checkOut is not after checkIn");
     }
 
-    if (rooms.isEmpty()) {
+    if (roomCount < 1) {
       errors.add("at least one room is required");
     }
 
-    Hotel hotel = rooms.stream().findFirst().get().getHotel();
-    if (rooms.stream().anyMatch(r -> !Objects.equals(r.getHotel().getId(), hotel.getId()))) {
-      throw new IllegalArgumentException("all rooms must have the same hotel");
-    }
-
-    Set<Room> availableRooms = roomService.findAvailableRooms(hotel, checkIn, checkOut);
-    List<String> unavailableRoomNumbers =
-        rooms.stream()
-            .filter(r -> !availableRooms.contains(r))
-            .map(r -> Integer.toString(r.getRoomNumber()))
-            .toList();
-
-    if (!unavailableRoomNumbers.isEmpty()) {
-      errors.add("rooms { " + String.join(", ", unavailableRoomNumbers) + " } are occupied");
+    Set<Room> availableRooms = roomService.getAvailableRooms(hotel, checkIn, checkOut);
+    if (availableRooms.size() < roomCount) {
+      errors.add("insufficient rooms available");
     }
 
     return errors.isEmpty()
         ? ValueResult.succesResult(
-            bookingRepository.save(new Booking(user, checkIn, checkOut, rooms)))
+            bookingRepository.save(new Booking(user, checkIn, checkOut, availableRooms)))
         : ValueResult.errorResult(errors);
   }
 
