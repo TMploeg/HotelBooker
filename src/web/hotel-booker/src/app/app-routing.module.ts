@@ -4,12 +4,14 @@ import { HotelListComponent } from './components/hotels/hotel-list/hotel-list.co
 import { HotelInfoComponent } from './components/hotels/hotel-info/hotel-info.component';
 import { AppRoutes } from "./constants/routes";
 import { BookingFormComponent } from './components/bookings/booking-form/booking-form.component';
+import { BookingInfoComponent } from './components/bookings/booking-info/booking-info.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'hotels', pathMatch: 'full' },
   { path: 'hotels', component: HotelListComponent },
   { path: AppRoutes.buildRoute(AppRoutes.HOTELS, ':' + AppRoutes.HOTEL_ID), component: HotelInfoComponent },
-  { path: AppRoutes.buildRoute(AppRoutes.BOOKINGS, AppRoutes.ADD), component: BookingFormComponent }
+  { path: AppRoutes.buildRoute(AppRoutes.BOOKINGS, AppRoutes.ADD), component: BookingFormComponent },
+  { path: AppRoutes.buildRoute(AppRoutes.BOOKINGS, ':' + AppRoutes.BOOKING_ID), component: BookingInfoComponent }
 ];
 
 @NgModule({

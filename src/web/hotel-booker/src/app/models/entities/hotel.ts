@@ -1,5 +1,5 @@
 export interface Hotel {
-    id: Number;
+    id: number;
     name: String;
     address: String;
 }

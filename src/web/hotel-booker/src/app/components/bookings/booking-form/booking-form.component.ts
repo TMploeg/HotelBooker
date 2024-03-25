@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { AppRoutes } from 'src/app/constants/routes';
-import { NewBookingDTO } from 'src/app/models/dtos/dtos.newbooking';
-import { Booking } from 'src/app/models/entities/booking';
 import { Time } from 'src/app/models/time';
 import { BookingService } from 'src/app/services/booking.service';
 import { TimeService } from 'src/app/services/time.service';
+import { MessageBoxComponent } from '../../message-box/message-box.component';
 
 @Component({
   selector: 'app-booking-form',
@@ -21,8 +21,8 @@ export class BookingFormComponent implements OnInit {
   constructor(
     private bookingService: BookingService,
     private timeService: TimeService,
-    private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private dialog: MatDialog
   ) {
     const hotelId: number = Number.parseInt(this.router.getCurrentNavigation()?.extras.state!['hotelId']);
 
@@ -53,14 +53,27 @@ export class BookingFormComponent implements OnInit {
   }
 
   submit(): void {
-    const booking = this.createNewBooking(
+    const checkIn: string = this.createDateTimeString(
       this.getControl('checkinDate')!.value,
-      this.timeService.parseTime(this.getControl('checkinTime')!.value)!,
+      this.timeService.parseTime(this.getControl('checkinTime')!.value)!
+    );
+    const checkOut: string = this.createDateTimeString(
       this.getControl('checkoutDate')!.value,
       this.timeService.parseTime(this.getControl('checkoutTime')!.value)!
     );
 
-    this.bookingService.placeBooking(booking).subscribe(succes => console.log('posted booking: ' + succes));
+    this.bookingService
+      .placeBooking(this.hotelId, checkIn, checkOut, 1)
+      .subscribe(response => {
+        if (response.succes) {
+          this.router.navigate([AppRoutes.BOOKINGS, this.hotelId]);
+          return;
+        }
+
+        this.dialog.open(MessageBoxComponent, {
+          data: response.errorMessage
+        })
+      });
   }
 
   getControl(controlName: string): FormControl | null {
@@ -222,21 +235,6 @@ export class BookingFormComponent implements OnInit {
         formattedDate1 < formattedDate2 ? -1 : 0
       )
     );
-  }
-
-  private createNewBooking(
-    checkinDate: Date,
-    checkinTime: Time,
-    checkoutDate: Date,
-    checkoutTime: Time
-  ): NewBookingDTO {
-    return {
-      id: 0,
-      checkIn: this.createDateTimeString(checkinDate, checkinTime),
-      checkOut: this.createDateTimeString(checkoutDate, checkoutTime),
-      hotelId: this.hotelId,
-      roomNumbers: [10]
-    }
   }
 
   private createDateTimeString(date: Date, time: Time) {

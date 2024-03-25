@@ -22,6 +22,8 @@ import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
 import { MatInputModule } from '@angular/material/input';
 import { BookingFormComponent } from './components/bookings/booking-form/booking-form.component';
 import { BookingInfoComponent } from './components/bookings/booking-info/booking-info.component';
+import { MessageBoxComponent } from './components/message-box/message-box.component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [
@@ -31,7 +33,8 @@ import { BookingInfoComponent } from './components/bookings/booking-info/booking
     HotelListComponent,
     HotelInfoComponent,
     BookingFormComponent,
-    BookingInfoComponent
+    BookingInfoComponent,
+    MessageBoxComponent
   ],
   imports: [
     BrowserModule,
@@ -49,7 +52,8 @@ import { BookingInfoComponent } from './components/bookings/booking-info/booking
     MatDatepickerModule,
     NgxMaterialTimepickerModule,
     MatInputModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    MatDialogModule
   ],
   providers: [],
   bootstrap: [AppComponent]
