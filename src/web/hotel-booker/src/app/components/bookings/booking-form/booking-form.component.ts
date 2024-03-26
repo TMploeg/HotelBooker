@@ -7,6 +7,7 @@ import { Time } from 'src/app/models/time';
 import { BookingService } from 'src/app/services/booking.service';
 import { TimeService } from 'src/app/services/time.service';
 import { MessageBoxComponent } from '../../message-box/message-box.component';
+import { ErrorResult, SuccesResult } from '../../../models/results';
 
 @Component({
   selector: 'app-booking-form',
@@ -69,13 +70,14 @@ export class BookingFormComponent implements OnInit {
     this.bookingService
       .placeBooking(this.hotelId, checkIn, checkOut, nrOfRooms)
       .subscribe(response => {
-        if (response.succes) {
-          this.router.navigate([AppRoutes.BOOKINGS, this.hotelId]);
+        if (response instanceof SuccesResult) {
+          this.router.navigate([AppRoutes.BOOKINGS, response.getValue().id]);
           return;
         }
 
+        console.log(response.getErrors());
         this.dialog.open(MessageBoxComponent, {
-          data: response.errorMessage
+          data: response.getErrors()
         })
       });
   }
