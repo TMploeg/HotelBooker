@@ -1,7 +1,10 @@
 import { Component } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { delay } from 'rxjs';
 import { AppRoutes } from 'src/app/constants/routes';
 import { Hotel } from 'src/app/models/entities/hotel';
+import { ErrorResult, SuccesResult } from 'src/app/models/results';
 import { HotelService } from 'src/app/services/hotel.service';
 
 @Component({
@@ -10,16 +13,28 @@ import { HotelService } from 'src/app/services/hotel.service';
   styleUrls: ['./hotel-list.component.scss']
 })
 export class HotelListComponent {
-  hotels: Hotel[] = [];
+  hotels?: Hotel[];
+  loading: boolean = false;
 
   constructor(
     private router: Router,
-    private hotelService: HotelService
+    private hotelService: HotelService,
+    private snackbar: MatSnackBar
   ) { }
 
   ngOnInit(): void {
-    this.hotelService.getAll().subscribe(hotels => {
-      this.hotels = hotels ?? [];
+    this.loading = true;
+    this.hotelService.getAll().subscribe(result => {
+      if (result instanceof SuccesResult) {
+        this.hotels = result.getValue();
+      }
+      else {
+        this.snackbar.open("ERROR: failed to load hotels", "ok", {
+          duration: 3000
+        });
+      }
+
+      this.loading = false;
     });
   }
 

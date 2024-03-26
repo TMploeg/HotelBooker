@@ -7,9 +7,9 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
   styleUrls: ['./message-box.component.scss']
 })
 export class MessageBoxComponent {
-  constructor(@Inject(MAT_DIALOG_DATA) private data: string) { }
+  constructor(@Inject(MAT_DIALOG_DATA) private data: string[]) { }
 
-  getErrorMessage() {
+  getErrorMessages(): string[] {
     return this.data;
   }
 }

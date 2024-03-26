@@ -24,6 +24,7 @@ import { BookingFormComponent } from './components/bookings/booking-form/booking
 import { BookingInfoComponent } from './components/bookings/booking-info/booking-info.component';
 import { MessageBoxComponent } from './components/message-box/message-box.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [
@@ -53,7 +54,8 @@ import { MatDialogModule } from '@angular/material/dialog';
     NgxMaterialTimepickerModule,
     MatInputModule,
     MatNativeDateModule,
-    MatDialogModule
+    MatDialogModule,
+    MatSnackBarModule
   ],
   providers: [],
   bootstrap: [AppComponent]

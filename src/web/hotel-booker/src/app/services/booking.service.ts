@@ -3,8 +3,8 @@ import { ApiService } from './api.service';
 import { Booking } from '../models/entities/booking';
 import { Observable, map, of, switchMap } from 'rxjs';
 import { NewBookingDTO } from '../models/dtos/dtos.newbooking';
-import { RoomDTO } from '../models/dtos/dtos.room';
 import { CanBookDTO } from '../models/dtos/dtos.canbook';
+import { ErrorResult, SuccesResult } from '../models/results';
 
 @Injectable({
   providedIn: 'root'
@@ -17,25 +17,21 @@ export class BookingService {
     checkIn: string,
     checkOut: string,
     roomCount: number
-  ): Observable<{
-    newBooking: Booking | null,
-    succes: boolean,
-    errorMessage: string | null
-  }> {
+  ): Observable<SuccesResult<Booking> | ErrorResult> {
     return this.apiService.get<CanBookDTO>('hotels/' + hotelId + '/rooms/can-book', {
       roomCount: roomCount,
       checkIn: checkIn,
       checkOut: checkOut
     }).pipe(switchMap((canBookResponse, _) => {
+      console.log(canBookResponse.body!.canBook);
       if (!canBookResponse.succeeded) {
-        const errorMessage: string = canBookResponse.error;
-        return of(this.placeBookingErrorResponse('unknown error occurred' + errorMessage));
+        return of(new ErrorResult([canBookResponse.error]));
       }
 
       const value: CanBookDTO = canBookResponse.body!;
 
       if (!value.canBook) {
-        return of(this.placeBookingErrorResponse('cannot place booking: ' + value.errors.join(';')));
+        return of(new ErrorResult(value.errors));
       }
 
       const newBooking: NewBookingDTO = {
@@ -46,24 +42,12 @@ export class BookingService {
       }
 
       return this.apiService.post<Booking>('bookings', newBooking).pipe(map(postBookingResponse => {
-        return {
-          newBooking: postBookingResponse.body,
-          succes: postBookingResponse.succeeded,
-          errorMessage: null
-        };
+        if (!postBookingResponse.succeeded) {
+          return new ErrorResult(['booking failed due to unknown error']);
+        }
+
+        return new SuccesResult<Booking>(postBookingResponse.body!);
       }));
     }));
-  }
-
-  private placeBookingErrorResponse(errorMessage: string): {
-    newBooking: Booking | null,
-    succes: boolean,
-    errorMessage: string | null
-  } {
-    return {
-      newBooking: null,
-      succes: false,
-      errorMessage: errorMessage
-    };
   }
 }

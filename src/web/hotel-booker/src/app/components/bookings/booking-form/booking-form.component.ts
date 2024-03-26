@@ -7,6 +7,7 @@ import { Time } from 'src/app/models/time';
 import { BookingService } from 'src/app/services/booking.service';
 import { TimeService } from 'src/app/services/time.service';
 import { MessageBoxComponent } from '../../message-box/message-box.component';
+import { ErrorResult, SuccesResult } from '../../../models/results';
 
 @Component({
   selector: 'app-booking-form',
@@ -56,26 +57,37 @@ export class BookingFormComponent implements OnInit {
   }
 
   submit(): void {
+    const parsedCheckinTime: SuccesResult<Time> | ErrorResult = this.timeService.parseTime(this.getControl('checkinTime')!.value);
+    if (parsedCheckinTime instanceof ErrorResult) {
+      throw new Error("check-in time is in invalid format");
+    }
     const checkIn: string = this.createDateTimeString(
       this.getControl('checkinDate')!.value,
-      this.timeService.parseTime(this.getControl('checkinTime')!.value)!
+      parsedCheckinTime.getValue()
     );
+
+    const parsedCheckoutTime: SuccesResult<Time> | ErrorResult = this.timeService.parseTime(this.getControl('checkoutTime')!.value);
+    if (parsedCheckoutTime instanceof ErrorResult) {
+      throw new Error("check-out time is in invalid format");
+    }
     const checkOut: string = this.createDateTimeString(
       this.getControl('checkoutDate')!.value,
-      this.timeService.parseTime(this.getControl('checkoutTime')!.value)!
+      parsedCheckoutTime.getValue()
     );
+
     const nrOfRooms: number = this.getControl('roomCount')!.value;
 
     this.bookingService
       .placeBooking(this.hotelId, checkIn, checkOut, nrOfRooms)
       .subscribe(response => {
-        if (response.succes) {
-          this.router.navigate([AppRoutes.BOOKINGS, this.hotelId]);
+        if (response instanceof SuccesResult) {
+          this.router.navigate([AppRoutes.BOOKINGS, response.getValue().id]);
           return;
         }
 
+        console.log(response.getErrors());
         this.dialog.open(MessageBoxComponent, {
-          data: response.errorMessage
+          data: response.getErrors()
         })
       });
   }
@@ -216,14 +228,14 @@ export class BookingFormComponent implements OnInit {
       return false;
     }
 
-    const controlTime: Time | null = this.timeService.parseTime(control.value);
-    const compareTime: Time | null = this.timeService.parseTime(compareTimeString);
+    const controlTime: SuccesResult<Time> | ErrorResult = this.timeService.parseTime(control.value);
+    const compareTime: SuccesResult<Time> | ErrorResult = this.timeService.parseTime(compareTimeString);
 
-    if (controlTime == null || compareTime == null) {
+    if (controlTime instanceof ErrorResult || compareTime instanceof ErrorResult) {
       throw new Error('invalid time format');
     }
 
-    if (controlTime.compareTo(compareTime) < 0) {
+    if (controlTime.getValue().compareTo(compareTime.getValue()) < 0) {
       return true;
     }
 
