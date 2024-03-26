@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppRoutes } from 'src/app/constants/routes';
 import { Hotel } from 'src/app/models/entities/hotel';
+import { ErrorResult } from 'src/app/models/results';
 import { HotelService } from 'src/app/services/hotel.service';
 
 @Component({
@@ -26,12 +27,13 @@ export class HotelInfoComponent implements OnInit {
 
       const hotelId: number = params[AppRoutes.HOTEL_ID];
 
-      this.hotelService.getById(hotelId).subscribe(hotel => {
-        if (hotel == null) {
+      this.hotelService.getById(hotelId).subscribe(result => {
+        if (result instanceof ErrorResult) {
           this.returnToHomeScreen();
+          return;
         }
 
-        this.hotel = hotel;
+        this.hotel = result.getValue();
       });
     });
   }
