@@ -20,7 +20,7 @@ public class AuthenticationController {
   private final JwtService jwtService;
 
   @PostMapping("login")
-  public String Login(@RequestBody AuthDTO authDTO) {
+  public String login(@RequestBody AuthDTO authDTO) {
     try {
       authenticationManager.authenticate(
           new UsernamePasswordAuthenticationToken(authDTO.username(), authDTO.password()));
