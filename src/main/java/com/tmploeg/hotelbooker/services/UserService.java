@@ -20,6 +20,9 @@ public class UserService implements UserDetailsService {
   private final RoleService roleService;
   private final BookingRepository bookingRepository;
 
+  private static final int PASSWORD_MIN_LENGTH = 7;
+  private static final String PASSWORD_SPECIAL_CHARACTER_PATTERN = "[!@#$%&*()_+=|<>?{}\\[\\]~-]";
+
   public User save(String username, String password, Role role) {
     return userRepository.save(new User(username, passwordEncoder.encode(password), role));
   }
@@ -44,5 +47,14 @@ public class UserService implements UserDetailsService {
     }
 
     return user.getRole().getName().equals(RoleName.ADMIN.toString());
+  }
+
+  public boolean isValidPassword(String password) {
+    return password != null
+        && password.length() >= PASSWORD_MIN_LENGTH
+        && password.matches(PASSWORD_SPECIAL_CHARACTER_PATTERN)
+        && password.matches("[0-9]")
+        && password.matches("[a-z]")
+        && password.matches("[A-Z]");
   }
 }
