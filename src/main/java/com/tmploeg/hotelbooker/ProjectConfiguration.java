@@ -18,6 +18,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class ProjectConfiguration {
   private static final String ROUTE_SEPARATOR = "/";
 
+  @Value("${hotelbooker.cors}")
+  private String corsAllowedOrigins;
+
   @Bean
   public PasswordEncoder passwordEncoder() {
     return PasswordEncoderFactories.createDelegatingPasswordEncoder();
@@ -48,7 +51,7 @@ public class ProjectConfiguration {
     return new WebMvcConfigurer() {
       @Override
       public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**").allowedOrigins("http://localhost:4200");
+        registry.addMapping("/**").allowedOrigins(corsAllowedOrigins);
       }
     };
   }
