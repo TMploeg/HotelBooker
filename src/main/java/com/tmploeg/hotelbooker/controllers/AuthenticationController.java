@@ -9,9 +9,7 @@ import com.tmploeg.hotelbooker.services.JwtService;
 import com.tmploeg.hotelbooker.services.RoleService;
 import com.tmploeg.hotelbooker.services.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +20,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 @RequestMapping(ControllerRoutes.AUTH)
 @RequiredArgsConstructor
 public class AuthenticationController {
-  private final AuthenticationManager authenticationManager;
   private final JwtService jwtService;
   private final UserService userService;
   private final RoleService roleService;
@@ -33,10 +30,8 @@ public class AuthenticationController {
       throw new BadRequestException("username and password are required");
     }
 
-    try {
-      authenticationManager.authenticate(
-          new UsernamePasswordAuthenticationToken(authDTO.username(), authDTO.password()));
-    } catch (AuthenticationException ex) {
+    if (!userService.userExists(authDTO.username())
+        || !userService.isCorrectUserPassword(authDTO.username(), authDTO.password())) {
       throw new BadRequestException("username or password incorrect");
     }
 
@@ -44,7 +39,7 @@ public class AuthenticationController {
   }
 
   @PostMapping("register")
-  public UserDTO register(@RequestBody AuthDTO authDTO, UriComponentsBuilder ucb) {
+  public UserDTO register(@RequestBody @NotNull AuthDTO authDTO, UriComponentsBuilder ucb) {
     if (authDTO.username() == null || authDTO.password() == null) {
       throw new BadRequestException("username and password are required");
     }
