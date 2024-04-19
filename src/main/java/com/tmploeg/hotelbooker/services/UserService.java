@@ -6,6 +6,7 @@ import com.tmploeg.hotelbooker.enums.RoleName;
 import com.tmploeg.hotelbooker.models.entities.Role;
 import com.tmploeg.hotelbooker.models.entities.User;
 import java.util.Set;
+import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -57,5 +58,9 @@ public class UserService implements UserDetailsService {
         && Pattern.compile("[A-Z]").matcher(password).find()
         && Pattern.compile(PASSWORD_SPECIAL_CHARACTER_PATTERN).matcher(password).find();
   }
+
+  public boolean isCorrectUserPassword(String username, String password)
+      throws UsernameNotFoundException {
+    return passwordEncoder.matches(password, loadUserByUsername(username).getPassword());
   }
 }
