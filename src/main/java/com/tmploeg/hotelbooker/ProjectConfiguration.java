@@ -2,15 +2,20 @@ package com.tmploeg.hotelbooker;
 
 import com.tmploeg.hotelbooker.controllers.ControllerRoutes;
 import com.tmploeg.hotelbooker.enums.RoleName;
+import com.tmploeg.hotelbooker.filters.JwtAuthenticationFilter;
+import com.tmploeg.hotelbooker.other.UnauthorizedEntryPoint;
+import io.jsonwebtoken.Jwts;
+import javax.crypto.SecretKey;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -27,14 +32,14 @@ public class ProjectConfiguration {
   }
 
   @Bean
-  public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+  public SecurityFilterChain securityFilterChain(
+      HttpSecurity httpSecurity, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
     return httpSecurity
-        .httpBasic(Customizer.withDefaults())
         .csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(
             requests ->
                 requests
-                    .requestMatchers(ControllerRoutes.USERS + ROUTE_SEPARATOR + "**")
+                    .requestMatchers(ControllerRoutes.AUTH + ROUTE_SEPARATOR + "**")
                     .permitAll()
                     .requestMatchers(
                         HttpMethod.GET, ControllerRoutes.HOTELS + ROUTE_SEPARATOR + "**")
@@ -43,6 +48,10 @@ public class ProjectConfiguration {
                     .hasAuthority(RoleName.ADMIN.toString())
                     .anyRequest()
                     .authenticated())
+        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+        .exceptionHandling(
+            exceptionHandlingConfigurer ->
+                exceptionHandlingConfigurer.authenticationEntryPoint(new UnauthorizedEntryPoint()))
         .build();
   }
 
@@ -54,5 +63,10 @@ public class ProjectConfiguration {
         registry.addMapping("/**").allowedOrigins(corsAllowedOrigins);
       }
     };
+  }
+
+  @Bean
+  public SecretKey secretKey() {
+    return Jwts.SIG.HS256.key().build();
   }
 }
