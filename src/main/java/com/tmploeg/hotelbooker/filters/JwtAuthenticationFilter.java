@@ -1,6 +1,5 @@
 package com.tmploeg.hotelbooker.filters;
 
-import com.tmploeg.hotelbooker.models.JwtToken;
 import com.tmploeg.hotelbooker.models.entities.User;
 import com.tmploeg.hotelbooker.services.JwtService;
 import com.tmploeg.hotelbooker.services.UserService;
@@ -15,10 +14,12 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @RequiredArgsConstructor
-public class AuthenticationFilter extends OncePerRequestFilter {
+@Component
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
   private final UserService userService;
   private final JwtService jwtService;
 
@@ -33,37 +34,38 @@ public class AuthenticationFilter extends OncePerRequestFilter {
       throws ServletException, IOException {
 
     if (SecurityContextHolder.getContext().getAuthentication() != null) {
-      return;
+      filterChain.doFilter(request, response);
     }
 
-    Optional<String> authHeader = getAuthorizationHeader(request);
+    if (requestHasValidAuthHeader(request)) {
+      getUserFromAuthorizationHeader(request.getHeader(AUTHORIZATION_HEADER_NAME))
+          .ifPresent(
+              principal -> {
+                UsernamePasswordAuthenticationToken authToken =
+                    new UsernamePasswordAuthenticationToken(
+                        principal, null, principal.getAuthorities());
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-    if (authHeader.isEmpty()) {
-      return;
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+              });
     }
-
-    String rawToken = authHeader.get().substring(AUTHORIZATION_HEADER_JWT_PREFIX.length());
-    Optional<JwtToken> parsedToken = jwtService.readToken(rawToken);
-
-    if (parsedToken.isEmpty()
-        || parsedToken.get().isExpired()
-        || !userService.userExists(parsedToken.get().username())) {
-      return;
-    }
-
-    User user = userService.loadUserByUsername(parsedToken.get().username());
-
-    UsernamePasswordAuthenticationToken authToken =
-        new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-    SecurityContextHolder.getContext().setAuthentication(authToken);
 
     filterChain.doFilter(request, response);
   }
 
-  private static Optional<String> getAuthorizationHeader(HttpServletRequest request) {
-    return Optional.ofNullable(request.getHeader(AUTHORIZATION_HEADER_NAME))
-        .filter(authHeader -> authHeader.startsWith(AUTHORIZATION_HEADER_JWT_PREFIX));
+  private static boolean requestHasValidAuthHeader(HttpServletRequest request) {
+    String authHeader = request.getHeader(AUTHORIZATION_HEADER_NAME);
+    return authHeader != null && authHeader.startsWith(AUTHORIZATION_HEADER_JWT_PREFIX);
+  }
+
+  private Optional<User> getUserFromAuthorizationHeader(String authorization) {
+    if (authorization == null || !authorization.startsWith(AUTHORIZATION_HEADER_JWT_PREFIX)) {
+      return Optional.empty();
+    }
+
+    return jwtService
+        .readToken(authorization.substring(AUTHORIZATION_HEADER_JWT_PREFIX.length()))
+        .filter(token -> !token.isExpired())
+        .map(token -> userService.loadUserByUsername(token.username()));
   }
 }
