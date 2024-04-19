@@ -52,9 +52,10 @@ public class UserService implements UserDetailsService {
   public boolean isValidPassword(String password) {
     return password != null
         && password.length() >= PASSWORD_MIN_LENGTH
-        && password.matches(PASSWORD_SPECIAL_CHARACTER_PATTERN)
-        && password.matches("[0-9]")
-        && password.matches("[a-z]")
-        && password.matches("[A-Z]");
+        && Pattern.compile("[0-9]").matcher(password).find()
+        && Pattern.compile("[a-z]").matcher(password).find()
+        && Pattern.compile("[A-Z]").matcher(password).find()
+        && Pattern.compile(PASSWORD_SPECIAL_CHARACTER_PATTERN).matcher(password).find();
+  }
   }
 }
