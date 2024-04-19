@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
-@RequestMapping("auth")
+@RequestMapping(ControllerRoutes.AUTH)
 @RequiredArgsConstructor
 public class AuthenticationController {
   private final AuthenticationManager authenticationManager;
