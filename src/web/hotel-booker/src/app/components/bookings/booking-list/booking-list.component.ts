@@ -15,7 +15,10 @@ export class BookingListComponent implements OnInit {
   constructor(private bookingService: BookingService, private router: Router) { }
 
   ngOnInit(): void {
+    this.loading = true;
     this.bookingService.getBookings().subscribe(response => {
+      this.loading = false;
+
       if (!response.succeeded) {
         alert('unknown error occurred, could not get bookings');
         console.error(response.error);

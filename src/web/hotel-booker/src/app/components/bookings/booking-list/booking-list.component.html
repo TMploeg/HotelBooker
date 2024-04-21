@@ -1,14 +1,16 @@
 <div *ngIf="loading; else loadedBlock"><mat-spinner/></div>
 <ng-template #loadedBlock>
-    <mat-nav-list class="hotel-list" *ngIf="bookings && bookings.length > 0; else emptyBlock">
-        <div mat-subheader class="subheader">Bookings</div>
-        <mat-list-item *ngFor="let booking of bookings" (click)="navigate(booking)">
-            <span matListItemTitle>{{booking.checkIn}} - {{booking.checkOut}}</span>
-        </mat-list-item>
-    </mat-nav-list>
-</ng-template>
-<ng-template #emptyBlock>
-    <div>
-        You do not have any bookings, browse our <a routerLink="../hotels">hotels</a> to get started!
+    <div *ngIf="bookings">
+        <mat-nav-list class="hotel-list" *ngIf="bookings.length > 0; else emptyBlock">
+            <div mat-subheader class="subheader">Bookings</div>
+            <mat-list-item *ngFor="let booking of bookings" (click)="navigate(booking)">
+                <span matListItemTitle>{{booking.checkIn}} - {{booking.checkOut}}</span>
+            </mat-list-item>
+        </mat-nav-list>
     </div>
+    <ng-template #emptyBlock>
+        <div>
+            You do not have any bookings, browse our <a routerLink="../hotels">hotels</a> to get started!
+        </div>
+    </ng-template>
 </ng-template>

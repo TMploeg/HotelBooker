@@ -1,8 +1,8 @@
-import { HttpClient, HttpErrorResponse, HttpParams, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, map, of } from 'rxjs';
-import { ApiResponse } from '../models/api.response';
 import { environment } from 'src/environment/environment';
+import { ApiResponse } from '../models/api.response';
 
 @Injectable({
   providedIn: 'root'
@@ -45,7 +45,7 @@ export class ApiService {
 
         return {
           body: !isErrorResponse ? response.body : null,
-          error: isErrorResponse ? response.error : null,
+          error: isErrorResponse ? response.message : null,
           succeeded: !isErrorResponse
         }
       }));
@@ -53,8 +53,8 @@ export class ApiService {
 
   getAuthHeader(): string {
     const token: string = 'eyJhbGciOiJIUzI1NiJ9.' +
-      'eyJyb2xlcyI6W3siYXV0aG9yaXR5IjoiVVNFUiJ9XSwic3ViIjoidGVzdHVzZXIiLCJpYXQiOjE3MTM3MTIxMDQsImV4cCI6MTcxMzcxNTcwNH0.' +
-      'DThDNRCSBirvCLZdW1L1aFpqvRWxRewA_d31gxRtVIg';
+      'eyJyb2xlcyI6W3siYXV0aG9yaXR5IjoiVVNFUiJ9XSwic3ViIjoidGVzdHVzZXIiLCJpYXQiOjE3MTM3MjMwNjgsImV4cCI6MTcxMzcyNjY2OH0.' +
+      'UB94c9wTCW4_VKi4aSLUvaPZzan66keKSMTcNFLXpbM';
 
     return 'Bearer ' + token;
   }

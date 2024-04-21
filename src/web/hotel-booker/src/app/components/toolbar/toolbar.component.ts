@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Output } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 
 @Component({
@@ -8,7 +9,7 @@ import { Router } from '@angular/router';
 })
 export class ToolbarComponent {
   @Output() menuClicked = new EventEmitter();
-  constructor(private router: Router) { }
+  constructor(private router: Router, private dialog: MatDialog) { }
   titleClicked(): void {
     this.router.navigateByUrl('');
   }
