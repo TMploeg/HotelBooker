@@ -26,6 +26,7 @@ import { MessageBoxComponent } from './components/message-box/message-box.compon
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { BookingListComponent } from './components/bookings/booking-list/booking-list.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { MatSidenavModule } from '@angular/material/sidenav';
     HotelInfoComponent,
     BookingFormComponent,
     BookingInfoComponent,
-    MessageBoxComponent
+    MessageBoxComponent,
+    BookingListComponent
   ],
   imports: [
     BrowserModule,

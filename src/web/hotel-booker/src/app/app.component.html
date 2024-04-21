@@ -1,17 +1,17 @@
 <app-toolbar (menuClicked)="sidenav.toggle()"></app-toolbar>
 <mat-sidenav-container>
-    <mat-sidenav #sidenav>
-        <mat-nav-list (click)="sidenav.toggle()">
-            <mat-list-item>
-                <div class="list-item-content">
-                    <mat-icon>hotel</mat-icon>
-                    <span>hotels</span>
-                </div>
-            </mat-list-item>
-            <mat-list-item>
+    <mat-sidenav #sidenav autoFocus="false">
+        <mat-nav-list (click)="sidenav.close()">
+            <mat-list-item routerLink="/bookings">
                 <div class="list-item-content">
                     <mat-icon>list</mat-icon>
                     <span>Bookings</span>
+                </div>
+            </mat-list-item>
+            <mat-list-item routerLink="/hotels">
+                <div class="list-item-content">
+                    <mat-icon>hotel</mat-icon>
+                    <span>hotels</span>
                 </div>
             </mat-list-item>
         </mat-nav-list>
