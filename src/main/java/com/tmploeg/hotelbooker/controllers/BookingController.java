@@ -3,7 +3,6 @@ package com.tmploeg.hotelbooker.controllers;
 import com.tmploeg.hotelbooker.dtos.BookingDTO;
 import com.tmploeg.hotelbooker.dtos.NewBookingDTO;
 import com.tmploeg.hotelbooker.exceptions.BadRequestException;
-import com.tmploeg.hotelbooker.exceptions.ForbiddenException;
 import com.tmploeg.hotelbooker.exceptions.NotFoundException;
 import com.tmploeg.hotelbooker.helpers.LocalDateTimeHelper;
 import com.tmploeg.hotelbooker.models.ValueResult;
@@ -126,44 +125,23 @@ public class BookingController {
     Booking booking =
         bookingService
             .findById(bookingDTO.id())
-            .filter(b -> b.getUser() == user)
+            .filter(b -> b.isOwnedByUser(user))
             .orElseThrow(
                 () ->
                     new BadRequestException("no booking with id '" + bookingDTO.id() + "' exists"));
 
     LocalDateTime newCheckIn =
-        LocalDateTimeHelper.tryParse(bookingDTO.checkIn())
-            .orElseThrow(() -> new BadRequestException("checkIn is invalid"));
+        bookingDTO.checkIn() != null
+            ? LocalDateTimeHelper.tryParse(bookingDTO.checkIn())
+                .orElseThrow(() -> new BadRequestException("checkIn is invalid"))
+            : null;
     LocalDateTime newCheckOut =
-        LocalDateTimeHelper.tryParse(bookingDTO.checkOut())
-            .orElseThrow(() -> new BadRequestException("checkOut is invalid"));
+        bookingDTO.checkOut() != null
+            ? LocalDateTimeHelper.tryParse(bookingDTO.checkOut())
+                .orElseThrow(() -> new BadRequestException("checkOut is invalid"))
+            : null;
 
-    if (newCheckIn != booking.getCheckIn()) {
-      if (LocalDateTimeHelper.hasDatePassed(booking.getCheckIn())) {
-        throw new ForbiddenException("cannot change checkIn when already passed");
-      }
-      if (LocalDateTimeHelper.hasDatePassed(newCheckIn)) {
-        throw new ForbiddenException("checkIn has already passed");
-      }
-    }
-
-    if (newCheckOut != booking.getCheckOut()) {
-      if (LocalDateTimeHelper.hasDatePassed(booking.getCheckOut())) {
-        throw new ForbiddenException("cannot change checkOut when already passed");
-      }
-      if (LocalDateTimeHelper.hasDatePassed(newCheckOut)) {
-        throw new ForbiddenException("checkOut has already passed");
-      }
-    }
-
-    if (newCheckOut.isBefore(newCheckIn)) {
-      throw new ForbiddenException("checkOut cannot be before checkIn");
-    }
-
-    booking.setCheckIn(newCheckIn);
-    booking.setCheckOut(newCheckOut);
-
-    bookingService.update(booking);
+    updateBookingCheckInAndCheckOut(booking, newCheckIn, newCheckOut);
 
     return BookingDTO.fromBooking(booking);
   }
@@ -186,5 +164,42 @@ public class BookingController {
 
   private User getUser(@NotNull Authentication authentication) {
     return (User) authentication.getPrincipal();
+  }
+
+  private void updateBookingCheckInAndCheckOut(
+      Booking booking, LocalDateTime newCheckIn, LocalDateTime newCheckOut) {
+    if (booking == null) {
+      throw new IllegalArgumentException("booking is null");
+    }
+
+    if (LocalDateTimeHelper.hasDatePassed(booking.getCheckIn())) {
+      throw new BadRequestException("cannot update booking when checkIn has already passed");
+    }
+
+    if (newCheckIn != null) {
+      if (LocalDateTimeHelper.hasDatePassed(newCheckIn)) {
+        throw new BadRequestException("new checkIn value has already passed");
+      }
+
+      if (newCheckOut == null && newCheckIn.isAfter(booking.getCheckOut())) {
+        throw new BadRequestException("new checkIn value is after checkOut");
+      }
+
+      booking.setCheckIn(newCheckIn);
+    }
+
+    if (newCheckOut != null) {
+      if (LocalDateTimeHelper.hasDatePassed(newCheckOut)) {
+        throw new BadRequestException("new checkOut value has already passed");
+      }
+
+      if (newCheckOut.isBefore(booking.getCheckIn())) {
+        throw new BadRequestException("new checkOut value is before checkIn");
+      }
+
+      booking.setCheckOut(newCheckOut);
+    }
+
+    bookingService.update(booking);
   }
 }
