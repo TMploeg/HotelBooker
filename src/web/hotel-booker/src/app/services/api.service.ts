@@ -52,10 +52,10 @@ export class ApiService {
   }
 
   getAuthHeader(): string {
-    const username: string = 'Yggdrasil';
-    const password: string = 'BlueQueue_0428';
+    const token: string = 'eyJhbGciOiJIUzI1NiJ9.' +
+      'eyJyb2xlcyI6W3siYXV0aG9yaXR5IjoiVVNFUiJ9XSwic3ViIjoidGVzdHVzZXIiLCJpYXQiOjE3MTM3MTIxMDQsImV4cCI6MTcxMzcxNTcwNH0.' +
+      'DThDNRCSBirvCLZdW1L1aFpqvRWxRewA_d31gxRtVIg';
 
-    const encodedCredentials = 'Basic ' + btoa(username + ':' + password);
-    return encodedCredentials;
+    return 'Bearer ' + token;
   }
 }
