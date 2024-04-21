@@ -1,2 +1,22 @@
-<app-toolbar></app-toolbar>
-<router-outlet></router-outlet>
+<app-toolbar (menuClicked)="sidenav.toggle()"></app-toolbar>
+<mat-sidenav-container>
+    <mat-sidenav #sidenav>
+        <mat-nav-list (click)="sidenav.toggle()">
+            <mat-list-item>
+                <div class="list-item-content">
+                    <mat-icon>hotel</mat-icon>
+                    <span>hotels</span>
+                </div>
+            </mat-list-item>
+            <mat-list-item>
+                <div class="list-item-content">
+                    <mat-icon>list</mat-icon>
+                    <span>Bookings</span>
+                </div>
+            </mat-list-item>
+        </mat-nav-list>
+    </mat-sidenav>
+    <mat-sidenav-content>
+        <router-outlet></router-outlet>
+    </mat-sidenav-content>
+</mat-sidenav-container>
