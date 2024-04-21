@@ -25,6 +25,8 @@ import { BookingInfoComponent } from './components/bookings/booking-info/booking
 import { MessageBoxComponent } from './components/message-box/message-box.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { BookingListComponent } from './components/bookings/booking-list/booking-list.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +37,8 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     HotelInfoComponent,
     BookingFormComponent,
     BookingInfoComponent,
-    MessageBoxComponent
+    MessageBoxComponent,
+    BookingListComponent
   ],
   imports: [
     BrowserModule,
@@ -55,7 +58,8 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     MatInputModule,
     MatNativeDateModule,
     MatDialogModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatSidenavModule
   ],
   providers: [],
   bootstrap: [AppComponent]

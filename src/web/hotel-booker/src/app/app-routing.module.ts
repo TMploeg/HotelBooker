@@ -5,9 +5,11 @@ import { HotelInfoComponent } from './components/hotels/hotel-info/hotel-info.co
 import { AppRoutes } from "./constants/routes";
 import { BookingFormComponent } from './components/bookings/booking-form/booking-form.component';
 import { BookingInfoComponent } from './components/bookings/booking-info/booking-info.component';
+import { BookingListComponent } from './components/bookings/booking-list/booking-list.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'hotels', pathMatch: 'full' },
+  { path: '', redirectTo: 'bookings', pathMatch: 'full' },
+  { path: 'bookings', component: BookingListComponent },
   { path: 'hotels', component: HotelListComponent },
   { path: AppRoutes.buildRoute(AppRoutes.HOTELS, ':' + AppRoutes.HOTEL_ID), component: HotelInfoComponent },
   { path: AppRoutes.buildRoute(AppRoutes.BOOKINGS, AppRoutes.ADD), component: BookingFormComponent },

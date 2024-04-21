@@ -12,6 +12,10 @@ import { ErrorResult, SuccesResult } from '../models/results';
 export class BookingService {
   constructor(private apiService: ApiService) { }
 
+  getBookings() {
+    return this.apiService.get<Booking[]>('bookings');
+  }
+
   placeBooking(
     hotelId: number,
     checkIn: string,
