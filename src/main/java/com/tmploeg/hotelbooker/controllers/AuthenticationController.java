@@ -1,6 +1,7 @@
 package com.tmploeg.hotelbooker.controllers;
 
 import com.tmploeg.hotelbooker.dtos.AuthDTO;
+import com.tmploeg.hotelbooker.dtos.AuthTokenDTO;
 import com.tmploeg.hotelbooker.dtos.UserDTO;
 import com.tmploeg.hotelbooker.enums.RoleName;
 import com.tmploeg.hotelbooker.exceptions.BadRequestException;
@@ -25,7 +26,7 @@ public class AuthenticationController {
   private final RoleService roleService;
 
   @PostMapping("login")
-  public String login(@RequestBody AuthDTO authDTO) {
+  public AuthTokenDTO login(@RequestBody AuthDTO authDTO) {
     if (authDTO.username() == null || authDTO.password() == null) {
       throw new BadRequestException("username and password are required");
     }
@@ -35,7 +36,7 @@ public class AuthenticationController {
       throw new BadRequestException("username or password incorrect");
     }
 
-    return jwtService.generateTokenForUser(authDTO.username());
+    return new AuthTokenDTO(jwtService.generateTokenForUser(authDTO.username()));
   }
 
   @PostMapping("register")

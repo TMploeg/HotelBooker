@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { ApiService } from './api.service';
-import { Booking } from '../models/entities/booking';
-import { Observable, map, of, switchMap } from 'rxjs';
-import { NewBookingDTO } from '../models/dtos/dtos.newbooking';
+import { Observable, of, switchMap } from 'rxjs';
+import { ApiResponse } from '../models/api.response';
 import { CanBookDTO } from '../models/dtos/dtos.canbook';
-import { ErrorResult, SuccesResult } from '../models/results';
+import { NewBookingDTO } from '../models/dtos/dtos.newbooking';
+import { Booking } from '../models/entities/booking';
+import { ApiService } from './api.service';
 
 @Injectable({
   providedIn: 'root'
@@ -21,37 +21,25 @@ export class BookingService {
     checkIn: string,
     checkOut: string,
     roomCount: number
-  ): Observable<SuccesResult<Booking> | ErrorResult> {
+  ): Observable<ApiResponse<Booking>> {
     return this.apiService.get<CanBookDTO>('hotels/' + hotelId + '/rooms/can-book', {
       roomCount: roomCount,
       checkIn: checkIn,
       checkOut: checkOut
     }).pipe(switchMap((canBookResponse, _) => {
-      console.log(canBookResponse.body!.canBook);
-      if (!canBookResponse.succeeded) {
-        return of(new ErrorResult([canBookResponse.error]));
-      }
+      if (canBookResponse.succeeded()) {
 
-      const value: CanBookDTO = canBookResponse.body!;
-
-      if (!value.canBook) {
-        return of(new ErrorResult(value.errors));
-      }
-
-      const newBooking: NewBookingDTO = {
-        checkIn: checkIn,
-        checkOut: checkOut,
-        hotelId: hotelId,
-        roomCount: roomCount
-      }
-
-      return this.apiService.post<Booking>('bookings', newBooking).pipe(map(postBookingResponse => {
-        if (!postBookingResponse.succeeded) {
-          return new ErrorResult(['booking failed due to unknown error']);
+        const newBooking: NewBookingDTO = {
+          checkIn: checkIn,
+          checkOut: checkOut,
+          hotelId: hotelId,
+          roomCount: roomCount
         }
 
-        return new SuccesResult<Booking>(postBookingResponse.body!);
-      }));
+        return this.apiService.post<Booking>('bookings', newBooking);
+      }
+
+      return of(ApiResponse.convertFailureResponse<CanBookDTO, Booking>(canBookResponse));
     }));
   }
 }

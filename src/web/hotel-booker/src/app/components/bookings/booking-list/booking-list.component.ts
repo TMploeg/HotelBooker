@@ -15,18 +15,24 @@ export class BookingListComponent implements OnInit {
   constructor(private bookingService: BookingService, private router: Router) { }
 
   ngOnInit(): void {
+    this.loading = true;
     this.bookingService.getBookings().subscribe(response => {
-      if (!response.succeeded) {
-        alert('unknown error occurred, could not get bookings');
-        console.error(response.error);
-        return;
-      }
-
-      this.bookings = response.body!;
+      this.loading = false;
+      response.ifSucceededOrElse(
+        bookings => this.setBookings(bookings),
+        error => {
+          console.error(error);
+          alert('unknown error occurred, could not get bookings');
+        }
+      );
     });
   }
 
   navigate(booking: Booking) {
     this.router.navigateByUrl('/bookings/' + booking.id);
+  }
+
+  private setBookings(bookings: Booking[]) {
+    this.bookings = bookings;
   }
 }

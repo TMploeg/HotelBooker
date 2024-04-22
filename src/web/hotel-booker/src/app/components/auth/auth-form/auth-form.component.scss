@@ -1,0 +1,18 @@
+form{
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+
+    mat-form-field{
+        max-width: 75%;
+        width: 400px;
+        min-width: 200px;
+    }
+
+    .button-container{
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+}
