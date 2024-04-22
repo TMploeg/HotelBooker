@@ -2,12 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { AppRoutes } from 'src/app/constants/routes';
 import { Time } from 'src/app/models/time';
 import { BookingService } from 'src/app/services/booking.service';
 import { TimeService } from 'src/app/services/time.service';
-import { MessageBoxComponent } from '../../message-box/message-box.component';
 import { ErrorResult, SuccesResult } from '../../../models/results';
+import { MessageBoxComponent } from '../../message-box/message-box.component';
 
 @Component({
   selector: 'app-booking-form',
@@ -79,17 +78,10 @@ export class BookingFormComponent implements OnInit {
 
     this.bookingService
       .placeBooking(this.hotelId, checkIn, checkOut, nrOfRooms)
-      .subscribe(response => {
-        if (response instanceof SuccesResult) {
-          this.router.navigate([AppRoutes.BOOKINGS, response.getValue().id]);
-          return;
-        }
-
-        console.log(response.getErrors());
-        this.dialog.open(MessageBoxComponent, {
-          data: response.getErrors()
-        })
-      });
+      .subscribe(response => response.ifSucceededOrElse(
+        newBooking => this.router.navigate(['bookings', newBooking.id]),
+        error => this.dialog.open(MessageBoxComponent, { data: error })
+      ));
   }
 
   getControl(controlName: string): FormControl | null {

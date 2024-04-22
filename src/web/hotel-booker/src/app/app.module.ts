@@ -19,7 +19,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { AuthFormComponent } from './components/auth/auth-form/auth-form.component';
 import { LoginComponent } from './components/auth/login/login.component';
 import { PasswordHelpDialogComponent } from './components/auth/register/password-help-dialog/password-help-dialog.component';
 import { RegisterComponent } from './components/auth/register/register.component';
@@ -43,7 +42,6 @@ import { ToolbarComponent } from './components/toolbar/toolbar.component';
     BookingInfoComponent,
     MessageBoxComponent,
     BookingListComponent,
-    AuthFormComponent,
     RegisterComponent,
     LoginComponent,
     PasswordHelpDialogComponent

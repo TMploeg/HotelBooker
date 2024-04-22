@@ -1,23 +1,13 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { FormControl, FormGroup, ValidatorFn } from '@angular/forms';
+import { Directive, OnInit } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 import { AuthDTO } from 'src/app/models/dtos/dtos.auth';
 
-@Component({
-  selector: 'app-auth-form',
-  templateUrl: './auth-form.component.html',
-  styleUrls: ['./auth-form.component.scss']
+@Directive({
+  selector: 'app-auth-form'
 })
-export class AuthFormComponent implements OnInit {
+export abstract class AuthFormComponent implements OnInit {
   formGroup!: FormGroup;
-
-  @Input() fieldProperties: {
-    [key: string]: {
-      validators: ValidatorFn[],
-      showHelp?: () => void
-    }
-  } = {};
-
-  @Input() submitButtonText?: string;
+  private helpData: { [key: string]: () => void } = {};
 
   private static readonly DefaultFieldNames: string[] = ['username', 'password'];
 
@@ -25,11 +15,11 @@ export class AuthFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.formGroup = new FormGroup({});
-    AuthFormComponent.DefaultFieldNames.forEach(
-      name => this.formGroup.addControl(
-        name,
-        new FormControl('', this.fieldProperties[name] ?? [])
-      )
+    AuthFormComponent.DefaultFieldNames.forEach(name => {
+      const control: FormControl = new FormControl('');
+      this.initControl(name, control);
+      this.formGroup.addControl(name, control);
+    }
     );
   }
 
@@ -62,18 +52,25 @@ export class AuthFormComponent implements OnInit {
     return `${controlName} is invalid`;
   }
 
-  hasHelp(controlName: string) {
-    const properties = this.fieldProperties[controlName];
-
-    return properties && properties.showHelp;
+  getHelpFn(controlName: string): () => void | undefined {
+    return this.helpData[controlName];
   }
 
   showHelp(controlName: string) {
-    if (!this.hasHelp(controlName)) {
+    const helpFn = this.getHelpFn(controlName);
+    if (!helpFn) {
       console.error('help function missing');
       return;
     }
 
-    this.fieldProperties[controlName].showHelp!();
+    helpFn();
+  }
+
+  abstract initControl(controlName: string, control: FormControl): void;
+
+  abstract submit(): void;
+
+  protected setHelpDataForControl(controlName: string, helpFn: () => void) {
+    this.helpData[controlName] = helpFn;
   }
 }

@@ -1,36 +1,42 @@
 import { Component } from '@angular/core';
-import { AbstractControl, ValidationErrors, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, ValidationErrors, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { PasswordHelpDialogComponent } from './password-help-dialog/password-help-dialog.component';
+import { AuthFormComponent } from '../auth-form/auth-form.component';
 
 @Component({
   selector: 'app-register',
-  templateUrl: './register.component.html',
-  styleUrls: ['./register.component.scss']
+  templateUrl: '../auth-form/auth-form.component.html',
+  styleUrls: ['../auth-form/auth-form.component.scss']
 })
-export class RegisterComponent {
+export class RegisterComponent extends AuthFormComponent {
   private static readonly PasswordMinLength: number = 7;
   private static readonly SpecialCharacterPattern: string = '[!@#$%&*()_+=|<>?{}\\[\\]~-]';
 
-  fieldProperties = {
-    username: {
-      validators: [Validators.required]
-    },
-    password: {
-      validators: [Validators.required, this.passwordStrengthValidator],
-      showHelp: () => this.dialog.open(PasswordHelpDialogComponent, {
-        data: [
-          `password must have at least ${RegisterComponent.PasswordMinLength} characters`,
-          'password must have a number',
-          'password must have a lowercase character',
-          'password must have an uppercase character',
-          'password must have a special character'
-        ]
-      })
+  formTitle: string = 'Register new account';
+  navigateButtonText: string = 'Go To Login';
+  navigateButtonRoute: string = '/login';
+  submitButtonText: string = 'Register';
+
+  constructor(private dialog: MatDialog) { super(); }
+
+  override initControl(controlName: string, control: FormControl) {
+    switch (controlName) {
+      case 'username':
+        control.addValidators([Validators.required]);
+        break;
+      case 'password':
+        control.addValidators([Validators.required, this.passwordStrengthValidator]);
+        break;
+      default:
+        console.warn('unhandled control found');
+        break;
     }
   }
 
-  constructor(private dialog: MatDialog) { }
+  override submit(): void {
+
+  }
+
 
   private passwordStrengthValidator(control: AbstractControl): ValidationErrors | null {
     if (!control || !control.value) {

@@ -17,9 +17,7 @@ export class ApiService {
       {
         observe: 'response',
         params: params,
-        headers: {
-          Authorization: this.getAuthHeader()
-        }
+        headers: this.generateHeaders()
       }
     ));
   }
@@ -31,9 +29,7 @@ export class ApiService {
       {
         observe: 'response',
         params: params,
-        headers: {
-          Authorization: this.getAuthHeader()
-        }
+        headers: this.generateHeaders()
       }
     ));
   }
@@ -41,20 +37,32 @@ export class ApiService {
   handleResponse<TResponse>(obsResponse: Observable<HttpResponse<TResponse>>): Observable<ApiResponse<TResponse>> {
     return obsResponse.pipe(catchError(err => of(err)))
       .pipe(map((response: HttpResponse<TResponse> | HttpErrorResponse) => {
-        const isErrorResponse = response instanceof HttpErrorResponse;
-
-        return {
-          body: !isErrorResponse ? response.body : null,
-          error: isErrorResponse ? response.message : null,
-          succeeded: !isErrorResponse
+        if (!(response instanceof HttpErrorResponse)) {
+          const body: TResponse = response.body!;
+          return ApiResponse.succesResponse(body);
         }
-      }));
+
+        return ApiResponse.failureResponse(response.message);
+      }
+      ));
   }
 
-  getAuthHeader(): string {
-    const token: string = 'eyJhbGciOiJIUzI1NiJ9.' +
-      'eyJyb2xlcyI6W3siYXV0aG9yaXR5IjoiVVNFUiJ9XSwic3ViIjoidGVzdHVzZXIiLCJpYXQiOjE3MTM3MjMwNjgsImV4cCI6MTcxMzcyNjY2OH0.' +
-      'UB94c9wTCW4_VKi4aSLUvaPZzan66keKSMTcNFLXpbM';
+  generateHeaders(): { [key: string]: string } {
+    const authHeader = this.getAuthHeader();
+
+    if (authHeader) {
+      return { Authorization: authHeader }
+    }
+
+    return {};
+  }
+
+  getAuthHeader(): string | undefined {
+    const token: string | null = sessionStorage.getItem(environment.tokenStorageLocation);
+
+    if (!token) {
+      return undefined;
+    }
 
     return 'Bearer ' + token;
   }
