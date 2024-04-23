@@ -1,6 +1,8 @@
+const API_URL = 'http://localhost:8080/'
+
 export default class ApiService {
     get(url, params) {
-        return new ApiRequest('GET', url, params);
+        return new ApiRequest('GET', API_URL + url, params);
     }
 }
 
