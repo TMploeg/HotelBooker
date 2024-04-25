@@ -1,5 +1,21 @@
+:root{
+    --default-color: #0083db;
+    --default-color-light: #a1dbff;
+    --default-color-x-light: #d7f0ff;
+    --default-color-dark: #00263f;
+}
+
 .app-container{
     height: 100vh;
-    padding: 20px;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.content-container{
+    padding: 20px;
+    background-color: var(--default-color-x-light);
+
+    flex: 1;
 }

@@ -1,0 +1,16 @@
+.toolbar-container{
+    background-color: var(--default-color);
+
+    padding: 20px;
+
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+}
+
+.title{
+    cursor: pointer;
+}
+.title:hover{
+    color: #dcdcdc;
+}
