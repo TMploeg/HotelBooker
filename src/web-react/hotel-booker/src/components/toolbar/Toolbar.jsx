@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import "./Toolbar.css";
+import AccountMenu from "./account-menu/AccountMenu";
 
 export default function Toolbar() {
     const navigate = useNavigate();
@@ -8,6 +9,8 @@ export default function Toolbar() {
         <div className="toolbar-left">
             <span className="title" onClick={() => navigate('/')}>Hotel Booker</span>
         </div>
-        <div className="toolbar-right"></div>
+        <div className="toolbar-right">
+            <AccountMenu />
+        </div>
     </div>
 }

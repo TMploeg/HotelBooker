@@ -1,8 +1,11 @@
 :root{
     --default-color: #0083db;
+    
     --default-color-light: #a1dbff;
     --default-color-x-light: #d7f0ff;
-    --default-color-dark: #00263f;
+
+    --default-color-slightly-dark: #0075c4;
+    --default-color-dark: #0063a4;
 }
 
 .app-container{

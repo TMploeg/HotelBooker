@@ -5,6 +5,9 @@ import HotelList from "./components/hotels/hotel-list";
 import Toolbar from "./components/toolbar/Toolbar";
 
 export default function App() {
+
+  window.addEventListener('load', preventImageDrag);
+
   return (
     <div className="app-container">
       <BrowserRouter>
@@ -19,4 +22,10 @@ export default function App() {
       </BrowserRouter>
     </div>
   )
+
+  function preventImageDrag() {
+    for (let element of document.getElementsByTagName('img')) {
+      element.setAttribute('draggable', 'false');
+    }
+  }
 }
