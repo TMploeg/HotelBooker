@@ -22,10 +22,30 @@ export default function Toolbar() {
                 </DroppedButton>
             </div>
         </div>
-        <AccountMenu isVisible={menuVisible} />
+        <AccountMenu
+            isVisible={menuVisible}
+            isLoggedIn={false}
+            onLogoutClicked={onLogoutClicked}
+            onRegisterClicked={onRegisterClicked}
+            onLoginClicked={onLoginClicked} />
     </div>
 
     function toggleAccountMenu() {
         setMenuVisible(visible => !visible);
+    }
+
+    function onLogoutClicked() {
+        console.log('onLogoutClicked not implemented')
+        setMenuVisible(false);
+    }
+
+    function onRegisterClicked() {
+        navigate('/register');
+        setMenuVisible(false);
+    }
+
+    function onLoginClicked() {
+        navigate('/login');
+        setMenuVisible(false);
     }
 }
