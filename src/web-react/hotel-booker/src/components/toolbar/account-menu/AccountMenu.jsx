@@ -12,7 +12,7 @@ function LoggedInAccountMenu({ isVisible, onLogoutClicked }) {
     return <div className="menu-container">
         <div className={`menu-content${isVisible ? ' visible' : ''}`}>
             <DroppedButton onClick={onLogoutClicked}>
-                <img className="medium-icon margin-left" src="/images/logout_icon.png" />
+                <img className="medium-icon margin-left" src="/images/logout_icon_white.png" />
                 <span>Logout</span>
             </DroppedButton>
         </div>
@@ -23,11 +23,11 @@ function NotLoggedInAccountMenu({ isVisible, onRegisterClicked, onLoginClicked }
     return <div className="menu-container">
         <div className={`menu-content${isVisible ? ' visible' : ''}`}>
             <DroppedButton onClick={onRegisterClicked}>
-                <img className="medium-icon margin-left" src="/images/register_icon.png" />
+                <img className="medium-icon margin-left" src="/images/register_icon_white.png" />
                 <span>Register</span>
             </DroppedButton>
             <DroppedButton onClick={onLoginClicked}>
-                <img className="medium-icon margin-left" src="/images/login_icon.png" />
+                <img className="medium-icon margin-left" src="/images/login_icon_white.png" />
                 <span>Login</span>
             </DroppedButton>
         </div>

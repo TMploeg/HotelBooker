@@ -17,7 +17,7 @@ export default function Toolbar() {
             </div>
             <div className="toolbar-right">
                 <DroppedButton onClick={toggleAccountMenu}>
-                    <img className="medium-icon" src="/images/account_icon.png" />
+                    <img className="medium-icon" src="/images/account_icon_white.png" />
                     <span>Not logged in</span>
                 </DroppedButton>
             </div>
