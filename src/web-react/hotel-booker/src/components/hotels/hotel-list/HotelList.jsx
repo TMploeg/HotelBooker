@@ -4,8 +4,6 @@ import ApiService from "../../../services/ApiService";
 import "./HotelList.css";
 
 export default function HotelList() {
-    const apiService = new ApiService();
-
     const [hotels, setHotels] = useState([]);
     useEffect(loadHotels, [])
 
@@ -17,7 +15,7 @@ export default function HotelList() {
     </div>
 
     function loadHotels() {
-        apiService
+        ApiService
             .get('hotels', undefined)
             .onComplete(response => {
                 if (response.succes) {

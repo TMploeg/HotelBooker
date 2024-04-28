@@ -4,7 +4,6 @@ import ApiService from "../../../services/ApiService.js";
 
 export default function HotelInfo() {
     const { id } = useParams();
-    const apiService = new ApiService();
     const [hotel, setHotel] = useState(null);
 
     useEffect(() => loadHotel, []);
@@ -21,7 +20,7 @@ export default function HotelInfo() {
     </div>
 
     function loadHotel() {
-        apiService
+        ApiService
             .get(`hotels/${id}`)
             .onComplete(response => setHotel(response.body))
     }
