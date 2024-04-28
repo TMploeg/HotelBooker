@@ -14,11 +14,7 @@ export default function AuthForm({ title, onSubmit }) {
         <form className="auth-form">
             <InputField label="Username" value={username} onValueChanged={setUsername} />
             <InputField label="Password" value={password} onValueChanged={setPassword} />
-            <FlatButton onClick={submit}>Submit</FlatButton>
+            <FlatButton onClick={() => onSubmit(username, password)}>Submit</FlatButton>
         </form>
     </div>
-
-    function submit() {
-        console.log('onClick not implemented');
-    }
 }

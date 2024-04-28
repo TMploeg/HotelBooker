@@ -1,61 +1,81 @@
-const API_URL = 'http://localhost:8080/'
+const API_URL = 'http://localhost:8080/';
+const REQUEST_COMPLETED_STATE = 4;
+const TOKEN_STORAGE_LOCATION = 'JWT';
 
 export default class ApiService {
+
     static get(url, params) {
-        return new ApiRequest('GET', API_URL + url, params);
+        return this.#doHttpRequest('GET', url, params);
     }
-}
 
-export class ApiRequest {
-    #REQUEST_COMPLETED_STATE = 4;
+    static post(url, body, params) {
+        return this.#doHttpRequest('POST', url, params, body);
+    }
 
-    #request;
-    #responseData;
-    #onComplete;
+    static #doHttpRequest(method, url, params, body) {
+        return new Promise((onSucces, onFailed) => {
+            const request = new XMLHttpRequest();
+            request.open(method, API_URL + url + this.#getParamString(params));
+            request.setRequestHeader('accept', 'application/json');
+            request.setRequestHeader('Content-Type', 'application/json');
 
-    constructor(httpMethod, url, params) {
-        const joinedParams = params === undefined ? undefined : Object.keys(params).map(key => `${key}=${params[key]}`).join('&');
-
-        this.#request = new XMLHttpRequest();
-        this.#request.open(httpMethod, url + (joinedParams !== undefined && joinedParams.length > 0 ? `?${joinedParams}` : ''));
-        this.#request.setRequestHeader('accept', 'application/json');
-        this.#request.onreadystatechange = () => {
-            if (!this.#isRequestComplete(this.#request)) {
-                return;
+            const authHeader = this.#getAuthHeader();
+            if (authHeader !== null) {
+                request.setRequestHeader('Authorization', authHeader);
             }
 
-            this.#responseData = this.#isRequestSuccesfull(this.#request)
-                ? {
-                    succes: true,
-                    body: JSON.parse(this.#request.responseText)
+            request.onreadystatechange = () => {
+                if (!this.#isRequestComplete(request)) {
+                    return;
                 }
-                : {
-                    succes: false,
-                    message: this.#request.responsetext
-                };
 
-            if (this.#onComplete) {
-                this.#onComplete(this.#responseData);
+                if (this.#isRequestSuccesfull(request)) {
+                    onSucces({
+                        status: request.status,
+                        body: JSON.parse(request.responseText)
+                    });
+                }
+                else {
+                    onFailed({
+                        status: request.status,
+                        message: JSON.parse(request.responseText).detail
+                    });
+                }
             }
-        }
 
-        this.#request.send();
+            request.send(JSON.stringify(body));
+        });
     }
 
-    onComplete(onComplete) {
-        if (this.#responseData) {
-            onComplete(this.#responseData);
+    static #getParamString(params) {
+        if (!params || params == null) {
+            return '';
         }
-        else {
-            this.#onComplete = onComplete;
+
+        const paramString = Object.keys(params).map(key => `${key}=${params[key]}`).join('&');
+
+        if (paramString.length > 0) {
+            paramString = '?' + paramString;
         }
+
+        return paramString;
     }
 
-    #isRequestComplete(request) {
-        return request.readyState === this.#REQUEST_COMPLETED_STATE;
+    static #isRequestComplete(request) {
+        return request.readyState === REQUEST_COMPLETED_STATE;
     }
 
-    #isRequestSuccesfull(request) {
+    static #isRequestSuccesfull(request) {
         return Math.floor(request.status / 100) === 2;
+    }
+
+    static #getAuthHeader() {
+        const token = sessionStorage.getItem(TOKEN_STORAGE_LOCATION);
+
+        if (token === null) {
+            return null;
+        }
+
+        return `Bearer ${token}`;
     }
 }

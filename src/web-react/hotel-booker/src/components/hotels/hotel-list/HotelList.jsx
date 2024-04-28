@@ -16,15 +16,11 @@ export default function HotelList() {
 
     function loadHotels() {
         ApiService
-            .get('hotels', undefined)
-            .onComplete(response => {
-                if (response.succes) {
-                    setHotels(response.body);
-                }
-                else {
-                    console.error("GET HOTELS FAILED", response);
-                }
-            });
+            .get('hotels')
+            .then(
+                response => setHotels(response.body),
+                console.error
+            );
     }
 }
 

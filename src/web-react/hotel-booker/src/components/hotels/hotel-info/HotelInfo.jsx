@@ -22,6 +22,6 @@ export default function HotelInfo() {
     function loadHotel() {
         ApiService
             .get(`hotels/${id}`)
-            .onComplete(response => setHotel(response.body))
+            .then(response => setHotel(response.body))
     }
 }
