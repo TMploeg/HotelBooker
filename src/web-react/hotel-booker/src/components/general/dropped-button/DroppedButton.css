@@ -1,24 +1,29 @@
 :root{
-    --dropped-button-color-default: #89b7d6;
+    /* --dropped-button-color-default: #89b7d6;
     --dropped-button-color-hover: #73a6c8;
-    --dropped-button-color-active: #659dc2;
+    --dropped-button-color-active: #659dc2; */
+    --dropped-button-color-default: #003d59;
+    --dropped-button-color-hover: #006392;
+    --dropped-button-color-active: #776392;
+    --dropped-button-text-color: white;
 }
 
 .dropped-button{
     display: flex;
-    /* justify-content: center; */
     align-items: center;
     gap: 20px;
 
     padding: 8px;
 
-    box-shadow: 1px 1px 3px inset;
+    box-shadow: 2px 2px 3px inset black;
     background-color: var(--dropped-button-color-default);
     border: none;
     outline: none;
 
     font-family: inherit;
     font-size: 30px;
+
+    color: var(--dropped-button-text-color);
 }
 .dropped-button:hover{
     background-color: var(--dropped-button-color-hover);
