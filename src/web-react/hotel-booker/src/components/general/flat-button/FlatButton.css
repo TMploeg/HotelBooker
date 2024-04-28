@@ -25,6 +25,10 @@
     position: relative;
     cursor: pointer;
 }
+.flat-button:active:not(:disabled){
+    color: var(--flat-button-active-color);
+    border-color: var(--flat-button-active-color);
+}
 .flat-button:disabled{
     cursor:default;
     color: gray;
@@ -50,7 +54,7 @@
 .flat-button:hover:not(:disabled) .flat-button-background{
     opacity: 0.1;
 }
-.flat-button:active:not(:disabled){
-    color: var(--flat-button-active-color);
-    border-color: var(--flat-button-active-color);
+.flat-button:active:not(:disabled) .flat-button-background{
+    background-color: var(--flat-button-active-color);
+    opacity: 0.15
 }
