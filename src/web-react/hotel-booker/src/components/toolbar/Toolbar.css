@@ -18,6 +18,12 @@
     align-items: center;
 }
 
+.toolbar-left, .toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
 .title{
     cursor: pointer;
 }
