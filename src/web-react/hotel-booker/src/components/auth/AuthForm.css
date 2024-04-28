@@ -14,24 +14,3 @@
 
    font-size: 30px;
 }
-.form-field{
-    display: flex;
-    justify-content: space-between;
-}
-
-.form-field label{
-    margin-right: 5px;
-}
-
-.submit-button{
-    font-size: 24px;
-    border-width: 3px;
-    border-style: solid;
-    border-radius: 5px;
-    border-color: black;
-
-    background-color: #006ab0;
-}
-.submit-button:active{
-    transform: scale(0.95);
-}

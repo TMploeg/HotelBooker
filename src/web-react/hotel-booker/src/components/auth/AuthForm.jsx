@@ -1,4 +1,5 @@
 import { useState } from "react";
+import FlatButton from "../general/flat-button/FlatButton";
 import InputField from "../general/input-field/InputField";
 import "./AuthForm.css";
 
@@ -13,7 +14,11 @@ export default function AuthForm({ title, onSubmit }) {
         <form className="auth-form">
             <InputField label="Username" value={username} onValueChanged={setUsername} />
             <InputField label="Password" value={password} onValueChanged={setPassword} />
-            <button class="submit-button" type="button" onClick={onSubmit}>Submit</button>
+            <FlatButton onClick={submit}>Submit</FlatButton>
         </form>
     </div>
+
+    function submit() {
+        console.log('onClick not implemented');
+    }
 }
