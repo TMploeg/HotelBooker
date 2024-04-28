@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./InputField.css";
 
-export default function InputField({ label, value, onValueChanged }) {
+export default function InputField({ label, value, onValueChanged, type }) {
     const [inputHasFocus, setInputHasFocus] = useState(false);
     const labelElement = label
         ? <label className={`field-label${inputHasFocus || value.length > 0 ? ' shifted' : ''}`}>{label}</label>
@@ -13,7 +13,8 @@ export default function InputField({ label, value, onValueChanged }) {
             value={value}
             onChange={event => onValueChanged(event.target.value)}
             onFocus={() => setInputHasFocus(true)}
-            onBlur={() => setInputHasFocus(false)} />
+            onBlur={() => setInputHasFocus(false)}
+            type={type ?? 'text'} />
         {labelElement}
     </div>
 }
