@@ -1,13 +1,11 @@
 import { useState } from "react";
 import FlatButton from "../general/flat-button/FlatButton";
-import IconButton from "../general/icon-button";
 import InputField from "../general/input-field/InputField";
 import "./AuthForm.css";
 
 export default function AuthForm({ title, onSubmit }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [passwordVisible, setPasswordVisible] = useState(false);
 
     const usernameErrors = getUsernameErrors();
     const passwordErrors = getPasswordErrors();
@@ -18,32 +16,23 @@ export default function AuthForm({ title, onSubmit }) {
         {titleElement}
         <form className="auth-form">
             <div className="input-field-container">
-                <div className="error-container">
-                    {usernameErrors.map((error, index) => <div key={index}>{error}</div>)}
-                </div>
                 <InputField
                     label="Username"
                     value={username}
                     onValueChanged={setUsername}
-                    hasError={usernameErrors.length > 0} />
+                    errors={usernameErrors} />
             </div>
             <div className="input-field-container">
-                <div className="error-container">
-                    {passwordErrors.map((error, index) => <div key={index}>{error}</div>)}
-                </div>
                 <InputField
                     label="Password"
                     value={password}
                     onValueChanged={setPassword}
-                    type={passwordVisible ? 'text' : 'password'}
-                    hasError={passwordErrors.length > 0} />
-                <div className="suffix">
-                    <IconButton
-                        onClick={() => setPasswordVisible(visible => !visible)}
-                        imgUrl={`/images/visibility_${passwordVisible ? 'off' : 'on'}.png`} />
-                </div>
+                    errors={passwordErrors}
+                    toggleVisiblity />
             </div>
-            <FlatButton onClick={() => onSubmit(username, password)}>Submit</FlatButton>
+            <FlatButton
+                onClick={() => onSubmit(username, password)}
+                disabled={usernameErrors.length > 0 || passwordErrors.length > 0}>Submit</FlatButton>
         </form>
     </div>
 

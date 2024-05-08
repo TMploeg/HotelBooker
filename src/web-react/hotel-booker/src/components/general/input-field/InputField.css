@@ -59,3 +59,15 @@
     top: -0.6em;
     font-size: 0.6em;
 }
+
+.buttons-container{
+    height: 100%;
+    position: absolute;
+    right: 0;
+    top: 0;
+
+    padding-right: 10px;
+
+    display: flex;
+    align-items: center;
+}
