@@ -15,21 +15,17 @@ export default function AuthForm({ title, onSubmit }) {
     return <div className="form-container">
         {titleElement}
         <form className="auth-form">
-            <div className="input-field-container">
-                <InputField
-                    label="Username"
-                    value={username}
-                    onValueChanged={setUsername}
-                    errors={usernameErrors} />
-            </div>
-            <div className="input-field-container">
-                <InputField
-                    label="Password"
-                    value={password}
-                    onValueChanged={setPassword}
-                    errors={passwordErrors}
-                    toggleVisiblity />
-            </div>
+            <InputField
+                label="Username"
+                value={username}
+                onValueChanged={setUsername}
+                errors={usernameErrors} />
+            <InputField
+                label="Password"
+                value={password}
+                onValueChanged={setPassword}
+                errors={passwordErrors}
+                toggleVisiblity />
             <FlatButton
                 onClick={() => onSubmit(username, password)}
                 disabled={usernameErrors.length > 0 || passwordErrors.length > 0}>Submit</FlatButton>
