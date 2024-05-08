@@ -1,13 +1,13 @@
 import { useState } from "react";
 import "./InputField.css";
 
-export default function InputField({ label, value, onValueChanged, type }) {
+export default function InputField({ label, value, onValueChanged, type, hasError }) {
     const [inputHasFocus, setInputHasFocus] = useState(false);
     const labelElement = label
         ? <label className={`field-label${inputHasFocus || value.length > 0 ? ' shifted' : ''}`}>{label}</label>
         : null;
 
-    return <div className={`field-container${inputHasFocus ? ' active' : ''}`}>
+    return <div className={`field-container${inputHasFocus ? ' active' : hasError ? ' error' : ''}`}>
         <input
             className="field-input"
             value={value}
