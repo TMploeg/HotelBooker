@@ -1,17 +1,16 @@
-import { useNavigate } from "react-router-dom";
 import UserService from "../../../services/UserService";
 import AuthForm from "../AuthForm";
 
-export default function Register() {
-    const navigate = useNavigate();
-
+export default function Register({ onRegister }) {
     return <AuthForm title="Register Account" onSubmit={register} />
 
     function register(username, password) {
         UserService.register(username, password).then(
             response => {
                 UserService.login(username, password).then(response => {
-                    navigate('/');
+                    if (onRegister) {
+                        onRegister();
+                    }
                 });
             },
             console.error

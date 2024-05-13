@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import UserService from "../../services/UserService.js";
 import "../../stylesheets/icons.css";
-import DroppedButton from "../general/dropped-button";
+import IconButton from "../general/icon-button";
 import "./Toolbar.css";
 import AccountMenu from "./account-menu/AccountMenu";
 
-export default function Toolbar() {
+export default function Toolbar({ onLogout, isLoggedIn }) {
     const navigate = useNavigate();
 
     const [menuVisible, setMenuVisible] = useState(false);
@@ -16,15 +17,13 @@ export default function Toolbar() {
                 <span className="title" onClick={() => navigate('/')}>Hotel Booker</span>
             </div>
             <div className="toolbar-right">
-                <DroppedButton onClick={toggleAccountMenu}>
-                    <img className="medium-icon" src="/images/account_icon_white.png" />
-                    <span>Not logged in</span>
-                </DroppedButton>
+                <span>{isLoggedIn ? 'logged in' : 'not logged in'}</span>
+                <IconButton onClick={toggleAccountMenu} imgUrl="/images/account_icon_white.png" />
             </div>
         </div>
         <AccountMenu
             isVisible={menuVisible}
-            isLoggedIn={false}
+            isLoggedIn={isLoggedIn}
             onLogoutClicked={onLogoutClicked}
             onRegisterClicked={onRegisterClicked}
             onLoginClicked={onLoginClicked} />
@@ -35,8 +34,13 @@ export default function Toolbar() {
     }
 
     function onLogoutClicked() {
-        console.log('onLogoutClicked not implemented')
+        UserService.logout();
+        navigate('/login');
         setMenuVisible(false);
+
+        if (onLogout) {
+            onLogout();
+        }
     }
 
     function onRegisterClicked() {
