@@ -35,9 +35,6 @@ export default function Register({ onRegister }) {
             return errors;
         }
 
-        if (password.length < passwordMinLength) {
-            errors.push(`must have at least ${passwordMinLength} characters`);
-        }
         if (!regEx(password, '[a-z]')) {
             errors.push('must have lowercase letter');
         }
@@ -49,6 +46,9 @@ export default function Register({ onRegister }) {
         }
         if (!regEx(password, `[${specialCharacters}]`)) {
             errors.push('must have special character');
+        }
+        if (password.length < passwordMinLength) {
+            errors.push(`must have at least ${passwordMinLength} characters`);
         }
 
         return errors;
