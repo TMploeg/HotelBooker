@@ -13,6 +13,10 @@ export default class ApiService {
         return this.#doHttpRequest('POST', url, params, body);
     }
 
+    static emptyPromise(value) {
+        return new Promise(onSucces => onSucces(value));
+    }
+
     static #doHttpRequest(method, url, params, body) {
         return new Promise((onSucces, onFailed) => {
             const request = new XMLHttpRequest();
@@ -53,7 +57,7 @@ export default class ApiService {
             return '';
         }
 
-        const paramString = Object.keys(params).map(key => `${key}=${params[key]}`).join('&');
+        let paramString = Object.keys(params).map(key => `${key}=${params[key]}`).join('&');
 
         if (paramString.length > 0) {
             paramString = '?' + paramString;

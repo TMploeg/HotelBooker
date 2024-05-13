@@ -32,7 +32,13 @@ export default class UserService {
     }
 
     static isLoggedIn() {
-        return StorageService.getJWT() !== undefined;
+        const jwt = StorageService.getJWT();
+
+        if (jwt === undefined) {
+            return ApiService.emptyPromise(false);
+        }
+
+        return ApiService.get('auth/validate-token', { token: jwt.token })
     }
 
     static getUsername() {
