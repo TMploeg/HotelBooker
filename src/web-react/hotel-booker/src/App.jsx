@@ -17,15 +17,7 @@ export default function App() {
   return (
     <div className="app-container">
       <Toolbar onLogout={onAuthenticationUpdated} isLoggedIn={isLoggedIn} />
-      <div className="content-container">
-        <Routes>
-          <Route path="/" element={<Navigate to={`/${isLoggedIn ? 'hotels' : 'login'}`} replace={true} />} />
-          <Route path="/hotels" element={<HotelList />} />
-          <Route path="/hotels/:id" element={<HotelInfo />} />
-          <Route path="/login" element={<Login onLogin={onAuthenticationUpdated} />} />
-          <Route path="/register" element={<Register onRegister={onAuthenticationUpdated} />} />
-        </Routes>
-      </div>
+      <div className="content-container">{getRoutes()}</div>
     </div>
   )
 
@@ -38,5 +30,24 @@ export default function App() {
   function onAuthenticationUpdated() {
     setLoggedIn(UserService.isLoggedIn());
     navigate('/');
+  }
+
+  function getRoutes() {
+    return <Routes>
+      {
+        isLoggedIn
+          ? <>
+            <Route path="/" element={<Navigate to="hotels" replace={true} />} />
+            <Route path="/hotels" element={<HotelList />} />
+            <Route path="/hotels/:id" element={<HotelInfo />} />
+          </>
+          : <>
+            <Route path="/" element={<Navigate to="login" replace={true} />} />
+            <Route path="/login" element={<Login onLogin={onAuthenticationUpdated} />} />
+            <Route path="/register" element={<Register onRegister={onAuthenticationUpdated} />} />
+          </>
+      }
+      <Route path="/*" element={<Navigate to="/" replace={true} />} />
+    </Routes>
   }
 }
