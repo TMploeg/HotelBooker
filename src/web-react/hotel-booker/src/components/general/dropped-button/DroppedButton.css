@@ -1,0 +1,30 @@
+:root{
+    --dropped-button-color-default: #003d59;
+    --dropped-button-color-hover: #006392;
+    --dropped-button-color-active: #776392;
+    --dropped-button-text-color: white;
+}
+
+.dropped-button{
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+    padding: 8px;
+
+    box-shadow: 2px 2px 3px inset black;
+    background-color: var(--dropped-button-color-default);
+    border: none;
+    outline: none;
+
+    font-family: inherit;
+    font-size: 30px;
+
+    color: var(--dropped-button-text-color);
+}
+.dropped-button:hover{
+    background-color: var(--dropped-button-color-hover);
+}
+.dropped-button:active{
+    background-color: var(--dropped-button-color-active);
+}

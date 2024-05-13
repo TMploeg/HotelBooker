@@ -1,0 +1,28 @@
+:root{
+    --default-color: #0083db;
+    
+    --default-color-light: #a1dbff;
+    --default-color-x-light: #d7f0ff;
+
+    --default-color-slightly-dark: #0075c4;
+    --default-color-dark: #0063a4;
+}
+
+.app-container{
+    height: 100vh;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.content-container{
+    padding: 20px;
+    background-color: var(--default-color-x-light);
+
+    flex: 1;
+}
+
+.margin-left{
+    margin-left: 5px;
+}

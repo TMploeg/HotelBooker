@@ -1,0 +1,41 @@
+:root{
+    --menu-width: 250px;
+    --menu-padding: 10px;
+
+    --menu-button-color-default: #89b7d6;
+    --menu-button-color-hover: #679fc5;
+    --menu-button-color-active: #4685b0;
+}
+
+.menu-container{
+    position: absolute;
+    width: 100%;
+}
+
+.menu-content{
+    position: absolute;
+    right: calc((var(--menu-width) + var(--menu-padding) * 4) * -1);
+    width: var(--menu-width);
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--menu-padding);
+
+    transition: right 500ms;
+
+    background-color: var(--default-color-dark);
+
+    padding-top: var(--menu-padding);
+    padding-bottom: var(--menu-padding);
+    padding-left: calc(var(--menu-padding) * 2);
+    padding-right: calc(var(--menu-padding) * 2);
+
+    z-index: 10;
+}
+.menu-content.visible{
+    right: 0%;
+}
+
+.test:first-child{
+    margin-right: 10px;
+}
