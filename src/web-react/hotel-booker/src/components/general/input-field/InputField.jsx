@@ -1,5 +1,4 @@
 import { useState } from "react";
-import ConditionalElement from "../conditional-element";
 import IconButton from "../icon-button";
 import "./InputField.css";
 
@@ -27,20 +26,20 @@ export default function InputField({ label, value, onValueChanged, errors, toggl
             onFocus={handleFocus}
             onBlur={handleBlur}
             type={visible ? 'text' : 'password'} />
-        <ConditionalElement condition={hasLabel}>
-            <label className={`field-label${inputHasFocus || value.length > 0 ? ' shifted' : ''}`}>{label}</label>
-        </ConditionalElement>
+        {hasLabel ? <label className={`field-label${inputHasFocus || value.length > 0 ? ' shifted' : ''}`}>{label}</label> : null}
         <div className="buttons-container">
-            <ConditionalElement condition={hasError}>
-                <IconButton
+            {hasError
+                ? <IconButton
                     imgUrl="/images/help.png"
                     onClick={showErrors} />
-            </ConditionalElement>
-            <ConditionalElement condition={toggleVisiblity}>
-                <IconButton
+                : null
+            }
+            {toggleVisiblity
+                ? <IconButton
                     imgUrl={`/images/visibility_${visible ? 'off' : 'on'}.png`}
                     onClick={() => setVisible(visible => !visible)} />
-            </ConditionalElement>
+                : null
+            }
         </div>
     </div>
 
