@@ -1,6 +1,7 @@
+import StorageService from "./StorageService";
+
 const API_URL = 'http://localhost:8080/';
 const REQUEST_COMPLETED_STATE = 4;
-const TOKEN_STORAGE_LOCATION = 'JWT';
 
 export default class ApiService {
 
@@ -70,7 +71,7 @@ export default class ApiService {
     }
 
     static #getAuthHeader() {
-        const token = sessionStorage.getItem(TOKEN_STORAGE_LOCATION);
+        const token = StorageService.getJWT()?.token;
 
         if (token === null) {
             return null;

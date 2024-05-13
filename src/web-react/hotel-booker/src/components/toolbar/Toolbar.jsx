@@ -17,7 +17,7 @@ export default function Toolbar({ onLogout, isLoggedIn }) {
                 <span className="title" onClick={() => navigate('/')}>Hotel Booker</span>
             </div>
             <div className="toolbar-right">
-                <span>{isLoggedIn ? 'logged in' : 'not logged in'}</span>
+                <span>{isLoggedIn ? UserService.getUsername() : 'not logged in'}</span>
                 <IconButton onClick={toggleAccountMenu} imgUrl="/images/account_icon_white.png" />
             </div>
         </div>

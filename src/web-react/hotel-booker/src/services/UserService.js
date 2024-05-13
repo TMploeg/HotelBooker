@@ -1,6 +1,5 @@
 import ApiService from "./ApiService";
-
-const TOKEN_STORAGE_LOCATION = 'JWT';
+import StorageService from "./StorageService";
 
 export default class UserService {
     static login(username, password) {
@@ -10,13 +9,18 @@ export default class UserService {
                 password: password
             })
             .then(
-                response => Promise.resolve(sessionStorage.setItem(TOKEN_STORAGE_LOCATION, response.body.token)),
+                response => Promise.resolve(
+                    StorageService.setJWT({
+                        token: response.body.token,
+                        username: username
+                    })
+                ),
                 error => Promise.reject(error)
             );
     }
 
     static logout() {
-        sessionStorage.removeItem(TOKEN_STORAGE_LOCATION);
+        StorageService.removeJWT();
     }
 
     static register(username, password) {
@@ -28,6 +32,10 @@ export default class UserService {
     }
 
     static isLoggedIn() {
-        return sessionStorage.getItem(TOKEN_STORAGE_LOCATION) !== null;
+        return StorageService.getJWT() !== undefined;
+    }
+
+    static getUsername() {
+        return StorageService.getJWT()?.username;
     }
 }
