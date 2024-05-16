@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { BarLoader } from "react-spinners";
+import useCSSProperties from "../../hooks/useCSSProperties";
 import FlatButton from "../general/flat-button/FlatButton";
 import InputField from "../general/input-field/InputField";
 import "./AuthForm.css";
@@ -19,10 +20,12 @@ export default function AuthForm({ title, onSubmit, validateUsername, validatePa
 
     const titleElement = title ? <h1>{title}</h1> : null;
 
+    const { getProperty } = useCSSProperties();
+
     const formInfoElement = formError && formError !== null
         ? formError
         : loading
-            ? <BarLoader color="#00c1db" />
+            ? <BarLoader color={getProperty('--default-color')} />
             : undefined;
 
     return <div className="form-container">
