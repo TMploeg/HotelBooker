@@ -14,13 +14,13 @@ export default function AuthForm({ title, onSubmit, validateUsername, validatePa
     const [loading, setLoading] = useState(false);
     const [formError, setFormError] = useState(null);
 
+    const { getProperty } = useCSSProperties();
+
     const usernameErrors = validateUsername ? validateUsername(username) : [];
     const passwordErrors = validatePassword ? validatePassword(password) : [];
     const submitDisabled = usernameErrors.length > 0 || passwordErrors.length > 0;
 
     const titleElement = title ? <h1>{title}</h1> : null;
-
-    const { getProperty } = useCSSProperties();
 
     const formInfoElement = formError && formError !== null
         ? formError
