@@ -3,6 +3,7 @@ package com.tmploeg.hotelbooker.controllers;
 import com.tmploeg.hotelbooker.dtos.AuthDTO;
 import com.tmploeg.hotelbooker.dtos.AuthTokenDTO;
 import com.tmploeg.hotelbooker.dtos.UserDTO;
+import com.tmploeg.hotelbooker.dtos.ValidTokenDTO;
 import com.tmploeg.hotelbooker.enums.RoleName;
 import com.tmploeg.hotelbooker.exceptions.BadRequestException;
 import com.tmploeg.hotelbooker.models.entities.User;
@@ -11,10 +12,7 @@ import com.tmploeg.hotelbooker.services.RoleService;
 import com.tmploeg.hotelbooker.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
@@ -55,5 +53,10 @@ public class AuthenticationController {
             authDTO.username(), authDTO.password(), roleService.findByName(RoleName.USER));
 
     return UserDTO.fromUser(user);
+  }
+
+  @GetMapping("validate-token")
+  public ValidTokenDTO validateToken(@RequestParam String token) {
+    return new ValidTokenDTO(jwtService.readToken(token).isPresent());
   }
 }
