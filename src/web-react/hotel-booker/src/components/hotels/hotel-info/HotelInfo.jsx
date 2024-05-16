@@ -21,7 +21,7 @@ export default function HotelInfo() {
     return <div>
         <h1 className="hotel-name">{hotel.name}</h1>
         <div className="hotel-address">{hotel.address}</div>
-        <FlatButton onClick={() => navigate(`hotels/${id}/book`)} className="test-flat-button">Book</FlatButton>
+        <FlatButton onClick={() => navigate('book')} className="test-flat-button">Book</FlatButton>
     </div>
 
     function loadHotel() {
