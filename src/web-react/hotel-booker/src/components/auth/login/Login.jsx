@@ -9,11 +9,7 @@ export default function Login({ onLogin }) {
         validatePassword={validatePassword} />
 
     function login(username, password) {
-        UserService.login(username, password)
-            .then(
-                () => onLogin?.(),
-                console.error
-            );
+        return UserService.login(username, password).then(() => onLogin?.());
     }
 
     function validateUsername(username) {

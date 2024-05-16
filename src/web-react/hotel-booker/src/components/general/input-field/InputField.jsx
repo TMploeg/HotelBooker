@@ -2,7 +2,7 @@ import { useState } from "react";
 import IconButton from "../icon-button";
 import "./InputField.css";
 
-export default function InputField({ label, value, onValueChanged, errors, toggleVisiblity }) {
+export default function InputField({ label, value, onValueChanged, errors, toggleVisiblity, onKeyUp }) {
     const [inputHasFocus, setInputHasFocus] = useState(false);
     const [touched, setTouched] = useState(false);
     const [visible, setVisible] = useState(!toggleVisiblity);
@@ -26,7 +26,8 @@ export default function InputField({ label, value, onValueChanged, errors, toggl
                 onChange={event => onValueChanged(event.target.value)}
                 onFocus={handleFocus}
                 onBlur={handleBlur}
-                type={visible ? 'text' : 'password'} />
+                type={visible ? 'text' : 'password'}
+                onKeyUp={onKeyUp} />
             {hasLabel ? <label className={`field-label${inputHasFocus || value.length > 0 ? ' shifted' : ''}`}>{label}</label> : null}
             <div className="buttons-container">
                 {toggleVisiblity
