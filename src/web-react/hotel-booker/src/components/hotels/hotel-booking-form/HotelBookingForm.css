@@ -9,7 +9,7 @@
 }
 
 .booking-form-field{
-    box-shadow: 0 0 3px black;
+    box-shadow: 1px 1px 3px 1px black;
     padding: 10px;
     max-width: 500px;
     background-color: var(--default-color);
