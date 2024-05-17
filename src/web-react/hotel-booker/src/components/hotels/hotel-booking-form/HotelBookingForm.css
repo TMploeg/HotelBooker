@@ -37,3 +37,9 @@
 .submit-booking-button{
     width: fit-content;
 }
+
+.booking-form-error{
+    color: red;
+    font-weight: bold;
+    font-size: 20px;
+}

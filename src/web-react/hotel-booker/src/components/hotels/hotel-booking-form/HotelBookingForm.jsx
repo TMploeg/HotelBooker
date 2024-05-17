@@ -48,7 +48,7 @@ export default function HotelBookingForm() {
         <FlatButton
             disabled={error !== null}
             className="submit-booking-button" onClick={onBookClicked}>Book</FlatButton>
-        {error !== null ? <div>{error}</div> : null}
+        {error !== null ? <div className="booking-form-error">{error}</div> : null}
     </div>
 
     function validateFields() {
