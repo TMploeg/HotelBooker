@@ -1,10 +1,6 @@
 export default function DateTimeSelector({ date, onDateChanged, time, onTimeChanged }) {
     return <div>
-        <label>
-            date <input type="date" value={date} onChange={event => onDateChanged(event.target.value)} />
-        </label>
-        <label >
-            time <input type="time" value={time} onChange={event => onTimeChanged(event.target.value)} />
-        </label>
+        <input name="date" type="date" value={date ?? ''} onChange={event => onDateChanged(event.target.value)} />
+        <input name="time" type="time" value={time ?? ''} onChange={event => onTimeChanged(event.target.value)} />
     </div>
 }
