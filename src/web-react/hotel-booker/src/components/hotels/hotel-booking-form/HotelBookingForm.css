@@ -1,0 +1,17 @@
+.booking-form-container{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.dt-select-container{
+    box-shadow: 0 0 3px 1px;
+    padding: 10px;
+}
+
+.dt-select-title{
+    margin-bottom: 5px;
+
+    font-size: 20px;
+    font-weight: bold;
+}
