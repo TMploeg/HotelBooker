@@ -1,3 +1,8 @@
+:root{
+    --dt-select-card-fade-color: #95d6ff;
+    --dt-select-component-bg-color: #eeeeee;
+}
+
 .booking-form-container{
     display: flex;
     flex-direction: column;
@@ -7,6 +12,8 @@
 .dt-select-container{
     box-shadow: 0 0 3px 1px;
     padding: 10px;
+    max-width: 500px;
+    background: linear-gradient(90deg, var(--default-color-x-light) 25%, var(--dt-select-card-fade-color) 100%);
 }
 
 .dt-select-title{
@@ -14,4 +21,14 @@
 
     font-size: 20px;
     font-weight: bold;
+}
+
+.dt-select-component{
+    padding: 5px;
+    box-shadow: 1px 1px 5px inset;
+    background-color: var(--dt-select-component-bg-color);
+}
+
+.submit-booking-button{
+    width: fit-content;
 }

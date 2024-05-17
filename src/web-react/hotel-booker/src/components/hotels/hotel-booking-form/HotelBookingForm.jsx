@@ -1,95 +1,65 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import ApiService from "../../../services/ApiService";
+import { useNavigate, useParams } from "react-router-dom";
+import useBookings from "../../../hooks/useBookings";
 import DateTimeSelector from "../../general/date-time-selector/DateTimeSelector";
 import FlatButton from "../../general/flat-button";
 import "./HotelBookingForm.css";
 
 export default function HotelBookingForm() {
-    const currentDateTime = getCurrentDateTime();
+    const initialCheckIn = new Date();
+    initialCheckIn.setDate(initialCheckIn.getDate() + 1);
+
+    const initialCheckOut = new Date(initialCheckIn);
+    initialCheckOut.setHours(initialCheckOut.getHours() + 1);
 
     const hotelId = Number(useParams().id);
 
-    const [checkIn, setCheckIn] = useState(currentDateTime);
-    const [checkOut, setCheckOut] = useState(currentDateTime);
+    const [checkIn, setCheckIn] = useState(initialCheckIn);
+    const [checkOut, setCheckOut] = useState(initialCheckOut);
 
     const [error, setError] = useState(null);
+
+    const { postBooking } = useBookings();
+
+    const navigate = useNavigate();
 
     useEffect(validateCheckInCheckOut, [checkIn, checkOut]);
 
     return <div className="booking-form-container">
         <div className="dt-select-container">
             <div className="dt-select-title">Check In</div>
-            <DateTimeSelector
-                date={checkIn.date} onDateChanged={newDate => stateChanged('date', newDate, setCheckIn)}
-                time={checkIn.time} onTimeChanged={newTime => stateChanged('time', newTime, setCheckIn)} />
+            <DateTimeSelector className="dt-select-component" value={checkIn} onChanged={setCheckIn} />
         </div>
         <div className="dt-select-container">
             <div className="dt-select-title">Check Out</div>
-            <DateTimeSelector
-                date={checkOut.date} onDateChanged={newDate => stateChanged('date', newDate, setCheckOut)}
-                time={checkOut.time} onTimeChanged={newTime => stateChanged('time', newTime, setCheckOut)} />
+            <DateTimeSelector className="dt-select-component" value={checkOut} onChanged={setCheckOut} />
         </div>
-        <FlatButton onClick={postBooking}>Book</FlatButton>
+        <FlatButton
+            disabled={error !== null}
+            className="submit-booking-button" onClick={onBookClicked}>Book</FlatButton>
         {error !== null ? <div>{error}</div> : null}
     </div>
-
-    function stateChanged(propertyName, propertyValue, stateSetter) {
-        stateSetter(value => {
-            const newValue = { ...value };
-
-            newValue[propertyName] = propertyValue;
-
-            return newValue;
-        });
-    }
-
-    function getCurrentDateTime() {
-        const now = new Date();
-
-        const years = now.getFullYear();
-        const month = toMin2LengthString(now.getMonth() + 1);
-        const days = toMin2LengthString(now.getDate());
-        const hours = toMin2LengthString(now.getHours());
-        const minutes = toMin2LengthString(now.getMinutes());
-
-        const date = `${years}-${month}-${days}`;
-        const time = `${hours}:${minutes}`;
-
-        return {
-            date: date,
-            time: time
-        }
-    }
 
     function validateCheckInCheckOut() {
         setError(null);
 
-        const checkInDT = new Date(`${checkIn.date}T${checkIn.time}`);
-        const checkOutDT = new Date(`${checkOut.date}T${checkOut.time}`);
+        if (isNaN(checkIn.getTime())) {
+            console.warn('checkIn is invalid');
+            setCheckIn(new Date());
+        }
+        if (isNaN(checkOut.getTime())) {
+            console.warn('checkOut is invalid');
+            setCheckOut(new Date());
+        }
 
-        if (checkInDT > checkOutDT) {
-            setError('Check out cannot be before check in');
+        if (checkIn >= checkOut) {
+            setError('Check out must be after check in');
         }
     }
 
-    function postBooking() {
-        const roomCount = 1;
-        const body = {
-            checkIn: `${checkIn.date}T${checkIn.time}`,
-            checkOut: `${checkOut.date}T${checkOut.time}`,
-            hotelId,
-            roomCount
-        };
-
-        console.log(body);
-
-        ApiService.post('bookings', body)
-            .catch(console.error)
-            .finally(console.log);
-    }
-
-    function toMin2LengthString(value) {
-        return (value <= 9 ? '0' : '') + value;
+    function onBookClicked() {
+        postBooking(checkIn, checkOut, hotelId, 1)
+            .then(_ => navigate('/'))
+            .catch(error => setError(error.message));
     }
 }
