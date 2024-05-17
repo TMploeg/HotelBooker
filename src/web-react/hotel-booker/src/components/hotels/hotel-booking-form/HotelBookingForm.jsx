@@ -67,7 +67,6 @@ export default function HotelBookingForm() {
             setError('Check out must be after check in');
         }
         else if (roomCount.length === 0) {
-            console.log('TEST2');
             setError('Number of rooms must be a number');
         }
     }
