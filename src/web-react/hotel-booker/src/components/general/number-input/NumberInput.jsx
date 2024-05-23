@@ -21,22 +21,20 @@ export default function NumberInput({ value, onChange, min, max, ...props }) {
     };
 
     return <div {...modifiedProps}>
-        <input value={value} onChange={onValueChanged} />
+        <input value={value} onChange={event => onValueChanged(event.target.value)} />
         <div className=" number-input-buttons">
             <img
                 src="\images\triangle_icon.png"
-                onClick={() => onChange(value + 1)} />
+                onClick={() => onValueChanged(value + 1)} />
             <img
                 className="rotate-180deg"
                 src="\images\triangle_icon.png"
-                onClick={() => onChange(value - 1)} />
+                onClick={() => onValueChanged(value - 1)} />
         </div>
     </div>
 
 
-    function onValueChanged(event) {
-        let newValue = event.target.value;
-
+    function onValueChanged(newValue) {
         if (newValue.length === 0) {
             onChange(0);
             return;
@@ -62,5 +60,9 @@ export default function NumberInput({ value, onChange, min, max, ...props }) {
 
         onChange(Number(newValue) * (isNegativeZero ? -1 : 1));
         setNegativeZero(false);
+    }
+
+    function updateValue(newValue) {
+
     }
 }

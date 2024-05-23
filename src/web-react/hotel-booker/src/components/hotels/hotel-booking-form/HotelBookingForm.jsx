@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import useBookings from "../../../hooks/useBookings";
 import DateTimeSelector from "../../general/date-time-selector/DateTimeSelector";
 import FlatButton from "../../general/flat-button";
+import NumberInput from "../../general/number-input";
 import "./HotelBookingForm.css";
 
 export default function HotelBookingForm() {
@@ -38,13 +39,14 @@ export default function HotelBookingForm() {
         </div>
         <div className="booking-form-field">
             <div className="booking-form-field-title">Number of Rooms</div>
-            <input
+            <NumberInput value={roomCount} onChange={setRoomCount} min={1} max={999} />
+            {/* <input
                 className="booking-form-control room-count-input"
                 type="number"
                 min={1}
                 max={999}
                 value={roomCount}
-                onChange={event => setRoomCount(event.target.value)} />
+                onChange={event => setRoomCount(event.target.value)} /> */}
         </div>
         <div className="booking-form-buttons">
             <FlatButton disabled={error !== null} onClick={onBookClicked}>Book</FlatButton>
