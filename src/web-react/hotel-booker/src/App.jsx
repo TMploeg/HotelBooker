@@ -3,6 +3,7 @@ import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import "./App.css";
 import Login from "./components/auth/login";
 import Register from "./components/auth/register";
+import BookingInfo from "./components/bookings/booking-info";
 import BookingList from "./components/bookings/booking-list";
 import HotelBookingForm from "./components/hotels/hotel-booking-form/HotelBookingForm";
 import HotelInfo from "./components/hotels/hotel-info";
@@ -50,6 +51,7 @@ export default function App() {
             <Route path="/hotels/:id" element={<HotelInfo />} />
             <Route path="/hotels/:id/book" element={<HotelBookingForm />} />
             <Route path="/bookings" element={<BookingList />} />
+            <Route path="/bookings/:id" element={<BookingInfo />} />
           </>
           : <>
             <Route path="/" element={<Navigate to="login" replace={true} />} />
