@@ -45,13 +45,6 @@ export default function HotelBookingForm() {
                 onChange={setRoomCount}
                 min={1}
                 max={999} />
-            {/* <input
-                className="booking-form-control room-count-input"
-                type="number"
-                min={1}
-                max={999}
-                value={roomCount}
-                onChange={event => setRoomCount(event.target.value)} /> */}
         </div>
         <div className="booking-form-buttons">
             <FlatButton disabled={error !== null} onClick={onBookClicked}>Book</FlatButton>
