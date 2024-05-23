@@ -13,10 +13,13 @@ export default function Toolbar({ onLogout, isLoggedIn }) {
 
     return <div>
         <div className="toolbar-container">
-            <div className="toolbar-left">
-                <span className="title" onClick={() => navigate('/')}>Hotel Booker</span>
+            <div>
+                <span className="toolbar-link" onClick={() => navigate('/')}>Hotel Booker</span>
+                <div className="v-seperator"></div>
+                <span className="toolbar-link" onClick={() => navigate('/')}>home</span>
+                <span className="toolbar-link" onClick={() => navigate('/bookings')}>bookings</span>
             </div>
-            <div className="toolbar-right">
+            <div>
                 <span>{isLoggedIn ? UserService.getUsername() : 'not logged in'}</span>
                 <IconButton onClick={toggleAccountMenu} imgUrl="/images/account_icon_white.png" />
             </div>
