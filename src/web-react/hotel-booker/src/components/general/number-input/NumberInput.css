@@ -1,5 +1,6 @@
 .number-input-container{
     position: relative;
+    width: fit-content;
 }
 .number-input-container > input{
     width: 100%;

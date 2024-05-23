@@ -39,7 +39,12 @@ export default function HotelBookingForm() {
         </div>
         <div className="booking-form-field">
             <div className="booking-form-field-title">Number of Rooms</div>
-            <NumberInput value={roomCount} onChange={setRoomCount} min={1} max={999} />
+            <NumberInput
+                className="booking-form-control room-count-input"
+                value={roomCount}
+                onChange={setRoomCount}
+                min={1}
+                max={999} />
             {/* <input
                 className="booking-form-control room-count-input"
                 type="number"

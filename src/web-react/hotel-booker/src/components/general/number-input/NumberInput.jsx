@@ -15,13 +15,8 @@ export default function NumberInput({ value, onChange, min, max, ...props }) {
         max = FALLBACK_MAX_VALUE;
     }
 
-    const modifiedProps = {
-        ...props,
-        className: `number-input-container ${props.className ?? ''}`
-    };
-
-    return <div {...modifiedProps}>
-        <input value={value} onChange={event => onValueChanged(event.target.value)} />
+    return <div className="number-input-container">
+        <input {...props} value={value} onChange={event => onValueChanged(event.target.value)} />
         <div className=" number-input-buttons">
             <img
                 src="\images\triangle_icon.png"
