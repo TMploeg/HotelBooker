@@ -12,8 +12,9 @@ public final class LocalDateTimeHelper {
   private LocalDateTimeHelper() {}
 
   public static Optional<LocalDateTime> tryParse(String rawDateTime) {
+    DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
     try {
-      return Optional.of(LocalDateTime.parse(rawDateTime));
+      return Optional.of(LocalDateTime.from(formatter.parse(rawDateTime)));
     } catch (DateTimeParseException ignored) {
       return Optional.empty();
     }

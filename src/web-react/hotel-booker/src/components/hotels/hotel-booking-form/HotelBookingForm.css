@@ -1,0 +1,50 @@
+:root{
+    --dt-select-component-bg-color: #eeeeee;
+}
+
+.booking-form-container{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.booking-form-field{
+    box-shadow: 1px 1px 3px 1px black;
+    padding: 10px;
+    max-width: 500px;
+    background-color: var(--default-color);
+    color: white;
+}
+
+.booking-form-field-title{
+    margin-bottom: 5px;
+
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.booking-form-control{
+    padding: 5px;
+    box-shadow: 1px 1px 5px black inset;
+    background-color: var(--dt-select-component-bg-color);
+}
+
+.room-count-input{
+    border: none;
+    outline: none;
+}
+
+.booking-form-buttons{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+.booking-form-buttons > button{
+    width: fit-content;
+}
+
+.booking-form-error{
+    color: red;
+    font-weight: bold;
+    font-size: 20px;
+}

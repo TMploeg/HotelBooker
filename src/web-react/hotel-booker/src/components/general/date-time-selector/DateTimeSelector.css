@@ -1,0 +1,11 @@
+.dt-selector{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    width: fit-content;
+}
+
+.dt-selector-input{
+    border: none;
+    background-color: transparent;
+}

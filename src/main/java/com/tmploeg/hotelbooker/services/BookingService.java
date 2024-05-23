@@ -9,6 +9,7 @@ import com.tmploeg.hotelbooker.models.entities.Room;
 import com.tmploeg.hotelbooker.models.entities.User;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -53,7 +54,12 @@ public class BookingService {
 
     return errors.isEmpty()
         ? ValueResult.succesResult(
-            bookingRepository.save(new Booking(user, checkIn, checkOut, availableRooms)))
+            bookingRepository.save(
+                new Booking(
+                    user,
+                    checkIn,
+                    checkOut,
+                    availableRooms.stream().limit(roomCount).collect(Collectors.toSet()))))
         : ValueResult.errorResult(errors);
   }
 
