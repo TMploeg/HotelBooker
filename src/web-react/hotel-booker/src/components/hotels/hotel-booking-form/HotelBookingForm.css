@@ -34,7 +34,12 @@
     outline: none;
 }
 
-.submit-booking-button{
+.booking-form-buttons{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+.booking-form-buttons > button{
     width: fit-content;
 }
 

@@ -45,9 +45,10 @@ export default function HotelBookingForm() {
                 value={roomCount}
                 onChange={event => setRoomCount(event.target.value)} />
         </div>
-        <FlatButton
-            disabled={error !== null}
-            className="submit-booking-button" onClick={onBookClicked}>Book</FlatButton>
+        <div className="booking-form-buttons">
+            <FlatButton disabled={error !== null} onClick={onBookClicked}>Book</FlatButton>
+            <FlatButton onClick={() => navigate(-1)}>Return</FlatButton>
+        </div>
         {error !== null ? <div className="booking-form-error">{error}</div> : null}
     </div>
 
