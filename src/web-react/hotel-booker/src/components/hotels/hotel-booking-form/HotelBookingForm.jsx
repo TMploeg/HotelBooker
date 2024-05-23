@@ -24,6 +24,7 @@ export default function HotelBookingForm() {
 
     const navigate = useNavigate();
 
+    useEffect(updateCheckOutIfNecessary, [checkIn]);
     useEffect(validateFields, [checkIn, checkOut, roomCount]);
 
     return <div className="booking-form-container">
@@ -81,5 +82,11 @@ export default function HotelBookingForm() {
         postBooking(checkIn, checkOut, hotelId, Number(roomCount))
             .then(_ => navigate('/'))
             .catch(error => setError(error.message));
+    }
+
+    function updateCheckOutIfNecessary() {
+        if (checkIn >= checkOut) {
+            setCheckOut(new Date(checkIn.getTime() + (3600 * 1000)));
+        }
     }
 }
