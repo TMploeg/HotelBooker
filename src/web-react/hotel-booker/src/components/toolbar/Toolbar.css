@@ -18,17 +18,24 @@
     align-items: center;
 }
 
-.toolbar-left, .toolbar-right {
+.toolbar-container > div{
     display: flex;
     align-items: center;
     gap: 20px;
+    height: 100%;
 }
 
-.title{
+.toolbar-link{
     cursor: pointer;
 }
-.title:hover{
-    color: #dcdcdc;
+.toolbar-link:hover{
+    opacity: 0.8;
+}
+
+.v-seperator{
+    height: 80%;
+    width: 1px;
+    background-color: var(--default-color-dark);
 }
 
 .account-menu-button{
