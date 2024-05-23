@@ -26,3 +26,7 @@
 .margin-left{
     margin-left: 5px;
 }
+
+.rotate-180deg{
+    rotate: 180deg; 
+}

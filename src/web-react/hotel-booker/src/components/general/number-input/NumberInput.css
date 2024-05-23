@@ -1,0 +1,22 @@
+.number-input-container{
+    position: relative;
+}
+.number-input-container > input{
+    width: 100%;
+}
+
+.number-input-buttons{
+    position: absolute;
+    height: 100%;
+    top: 0;
+    right: 0;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    font-size: 5px;
+}
+.number-input-buttons > img{
+    height: 1em;
+    aspect-ratio: 1.5 / 1;
+}
