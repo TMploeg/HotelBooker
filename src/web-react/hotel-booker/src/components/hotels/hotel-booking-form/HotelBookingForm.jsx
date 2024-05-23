@@ -6,6 +6,9 @@ import FlatButton from "../../general/flat-button";
 import NumberInput from "../../general/number-input";
 import "./HotelBookingForm.css";
 
+const MIN_ROOMS = 1;
+const MAX_ROOMS = 999;
+
 export default function HotelBookingForm() {
     const initialCheckIn = new Date();
     initialCheckIn.setDate(initialCheckIn.getDate() + 1);
@@ -17,7 +20,7 @@ export default function HotelBookingForm() {
 
     const [checkIn, setCheckIn] = useState(initialCheckIn);
     const [checkOut, setCheckOut] = useState(initialCheckOut);
-    const [roomCount, setRoomCount] = useState('1');
+    const [roomCount, setRoomCount] = useState(MIN_ROOMS);
 
     const [error, setError] = useState(null);
 
@@ -43,8 +46,8 @@ export default function HotelBookingForm() {
                 className="booking-form-control room-count-input"
                 value={roomCount}
                 onChange={setRoomCount}
-                min={1}
-                max={999} />
+                min={MIN_ROOMS}
+                max={MAX_ROOMS} />
         </div>
         <div className="booking-form-buttons">
             <FlatButton disabled={error !== null} onClick={onBookClicked}>Book</FlatButton>
