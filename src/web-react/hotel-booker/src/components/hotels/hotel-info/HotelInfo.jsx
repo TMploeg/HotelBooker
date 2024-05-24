@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
+import useApi from "../../../hooks/useApi.js";
 import useCSSProperties from "../../../hooks/useCSSProperties.js";
-import ApiService from "../../../services/ApiService.js";
 import FlatButton from "../../general/flat-button";
 import "./HotelInfo.css";
 
@@ -11,6 +11,8 @@ export default function HotelInfo() {
     const [hotel, setHotel] = useState(null);
     const { getProperty } = useCSSProperties();
     const navigate = useNavigate();
+
+    const { get } = useApi();
 
     useEffect(() => loadHotel, []);
 
@@ -25,8 +27,6 @@ export default function HotelInfo() {
     </div>
 
     function loadHotel() {
-        ApiService
-            .get(`hotels/${id}`)
-            .then(response => setHotel(response.body));
+        get(`hotels/${id}`).then(response => setHotel(response.data));
     }
 }

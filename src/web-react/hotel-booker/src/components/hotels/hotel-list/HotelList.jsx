@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import ApiService from "../../../services/ApiService";
+import useApi from "../../../hooks/useApi";
 import "./HotelList.css";
 
 export default function HotelList() {
+    const { get } = useApi();
+
     const [hotels, setHotels] = useState([]);
     useEffect(loadHotels, [])
 
@@ -15,12 +17,9 @@ export default function HotelList() {
     </div>
 
     function loadHotels() {
-        ApiService
-            .get('hotels')
-            .then(
-                response => setHotels(response.body),
-                console.error
-            );
+        get('hotels')
+            .catch(console.error)
+            .then(response => setHotels(response.data));
     }
 }
 

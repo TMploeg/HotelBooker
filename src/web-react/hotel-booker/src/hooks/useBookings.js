@@ -1,19 +1,20 @@
-import ApiService from "../services/ApiService";
+import useApi from "./useApi";
 
 export default function useBookings() {
-    const postBooking = (checkIn, checkOut, hotelId, roomCount) => {
-        return ApiService.post(
-            'bookings',
-            {
-                checkIn: checkIn.toISOString(),
-                checkOut: checkOut.toISOString(),
-                hotelId,
-                roomCount
-            }
-        );
+    const { post } = useApi();
+
+    const postBooking = async (checkIn, checkOut, hotelId, roomCount) => {
+        const requestData = {
+            checkIn: checkIn.toISOString(),
+            checkOut: checkOut.toISOString(),
+            hotelId,
+            roomCount
+        };
+
+        return await post('bookings', requestData);
     }
 
     return {
         postBooking
     };
-}
+} 

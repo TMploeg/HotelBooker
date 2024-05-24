@@ -1,16 +1,18 @@
-import UserService from "../../../services/UserService";
+import useAuthentication from "../../../hooks/useAuthentication";
 import AuthForm from "../AuthForm";
 
 export default function Register({ onRegister }) {
+    const { register, login } = useAuthentication();
+
     return <AuthForm
         title="Register Account"
-        onSubmit={register}
+        onSubmit={registerUser}
         validateUsername={validateUsername}
         validatePassword={validatePassword} />
 
-    function register(username, password) {
-        return UserService.register(username, password).then(
-            () => UserService.login(username, password).then(() => onRegister?.())
+    function registerUser(username, password) {
+        return register(username, password).then(
+            () => login(username, password).then(() => onRegister?.())
         );
     }
 

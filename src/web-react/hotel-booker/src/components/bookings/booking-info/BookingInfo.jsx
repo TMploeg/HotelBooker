@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
+import useApi from "../../../hooks/useApi";
 import useCSSProperties from "../../../hooks/useCSSProperties";
-import ApiService from "../../../services/ApiService";
 
 export default function BookingInfo() {
     const { id } = useParams();
     const { getProperty } = useCSSProperties();
+    const { get } = useApi();
 
     const navigate = useNavigate();
     if (id === undefined) {
@@ -32,9 +33,9 @@ export default function BookingInfo() {
     </div>
 
     function loadBooking() {
-        ApiService.get(`bookings/${id}`)
+        get(`bookings/${id}`)
             .catch(_ => leave())
-            .then(response => setBooking(response.body));
+            .then(response => setBooking(response.data));
     }
 
     function leave() {
@@ -46,6 +47,12 @@ export default function BookingInfo() {
             return;
         }
 
-        return date.toLocaleString('default', { month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric' })
+        return date.toLocaleString('default', {
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric'
+        })
     }
 }

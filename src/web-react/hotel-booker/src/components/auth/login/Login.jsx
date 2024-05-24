@@ -1,15 +1,17 @@
-import UserService from "../../../services/UserService.js";
+import useAuthentication from "../../../hooks/useAuthentication";
 import AuthForm from "../AuthForm";
 
 export default function Login({ onLogin }) {
+    const { login } = useAuthentication();
+
     return <AuthForm
         title="Login to Account"
-        onSubmit={login}
+        onSubmit={loginUser}
         validateUsername={validateUsername}
         validatePassword={validatePassword} />
 
-    function login(username, password) {
-        return UserService.login(username, password).then(() => onLogin?.());
+    function loginUser(username, password) {
+        return login(username, password).then(() => onLogin?.());
     }
 
     function validateUsername(username) {

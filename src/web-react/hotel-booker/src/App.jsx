@@ -9,18 +9,20 @@ import HotelBookingForm from "./components/hotels/hotel-booking-form/HotelBookin
 import HotelInfo from "./components/hotels/hotel-info";
 import HotelList from "./components/hotels/hotel-list";
 import Toolbar from "./components/toolbar/Toolbar";
-import UserService from "./services/UserService";
+import useAuthentication from "./hooks/useAuthentication";
 
 export default function App() {
-  const [isLoggedIn, setLoggedIn] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
   useEffect(onAuthenticationUpdated, []);
   const navigate = useNavigate();
+
+  const { isLoggedIn } = useAuthentication();
 
   window.addEventListener('load', preventImageDrag);
 
   return (
     <div className="app-container">
-      <Toolbar onLogout={onAuthenticationUpdated} isLoggedIn={isLoggedIn} />
+      <Toolbar onLogout={onAuthenticationUpdated} loggedIn={loggedIn} />
       <div className="content-container">{getRoutes()}</div>
     </div>
   )
@@ -32,7 +34,7 @@ export default function App() {
   }
 
   function onAuthenticationUpdated() {
-    UserService.isLoggedIn().then(
+    isLoggedIn().then(
       loggedIn => {
         setLoggedIn(loggedIn);
         navigate('/');
@@ -44,7 +46,7 @@ export default function App() {
   function getRoutes() {
     return <Routes>
       {
-        isLoggedIn
+        loggedIn
           ? <>
             <Route path="/" element={<Navigate to="hotels" replace={true} />} />
             <Route path="/hotels" element={<HotelList />} />

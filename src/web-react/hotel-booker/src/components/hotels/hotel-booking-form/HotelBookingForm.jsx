@@ -83,8 +83,8 @@ export default function HotelBookingForm() {
         }
 
         postBooking(checkIn, checkOut, hotelId, Number(roomCount))
-            .then(response => { console.log(response.body); navigate(`/bookings/${response.body.id}`); })
-            .catch(error => setError(error.message));
+            .then(response => navigate(`/bookings/${response.data.id}`))
+            .catch(error => setError(error.response.data.detail));
     }
 
     function updateCheckOutIfNecessary() {
