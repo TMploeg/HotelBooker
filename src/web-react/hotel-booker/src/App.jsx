@@ -12,11 +12,12 @@ import Toolbar from "./components/toolbar/Toolbar";
 import useAuthentication from "./hooks/useAuthentication";
 
 export default function App() {
-  const [loggedIn, setLoggedIn] = useState(false);
-  useEffect(onAuthenticationUpdated, []);
-  const navigate = useNavigate();
-
   const { isLoggedIn } = useAuthentication();
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  useEffect(onAuthenticationUpdated, []);
+
+  const navigate = useNavigate();
 
   window.addEventListener('load', preventImageDrag);
 
@@ -35,8 +36,8 @@ export default function App() {
 
   function onAuthenticationUpdated() {
     isLoggedIn().then(
-      loggedIn => {
-        setLoggedIn(loggedIn);
+      response => {
+        setLoggedIn(response.loggedIn);
         navigate('/');
       },
       console.error

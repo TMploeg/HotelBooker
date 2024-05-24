@@ -22,11 +22,15 @@ export default function HotelInfo() {
 
     return <div>
         <h1 className="hotel-name">{hotel.name}</h1>
-        <div className="hotel-address">{hotel.address}</div>
+        <div className="hotel-address">{getAddressDisplay(hotel.address)}</div>
         <FlatButton onClick={() => navigate('book')} className="test-flat-button">Book</FlatButton>
     </div>
 
     function loadHotel() {
         get(`hotels/${id}`).then(response => setHotel(response.data));
+    }
+
+    function getAddressDisplay(address) {
+        return `${address.street} ${address.houseNumber}, ${address.city}`;
     }
 }

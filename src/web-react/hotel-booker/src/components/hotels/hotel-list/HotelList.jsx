@@ -27,7 +27,7 @@ function HotelListItem({ hotel }) {
     return (
         <Link to={`${hotel.id}`} className="list-item">
             <div className="list-item-title">{hotel.name}</div>
-            <div className="list-item-content">{hotel.address}</div>
+            <div className="list-item-content">{hotel.address.city}</div>
         </Link>
     )
 }

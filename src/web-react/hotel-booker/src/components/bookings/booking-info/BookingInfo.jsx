@@ -26,7 +26,7 @@ export default function BookingInfo() {
                     <div>
                         <div>Check In: {displayDate(new Date(booking.checkIn))}</div>
                         <div>Check Out: {displayDate(new Date(booking.checkOut))}</div>
-                        <div>Address: {booking.hotel.address}</div>
+                        <div>Address: {displayAddress(booking.hotel.address)}</div>
                     </div>
                 </>
         }
@@ -54,5 +54,9 @@ export default function BookingInfo() {
             hour: 'numeric',
             minute: 'numeric'
         })
+    }
+
+    function displayAddress(address) {
+        return `${address.street} ${address.houseNumber}, ${address.city}`;
     }
 }
