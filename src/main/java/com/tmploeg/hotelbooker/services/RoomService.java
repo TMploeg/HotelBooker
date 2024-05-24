@@ -26,14 +26,15 @@ public class RoomService {
     return roomRepository.findByHotelOrderByRoomNumberAsc(hotel);
   }
 
-  public ValueResult<Room> save(Hotel hotel, int roomNumber) {
-    if (hotel == null) {
+  public ValueResult<Room> save(Long hotelId, int roomNumber) {
+    if (hotelId == null) {
       throw new IllegalArgumentException("hotel is null");
     }
 
-    List<String> errors = new LinkedList<String>();
+    List<String> errors = new LinkedList<>();
 
-    if (hotelService.findById(hotel.getId()).isEmpty()) {
+    Optional<Hotel> hotel = hotelService.findById(hotelId);
+    if (hotel.isEmpty()) {
       errors.add("hotel does not exist");
     }
 
@@ -41,9 +42,18 @@ public class RoomService {
       errors.add("room number must be greater than or equal to '1'");
     }
 
-    return errors.isEmpty()
-        ? ValueResult.succesResult(roomRepository.save(new Room(hotel, roomNumber)))
-        : ValueResult.errorResult(errors);
+    if (!errors.isEmpty()) {
+      return ValueResult.errorResult(errors);
+    }
+
+    Room room = new Room(hotel.get(), roomNumber);
+
+    Set<Room> hotelRooms = findByHotel(hotel.get());
+    hotelRooms.add(room);
+    hotel.get().setRooms(hotelRooms);
+    hotelService.update(hotel.get());
+
+    return ValueResult.succesResult(roomRepository.save(room));
   }
 
   public Set<Room> getAvailableRooms(Hotel hotel, LocalDateTime checkIn, LocalDateTime checkOut) {
