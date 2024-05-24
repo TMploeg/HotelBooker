@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
+import useApi from "../../../hooks/useApi";
 import useCSSProperties from "../../../hooks/useCSSProperties";
-import ApiService from "../../../services/ApiService";
 
 export default function BookingInfo() {
     const { id } = useParams();
     const { getProperty } = useCSSProperties();
+    const { get } = useApi();
 
     const navigate = useNavigate();
     if (id === undefined) {
@@ -25,16 +26,16 @@ export default function BookingInfo() {
                     <div>
                         <div>Check In: {displayDate(new Date(booking.checkIn))}</div>
                         <div>Check Out: {displayDate(new Date(booking.checkOut))}</div>
-                        <div>Address: {booking.hotel.address}</div>
+                        <div>Address: {displayAddress(booking.hotel.address)}</div>
                     </div>
                 </>
         }
     </div>
 
     function loadBooking() {
-        ApiService.get(`bookings/${id}`)
+        get(`bookings/${id}`)
             .catch(_ => leave())
-            .then(response => setBooking(response.body));
+            .then(response => setBooking(response.data));
     }
 
     function leave() {
@@ -46,6 +47,16 @@ export default function BookingInfo() {
             return;
         }
 
-        return date.toLocaleString('default', { month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric' })
+        return date.toLocaleString('default', {
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric'
+        })
+    }
+
+    function displayAddress(address) {
+        return `${address.street} ${address.houseNumber}, ${address.city}`;
     }
 }

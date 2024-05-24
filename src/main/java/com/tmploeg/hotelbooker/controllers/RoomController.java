@@ -70,7 +70,9 @@ public class RoomController {
     }
 
     Set<ValueResult<Room>> saveRoomResults =
-        roomNumbers.stream().map(n -> roomService.save(hotel, n)).collect(Collectors.toSet());
+        roomNumbers.stream()
+            .map(n -> roomService.save(hotel.getId(), n))
+            .collect(Collectors.toSet());
 
     List<String> errors =
         saveRoomResults.stream()

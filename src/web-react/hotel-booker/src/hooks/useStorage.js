@@ -1,7 +1,7 @@
 const JWT_STORAGE_LOCATION = 'JWT';
 
-export default class StorageService {
-    static setJWT(jwt) {
+export default function useStorage() {
+    const setJWT = (jwt) => {
         if (jwt === null || jwt === undefined) {
             this.removeJWT();
             return;
@@ -10,7 +10,7 @@ export default class StorageService {
         sessionStorage.setItem(JWT_STORAGE_LOCATION, JSON.stringify(jwt));
     }
 
-    static getJWT() {
+    const getJWT = () => {
         const jwt = sessionStorage.getItem(JWT_STORAGE_LOCATION);
 
         return jwt !== null
@@ -18,7 +18,13 @@ export default class StorageService {
             : undefined;
     }
 
-    static removeJWT() {
+    const removeJWT = () => {
         sessionStorage.removeItem(JWT_STORAGE_LOCATION);
+    }
+
+    return {
+        setJWT,
+        getJWT,
+        removeJWT
     }
 }

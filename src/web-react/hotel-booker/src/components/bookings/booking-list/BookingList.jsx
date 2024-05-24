@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
+import useApi from "../../../hooks/useApi";
 import useCSSProperties from "../../../hooks/useCSSProperties";
-import ApiService from "../../../services/ApiService";
 import "./BookingList.css";
 import BookingListItem from "./booking-list-item";
 
 export default function BookingList() {
     const navigate = useNavigate();
     const { getProperty } = useCSSProperties();
+    const { get } = useApi();
 
     const [bookings, setBookings] = useState(null);
     useEffect(loadBookings, []);
@@ -27,9 +28,9 @@ export default function BookingList() {
     </div>
 
     function loadBookings() {
-        ApiService.get('bookings')
+        get('bookings')
             .catch(_ => navigate('/'))
-            .then(response => setBookings(response.body));
+            .then(response => setBookings(response.data));
     }
 }
 

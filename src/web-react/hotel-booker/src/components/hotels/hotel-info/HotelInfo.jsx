@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
+import useApi from "../../../hooks/useApi.js";
 import useCSSProperties from "../../../hooks/useCSSProperties.js";
-import ApiService from "../../../services/ApiService.js";
 import FlatButton from "../../general/flat-button";
 import "./HotelInfo.css";
 
@@ -12,6 +12,8 @@ export default function HotelInfo() {
     const { getProperty } = useCSSProperties();
     const navigate = useNavigate();
 
+    const { get } = useApi();
+
     useEffect(() => loadHotel, []);
 
     if (!hotel) {
@@ -20,13 +22,15 @@ export default function HotelInfo() {
 
     return <div>
         <h1 className="hotel-name">{hotel.name}</h1>
-        <div className="hotel-address">{hotel.address}</div>
+        <div className="hotel-address">{getAddressDisplay(hotel.address)}</div>
         <FlatButton onClick={() => navigate('book')} className="test-flat-button">Book</FlatButton>
     </div>
 
     function loadHotel() {
-        ApiService
-            .get(`hotels/${id}`)
-            .then(response => setHotel(response.body));
+        get(`hotels/${id}`).then(response => setHotel(response.data));
+    }
+
+    function getAddressDisplay(address) {
+        return `${address.street} ${address.houseNumber}, ${address.city}`;
     }
 }

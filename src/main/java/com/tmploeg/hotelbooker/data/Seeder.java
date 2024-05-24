@@ -1,10 +1,12 @@
 package com.tmploeg.hotelbooker.data;
 
 import com.tmploeg.hotelbooker.enums.RoleName;
+import com.tmploeg.hotelbooker.models.Address;
+import com.tmploeg.hotelbooker.models.ValueResult;
+import com.tmploeg.hotelbooker.models.entities.Hotel;
 import com.tmploeg.hotelbooker.models.entities.Role;
 import com.tmploeg.hotelbooker.models.entities.User;
-import com.tmploeg.hotelbooker.services.RoleService;
-import com.tmploeg.hotelbooker.services.UserService;
+import com.tmploeg.hotelbooker.services.*;
 import java.util.Arrays;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
@@ -20,12 +22,15 @@ public class Seeder implements CommandLineRunner {
 
   private final UserService userService;
   private final RoleService roleService;
+  private final HotelService hotelService;
+  private final RoomService roomService;
   private final Environment environment;
 
   @Override
   public void run(String... args) throws Exception {
     seedRoles();
     seedUsers();
+    seedHotels();
   }
 
   private void seedRoles() {
@@ -54,5 +59,26 @@ public class Seeder implements CommandLineRunner {
     Role adminRole = roleService.findByName(RoleName.ADMIN);
 
     userService.save(adminUsername, adminPassword, adminRole);
+  }
+
+  private void seedHotels() {
+    if (!hotelService.getAll().isEmpty()) {
+      return;
+    }
+
+    createHotel("CoolHotel", "Cityville", "Streetlane", 14, 20);
+    createHotel("UncoolHotel", "Cityville", "Streetlane", 15, 16);
+  }
+
+  private void createHotel(
+      String name, String city, String street, int houseNumber, int nrOfRooms) {
+    ValueResult<Hotel> saveHotelResult =
+        hotelService.save(name, new Address(city, street, houseNumber));
+
+    if (saveHotelResult.succeeded()) {
+      for (int roomNumber = 1; roomNumber <= nrOfRooms; roomNumber++) {
+        roomService.save(saveHotelResult.getValue().getId(), roomNumber);
+      }
+    }
   }
 }

@@ -2,6 +2,7 @@ package com.tmploeg.hotelbooker.models.entities;
 
 import com.tmploeg.hotelbooker.models.RoomId;
 import jakarta.persistence.*;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import lombok.Getter;
@@ -17,7 +18,7 @@ public class Room {
   @Id private int roomNumber;
 
   @ManyToMany(mappedBy = "rooms")
-  private Set<Booking> bookings;
+  private final Set<Booking> bookings = new HashSet<>();
 
   public Room(Hotel hotel, int roomNumber) {
     this.hotel = hotel;

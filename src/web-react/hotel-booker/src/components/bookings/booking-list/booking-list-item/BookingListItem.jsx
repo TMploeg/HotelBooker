@@ -13,7 +13,11 @@ export default function BookingListItem({ booking }) {
         </div>
         <div>
             <div className="booking-hotel-name">{booking.hotel.name}</div>
-            <div className="booking-hotel-address">{booking.hotel.address}</div>
+            <div className="booking-hotel-address">{displayAddress(booking.hotel.address)}</div>
         </div>
     </div>
+
+    function displayAddress(address) {
+        return `${address.street} ${address.houseNumber}, ${address.city}`;
+    }
 }

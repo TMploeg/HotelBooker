@@ -1,13 +1,13 @@
 package com.tmploeg.hotelbooker.models.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import com.tmploeg.hotelbooker.models.Address;
+import jakarta.persistence.*;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @NoArgsConstructor
@@ -17,12 +17,13 @@ public class Hotel {
 
   private String name;
 
-  private String address;
+  @Embedded private Address address;
 
-  @OneToMany(mappedBy = "hotel")
-  private Set<Room> rooms;
+  @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)
+  @Setter
+  private Set<Room> rooms = new HashSet<>();
 
-  public Hotel(String name, String address) {
+  public Hotel(String name, Address address) {
     this.name = name;
     this.address = address;
   }
