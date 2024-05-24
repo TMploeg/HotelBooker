@@ -21,6 +21,10 @@ public class HotelService {
     return hotelRepository.findByOrderById();
   }
 
+  public Set<Hotel> search(String search) {
+    return hotelRepository.findByNameContainingIgnoreCaseOrderById(search);
+  }
+
   public ValueResult<Hotel> save(String name, String address) {
     if (name == null) {
       throw new IllegalArgumentException("name is null");

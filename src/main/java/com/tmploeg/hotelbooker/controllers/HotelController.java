@@ -33,8 +33,10 @@ public class HotelController {
   private final BookingService bookingService;
 
   @GetMapping
-  public Set<HotelDTO> getAll() {
-    return hotelService.getAll().stream().map(HotelDTO::fromHotel).collect(Collectors.toSet());
+  public Set<HotelDTO> getAll(@RequestParam(defaultValue = "") String search) {
+    return hotelService.search(search).stream()
+        .map(HotelDTO::fromHotel)
+        .collect(Collectors.toSet());
   }
 
   @GetMapping("{hotelId}")
