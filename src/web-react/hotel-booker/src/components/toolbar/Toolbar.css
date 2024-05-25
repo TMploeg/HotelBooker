@@ -32,12 +32,6 @@
     opacity: 0.8;
 }
 
-.v-seperator{
-    height: 80%;
-    width: 1px;
-    background-color: var(--default-color-dark);
-}
-
 .account-menu-button{
     background-color: transparent;
     box-shadow: 0px 0px 5px inset;
