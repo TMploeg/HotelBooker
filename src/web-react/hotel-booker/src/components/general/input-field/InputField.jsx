@@ -7,6 +7,12 @@ export default function InputField({ label, value, onValueChanged, errors, toggl
     const [touched, setTouched] = useState(false);
     const [visible, setVisible] = useState(!toggleVisiblity);
 
+    const disabled = value == undefined || value == null || onValueChanged == undefined || onValueChanged == null;
+
+    value ??= '';
+    onValueChanged ??= () => { }
+    onKeyUp ??= () => { }
+
     const hasLabel = label !== undefined && label !== null && label.length > 0;
     if (!hasLabel) {
         label = 'field';
@@ -27,7 +33,8 @@ export default function InputField({ label, value, onValueChanged, errors, toggl
                 onFocus={handleFocus}
                 onBlur={handleBlur}
                 type={visible ? 'text' : 'password'}
-                onKeyUp={onKeyUp} />
+                onKeyUp={onKeyUp}
+                disabled={disabled} />
             {hasLabel ? <label className={`field-label${inputHasFocus || value.length > 0 ? ' shifted' : ''}`}>{label}</label> : null}
             <div className="buttons-container">
                 {toggleVisiblity
@@ -38,7 +45,11 @@ export default function InputField({ label, value, onValueChanged, errors, toggl
                 }
             </div>
         </div>
-        <div className="field-error">{hasError ? errors[0] : null}</div>
+        {
+            errors !== undefined && errors !== null
+                ? (<div className="field-error">{hasError ? errors[0] : null}</div>)
+                : null
+        }
     </div>
 
     function handleFocus() {
@@ -48,9 +59,5 @@ export default function InputField({ label, value, onValueChanged, errors, toggl
     function handleBlur() {
         setInputHasFocus(false);
         setTouched(true);
-    }
-
-    function showErrors() {
-        alert([`${label} is invalid`, ...(errors.map(e => `- ${e}`))].join('\n'));
     }
 }

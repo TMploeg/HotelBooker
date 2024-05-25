@@ -30,3 +30,15 @@
 .rotate-180deg{
     rotate: 180deg; 
 }
+
+.v-seperator{
+    height: calc(100% - 10px);
+    width: 1px;
+    background-color: var(--default-color-dark);
+}
+
+.h-seperator{
+    width: calc(100% - 10px);
+    height: 1px;
+    background-color: var(--default-color-dark);
+}
