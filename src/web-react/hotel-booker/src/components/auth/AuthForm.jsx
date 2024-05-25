@@ -59,7 +59,7 @@ export default function AuthForm({ title, onSubmit, validateUsername, validatePa
         setLoading(true);
         setFormError(null);
         onSubmit(username, password)
-            .catch(error => setFormError(error.message))
+            .catch(error => setFormError(error.response.data.detail))
             .finally(() => setLoading(false));
     }
 
